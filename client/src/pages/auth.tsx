@@ -34,17 +34,23 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         if (error) throw error;
 
         if (data.user) {
-          await supabase
-            .from('profiles')
-            .insert([
-              {
-                id: data.user.id,
-                email: email,
-                name: '',
-                career: null,
-              },
-            ])
-            .single();
+          // Try to create profile but don't block signup if it fails
+          try {
+            await supabase
+              .from('profiles')
+              .insert([
+                {
+                  id: data.user.id,
+                  email: email,
+                  name: '',
+                  career: null,
+                },
+              ])
+              .single();
+          } catch (profileError) {
+            console.error('Profile creation warning (non-blocking):', profileError);
+            // Continue anyway - user can still play
+          }
 
           toast({
             title: 'Account Created!',
