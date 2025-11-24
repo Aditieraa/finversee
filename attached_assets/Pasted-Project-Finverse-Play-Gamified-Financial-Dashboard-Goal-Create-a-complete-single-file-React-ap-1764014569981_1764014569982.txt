@@ -1,0 +1,44 @@
+Project: Finverse Play - Gamified Financial Dashboard
+Goal: Create a complete, single-file React application (FinversePlay.jsx) that implements a gamified financial education dashboard, strictly adhering to the detailed specifications and dark-themed design provided below. All functionality, components, and styling (using Tailwind CSS) must be contained within this single file.
+1. Core Structure & Theme
+•	Project Type: Single-file React component (FinversePlay.jsx).
+•	Theme: Dark Theme is MANDATORY. Use a primary background color of Navy/Dark Blue (#161F36) for all screens.
+•	Color Palette (Must be used for accents):
+o	Primary Accent: Bright Blue (#2196F3 or similar) for active selections/buttons.
+o	Secondary Accent: Dark ocean blue for highlights.
+o	Positive Values: Green (#29E09A) for investment returns and positive financial data.
+o	Achievements/Highlights: Gold/Yellow (#FFE066).
+o	Card Backgrounds: Slightly lighter dark shade (#1F2A40).
+2. Application Flow and Initial Screens
+•	A. Landing/Start Screen: Must be the initial view. Display the app name ("Finverse Play"), a tagline, a central icon/illustration, and a prominent "Start" button.
+•	B. Login & Profile Creation (Integrated Flow):
+o	After clicking "Start" (or on initial load if no user is authenticated), display a dark-themed login panel. Since authentication is mocked/implied, the focus immediately shifts to Profile Creation.
+o	Create Avatar Page: This is the core sign-up step. Implement the following components:
+1.	Avatar Creature Selector: Allow selection of a custom avatar (use emojis like 👾, 🤖, 🦄).
+2.	Name Input Field.
+3.	Career Path Selector: Allow selection among Software Engineer, Doctor, Teacher, and Business Owner. The active selection must be clearly indicated with a primary accent color.
+4.	A final "Embark on Your Journey" button.
+3. Sidebar Navigation (Static Left Panel)
+•	Design: A vertical, dark-toned sidebar, separate from the main content.
+•	Menu Items (All 12 required): Home, Play, Learn, Dashboard, Investments, Leaderboard, Profile, Career & Income, Expenses, Life Events, Achievements, and Aura Twin AI Chat.
+•	Active State: The currently selected item must be highlighted with a brighter or more vibrant color (use Bright Blue or Light blue).
+•	Profile Display: Display the user's selected Profile Avatar and a set of Achievement Icons (use 3 mock gold/green icons) within the sidebar.
+4. Dashboard Page (Default View)
+•	Financial Snapshot Cards: Display three distinct cards with mock data for:
+1.	Net Worth
+2.	Monthly Income
+3.	Monthly Expenses
+•	Upcoming Events: A section listing upcoming financial events (Task Name and Due Date).
+•	Investment Options: A grid of four clickable cards/icons representing investment classes: SIPs, Stocks, Gold, and Real Estate.
+•	Map Placeholder: Include a clearly visible placeholder area/card that represents a "map focused on the user’s location or investments."
+5. Leaderboard Feature Page
+•	Leaderboard Table: Display mock data for at least 5 players, showing: Rank, Player Name, Level, and Achievement Icons (using the gold/green accent colors).
+•	Tabs: Include functional tabs (mock data required) to switch between ‘All Time’ and ‘Weekly’ leaderboards.
+6. Investment Portfolio Tracking Page
+•	Asset Segregation: Structure the page into distinct sections for the four asset classes: SIP (Mutual Funds), Stocks, Gold, and Real Estate.
+•	Data Tables: Each section must contain a simple table showing mock investment details (e.g., amount invested, current value, returns).
+•	Returns Highlight: Crucially, ensure positive returns are highlighted prominently in the Green accent color (#29E09A).
+7. Aura Twin AI Mentor & Chat Feature
+•	Dedicated Chat Interface: Create a dedicated, stylized chat screen.
+•	Avatar: Display a stylized AI avatar for the "Aura Twin AI Mentor."
+•	Conversation Box: Mock a conversation flow where AI responses appear on the left and user queries appear on the right.
