@@ -19,7 +19,6 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showLanding, setShowLanding] = useState(true);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,35 +88,16 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
     onAuthSuccess('guest');
   };
 
-  if (showLanding) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center p-4" style={{ background: '#0d2e47' }}>
-        <div className="text-center space-y-8 animate-fadeInUp">
-          <div>
-            <img 
-              src={logoPath} 
-              alt="Finverse Logo" 
-              className="h-48 w-48 mx-auto mb-8"
-            />
-            <h1 className="text-6xl font-bold text-white mb-4">Welcome to<br /><span style={{ color: '#00d4aa' }}>Finverse Play</span></h1>
-            <p className="text-xl text-gray-300">Learn. Conquer Financial Freedom.</p>
-          </div>
-          <Button
-            onClick={() => setShowLanding(false)}
-            className="mx-auto px-16 py-8 text-2xl font-bold rounded-full"
-            style={{ background: '#ffd700', color: '#0d2e47' }}
-          >
-            Start Playing
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden" style={{
-      background: 'linear-gradient(135deg, #0d2e47 0%, #0f3d52 50%, #0d2e47 100%)',
+      background: 'linear-gradient(135deg, #0a1f3f 0%, #0f2847 25%, #1a1f4d 50%, #2d1b4e 75%, #1a0f3f 100%)',
+      animation: 'gradientShift 15s ease infinite'
     }}>
+      {/* Animated background blobs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-blob" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
+      <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-blob animation-delay-4000" />
+      
       <Card className="w-full max-w-md border-primary/40 bg-black/50 backdrop-blur-2xl shadow-2xl relative z-10 animate-fadeInUp">
         <div className="p-8">
           <div className="text-center mb-8 space-y-3">
