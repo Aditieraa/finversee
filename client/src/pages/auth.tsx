@@ -32,6 +32,18 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         if (error) throw error;
 
         if (data.user) {
+          await supabase
+            .from('profiles')
+            .insert([
+              {
+                id: data.user.id,
+                email: email,
+                name: '',
+                career: null,
+              },
+            ])
+            .single();
+
           toast({
             title: 'Account Created!',
             description: 'Welcome to Finverse. Starting your financial journey...',
@@ -55,6 +67,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         }
       }
     } catch (error: any) {
+      console.error('Auth error:', error);
       toast({
         title: 'Authentication Error',
         description: error.message || 'Something went wrong',

@@ -324,7 +324,7 @@ export default function FinQuest() {
     }
   };
 
-  const completeOnboarding = () => {
+  const completeOnboarding = async () => {
     if (!onboarding.name || !onboarding.career) {
       toast({
         title: 'Missing Information',
@@ -343,6 +343,21 @@ export default function FinQuest() {
     };
 
     const initialCash = careerData.salary - careerData.expenses;
+
+    if (userId && userId !== 'guest') {
+      try {
+        await supabase
+          .from('profiles')
+          .update({
+            name: onboarding.name,
+            career: onboarding.career,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', userId);
+      } catch (error) {
+        console.error('Error updating profile:', error);
+      }
+    }
 
     setGameState(prev => ({
       ...prev,
