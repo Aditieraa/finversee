@@ -87,22 +87,32 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4" style={{ background: '#0A0F1F' }}>
-      <Card className="w-full max-w-md border-neon-cyan/30 bg-black/40 backdrop-blur-xl shadow-neon-cyan">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden" style={{
+      background: 'linear-gradient(135deg, #0a1f3f 0%, #0f2847 25%, #1a1f4d 50%, #2d1b4e 75%, #1a0f3f 100%)',
+      animation: 'gradientShift 15s ease infinite'
+    }}>
+      {/* Animated background blobs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-blob" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
+      <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-blob animation-delay-4000" />
+      
+      <Card className="w-full max-w-md border-primary/40 bg-black/50 backdrop-blur-2xl shadow-2xl relative z-10 animate-fadeInUp">
         <div className="p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-2" style={{ color: '#00E5FF' }}>
-              <Sparkles className="inline mr-2 h-8 w-8" />
+          <div className="text-center mb-8 space-y-3">
+            <div className="inline-block animate-bounce">
+              <Sparkles className="h-12 w-12 text-primary mx-auto" style={{ color: 'hsl(210 60% 70%)' }} />
+            </div>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent animate-pulse">
               Finverse
             </h1>
-            <p className="text-lg" style={{ color: '#E6F1FF' }}>
+            <p className="text-lg text-gray-300 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
               Play. Learn. Conquer Financial Freedom.
             </p>
           </div>
 
           <form onSubmit={handleAuth} className="space-y-6">
-            <div>
-              <Label htmlFor="email" className="text-neon-purple">Email</Label>
+            <div className="animate-fadeIn" style={{ animationDelay: '0.3s' }}>
+              <Label htmlFor="email" className="text-gray-200 font-semibold">Email</Label>
               <Input
                 id="email"
                 data-testid="input-auth-email"
@@ -111,12 +121,12 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
                 required
-                className="mt-2 bg-black/60 border-neon-cyan/50 text-white placeholder:text-gray-500 focus:border-neon-cyan focus:shadow-neon-cyan"
+                className="mt-2 bg-black/40 border-primary/30 text-white placeholder:text-gray-500 focus:border-primary/70 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
               />
             </div>
 
-            <div>
-              <Label htmlFor="password" className="text-neon-purple">Password</Label>
+            <div className="animate-fadeIn" style={{ animationDelay: '0.4s' }}>
+              <Label htmlFor="password" className="text-gray-200 font-semibold">Password</Label>
               <Input
                 id="password"
                 data-testid="input-auth-password"
@@ -126,7 +136,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
                 placeholder="••••••••"
                 required
                 minLength={6}
-                className="mt-2 bg-black/60 border-neon-cyan/50 text-white placeholder:text-gray-500 focus:border-neon-cyan focus:shadow-neon-cyan"
+                className="mt-2 bg-black/40 border-primary/30 text-white placeholder:text-gray-500 focus:border-primary/70 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
               />
             </div>
 
@@ -134,10 +144,14 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
               data-testid="button-auth-submit"
               type="submit"
               disabled={loading}
-              className="w-full bg-neon-cyan text-black hover:bg-neon-cyan/90 shadow-neon-cyan font-bold text-lg py-6"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 font-bold text-lg py-6 transition-all duration-300 transform hover:scale-105 active:scale-95 animate-fadeIn shadow-lg"
+              style={{ animationDelay: '0.5s' }}
             >
               {loading ? (
-                'Processing...'
+                <span className="inline-flex items-center">
+                  <span className="animate-spin mr-2">⏳</span>
+                  Processing...
+                </span>
               ) : isSignUp ? (
                 <>
                   <UserPlus className="mr-2 h-5 w-5" />
@@ -151,11 +165,11 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
               )}
             </Button>
 
-            <div className="text-center">
+            <div className="text-center animate-fadeIn" style={{ animationDelay: '0.6s' }}>
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-neon-purple hover:text-neon-purple/80 text-sm"
+                className="text-gray-300 hover:text-primary/80 text-sm transition-colors duration-300"
                 data-testid="button-toggle-auth-mode"
               >
                 {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
