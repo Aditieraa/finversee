@@ -14,10 +14,6 @@ run = ["npm", "run", "start"]
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 41303
-externalPort = 3000
-
 [env]
 PORT = "5000"
 
@@ -44,3 +40,9 @@ waitForPort = 5000
 
 [agent]
 integrations = ["javascript_gemini:1.0.0"]
+
+[userenv]
+
+[userenv.shared]
+VITE_SUPABASE_URL = "https://ucrjyinlqgwoltthusaq.supabase.co"
+VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjcmp5aW5scWd3b2x0dGh1c2FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMDQ1MDMsImV4cCI6MjA3OTU4MDUwM30.m_1rbSbo1oHaFwtLrglqsowwDRqZImF5G5YiXkSU04g"

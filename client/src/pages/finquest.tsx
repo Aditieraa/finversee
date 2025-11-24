@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
+import { supabase } from '@/lib/supabase';
+import Auth from './auth';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -114,6 +116,8 @@ const ACHIEVEMENTS: Achievement[] = [
 export default function FinQuest() {
   const { toast } = useToast();
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   
   const [gameState, setGameState] = useState<GameState>({
     currentMonth: 1,
@@ -155,6 +159,7 @@ export default function FinQuest() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [gameOver, setGameOver] = useState<'win' | 'loss' | null>(null);
   const [processingMonth, setProcessingMonth] = useState(false);
+  const [leaderboard, setLeaderboard] = useState<Array<{ name: string; score: number; level: number }>>([]);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -169,8 +174,126 @@ export default function FinQuest() {
   }, [gameState.chatHistory]);
 
   useEffect(() => {
-    checkDailyLogin();
+    checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (userId && userId !== 'guest') {
+      loadGameState();
+    }
+    if (userId) {
+      checkDailyLogin();
+      loadLeaderboard();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId && userId !== 'guest' && gameState.userProfile) {
+      const autoSaveInterval = setInterval(() => {
+        saveGameState(true);
+      }, 60000);
+
+      return () => clearInterval(autoSaveInterval);
+    }
+  }, [userId, gameState]);
+
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      setUserId(session.user.id);
+    }
+    setAuthChecked(true);
+  };
+
+  const handleAuthSuccess = (uid: string) => {
+    setUserId(uid);
+  };
+
+  const saveGameState = async (silent = false) => {
+    if (!userId || userId === 'guest' || !gameState.userProfile) return;
+
+    try {
+      const { error } = await supabase
+        .from('game_saves')
+        .upsert({
+          user_id: userId,
+          game_state: gameState,
+          chat_history: gameState.chatHistory,
+          achievements: gameState.achievements,
+          leaderboard_score: gameState.netWorth,
+        });
+
+      if (error) throw error;
+
+      if (!silent) {
+        toast({
+          title: '💾 Game Saved',
+          description: 'Your progress has been saved to the cloud',
+        });
+      }
+      
+      await loadLeaderboard();
+    } catch (error: any) {
+      console.error('Save error:', error);
+      if (!silent) {
+        toast({
+          title: 'Save Failed',
+          description: 'Could not save game progress',
+          variant: 'destructive',
+        });
+      }
+    }
+  };
+
+  const loadGameState = async () => {
+    if (!userId || userId === 'guest') return;
+
+    try {
+      const { data, error } = await supabase
+        .from('game_saves')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+
+      if (data) {
+        setGameState(data.game_state);
+        toast({
+          title: '✨ Progress Loaded',
+          description: 'Welcome back! Your game has been restored.',
+        });
+      }
+    } catch (error: any) {
+      console.error('Load error:', error);
+    }
+  };
+
+  const loadLeaderboard = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('game_saves')
+        .select('game_state, leaderboard_score')
+        .order('leaderboard_score', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      if (data) {
+        const leaderboardData = data
+          .filter(entry => entry.game_state?.userProfile?.name)
+          .map(entry => ({
+            name: entry.game_state.userProfile.name,
+            score: entry.leaderboard_score || 0,
+            level: entry.game_state.level || 1,
+          }));
+
+        setLeaderboard(leaderboardData);
+      }
+    } catch (error: any) {
+      console.error('Leaderboard error:', error);
+    }
+  };
 
   const checkDailyLogin = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -307,10 +430,28 @@ export default function FinQuest() {
     
     const totalInvestment = Object.values(monthlyDecisions).reduce((a, b) => a + b, 0);
     
+    if (totalInvestment === 0) {
+      toast({
+        title: 'No Investments',
+        description: 'Please enter at least one investment amount',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     if (totalInvestment > gameState.cashBalance) {
       toast({
         title: 'Insufficient Funds',
-        description: 'You cannot invest more than your available cash',
+        description: `You only have ₹${Math.round(gameState.cashBalance).toLocaleString('en-IN')} available. Total investment: ₹${totalInvestment.toLocaleString('en-IN')}`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (Object.values(monthlyDecisions).some(v => v < 0)) {
+      toast({
+        title: 'Invalid Amount',
+        description: 'Investment amounts cannot be negative',
         variant: 'destructive',
       });
       return;
@@ -336,7 +477,7 @@ export default function FinQuest() {
       };
     });
 
-    await sendAIMessage(`I invested ₹${totalInvestment.toLocaleString('en-IN')} this month: SIP ₹${monthlyDecisions.sip}, Stocks ₹${monthlyDecisions.stocks}, Gold ₹${monthlyDecisions.gold}, Real Estate ₹${monthlyDecisions.realEstate}, Savings ₹${monthlyDecisions.savings}`);
+    await sendAIMessage(`I invested ₹${totalInvestment.toLocaleString('en-IN')} this month: SIP ₹${monthlyDecisions.sip.toLocaleString('en-IN')}, Stocks ₹${monthlyDecisions.stocks.toLocaleString('en-IN')}, Gold ₹${monthlyDecisions.gold.toLocaleString('en-IN')}, Real Estate ₹${monthlyDecisions.realEstate.toLocaleString('en-IN')}, Savings ₹${monthlyDecisions.savings.toLocaleString('en-IN')}`);
 
     setTimeout(() => {
       processMonthEnd();
@@ -447,14 +588,17 @@ export default function FinQuest() {
   };
 
   const sendAIMessage = async (userMessage: string) => {
+    if (!userMessage.trim() && chatInput.trim()) {
+      userMessage = chatInput;
+    }
+    
     if (!userMessage.trim()) return;
 
+    const userMsg = { role: 'user' as const, content: userMessage, timestamp: Date.now() };
+    
     setGameState(prev => ({
       ...prev,
-      chatHistory: [
-        ...prev.chatHistory,
-        { role: 'user', content: userMessage, timestamp: Date.now() },
-      ],
+      chatHistory: [...prev.chatHistory, userMsg],
     }));
 
     setChatInput('');
@@ -487,11 +631,21 @@ export default function FinQuest() {
         ],
       }));
     } catch (error) {
-      toast({
-        title: 'AI Error',
-        description: 'Could not connect to Aura Twin. Please try again.',
-        variant: 'destructive',
-      });
+      console.error('AI chat error:', error);
+      
+      const fallbackMsg = `I'm having trouble connecting right now, but I'm here to support you! ${
+        userMessage.includes('invest') 
+          ? "Remember: Diversification is key to managing risk. Keep building your portfolio steadily! 💪" 
+          : "Keep making smart financial decisions. Your future self will thank you! 🌟"
+      }`;
+      
+      setGameState(prev => ({
+        ...prev,
+        chatHistory: [
+          ...prev.chatHistory,
+          { role: 'ai', content: fallbackMsg, timestamp: Date.now() },
+        ],
+      }));
     } finally {
       setAiLoading(false);
     }
@@ -506,7 +660,7 @@ export default function FinQuest() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'finquest-chat-history.txt';
+    a.download = 'finverse-chat-history.txt';
     a.click();
     URL.revokeObjectURL(url);
 
@@ -516,7 +670,7 @@ export default function FinQuest() {
     });
   };
 
-  const resetGame = () => {
+  const resetGame = async () => {
     if (!confirm('Are you sure you want to reset your game? All progress will be lost.')) {
       return;
     }
@@ -540,11 +694,40 @@ export default function FinQuest() {
     setOnboarding({ active: true, step: 1, name: '', career: '' });
     setGameOver(null);
 
+    if (userId && userId !== 'guest') {
+      await supabase
+        .from('game_saves')
+        .delete()
+        .eq('user_id', userId);
+    }
+
     toast({
       title: 'Game Reset',
       description: 'Your financial journey begins anew',
     });
   };
+
+  const handleLogout = async () => {
+    if (userId !== 'guest') {
+      await saveGameState();
+      await supabase.auth.signOut();
+    }
+    setUserId(null);
+    setAuthChecked(false);
+    resetGame();
+  };
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center" style={{ background: '#0A0F1F' }}>
+        <div className="text-neon-cyan text-xl animate-pulse">Loading Finverse...</div>
+      </div>
+    );
+  }
+
+  if (!userId) {
+    return <Auth onAuthSuccess={handleAuthSuccess} />;
+  }
 
   if (onboarding.active) {
     return (
@@ -554,7 +737,7 @@ export default function FinQuest() {
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold mb-2" style={{ color: '#00E5FF' }}>
                 <Sparkles className="inline mr-2 h-8 w-8" />
-                FinQuest India
+                Finverse
               </h1>
               <p className="text-lg" style={{ color: '#E6F1FF' }}>
                 Play. Learn. Conquer Financial Freedom.
@@ -644,7 +827,7 @@ export default function FinQuest() {
             </button>
             <h1 className="text-2xl font-bold text-neon-cyan flex items-center gap-2">
               <Sparkles className="h-6 w-6" />
-              FinQuest
+              Finverse
             </h1>
           </div>
 
@@ -878,7 +1061,7 @@ export default function FinQuest() {
                     Achievements
                   </h3>
 
-                  <ScrollArea className="h-64">
+                  <ScrollArea className="h-48">
                     <div className="space-y-2">
                       {gameState.achievements.map((achievement) => (
                         <div
@@ -906,6 +1089,47 @@ export default function FinQuest() {
                   </ScrollArea>
                 </div>
               </Card>
+
+              {/* Leaderboard */}
+              {leaderboard.length > 0 && (
+                <Card className="border-neon-cyan/30 bg-black/40 backdrop-blur-xl shadow-neon-cyan">
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-neon-cyan mb-4 flex items-center gap-2">
+                      <Award className="h-5 w-5" />
+                      Top Players
+                    </h3>
+
+                    <div className="space-y-2">
+                      {leaderboard.slice(0, 5).map((player, idx) => (
+                        <div
+                          key={idx}
+                          data-testid={`leaderboard-${idx}`}
+                          className={`p-3 rounded-lg border ${
+                            idx === 0
+                              ? 'border-neon-lime/50 bg-neon-lime/10'
+                              : 'border-gray-700 bg-black/20'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <span className="text-lg font-bold text-gray-400">
+                                #{idx + 1}
+                              </span>
+                              <div>
+                                <p className="font-semibold text-sm">{player.name}</p>
+                                <p className="text-xs text-gray-400">Level {player.level}</p>
+                              </div>
+                            </div>
+                            <span className="text-sm font-bold text-neon-lime">
+                              ₹{Math.round(player.score).toLocaleString('en-IN')}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              )}
             </div>
           </div>
         </div>
@@ -947,6 +1171,25 @@ export default function FinQuest() {
             >
               <RotateCcw className="mr-2 h-4 w-4" />
               Reset Game
+            </Button>
+            {userId && userId !== 'guest' && (
+              <Button
+                data-testid="button-save-game"
+                onClick={saveGameState}
+                variant="outline"
+                className="w-full border-neon-cyan/50 text-neon-cyan hover:bg-neon-cyan/20"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Save Game Now
+              </Button>
+            )}
+            <Button
+              data-testid="button-logout"
+              onClick={handleLogout}
+              variant="outline"
+              className="w-full border-gray-500 text-gray-400 hover:bg-gray-800"
+            >
+              Logout
             </Button>
           </div>
         </DialogContent>

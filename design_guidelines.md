@@ -1,4 +1,4 @@
-# FinQuest India - Design Guidelines
+# Finverse - Design Guidelines
 
 ## Design Approach
 **Reference-Based Hybrid**: Drawing inspiration from futuristic fintech apps (Robinhood's clarity + crypto dashboard aesthetics) with a distinctive neon gaming overlay. This is a gamified financial education platform requiring both utility and visual impact.
