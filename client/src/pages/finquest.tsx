@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
+import { useTheme } from '@/lib/ThemeProvider';
 import Auth from './auth';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
