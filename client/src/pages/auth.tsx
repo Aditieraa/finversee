@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Sparkles, LogIn, UserPlus } from 'lucide-react';
+// @ts-ignore
+import logoPath from '@assets/WhatsApp Image 2025-11-22 at 20.10.06_10cdf760_1764008354697.jpg';
 
 interface AuthProps {
   onAuthSuccess: (userId: string) => void;
@@ -99,12 +101,17 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
       <Card className="w-full max-w-md border-primary/40 bg-black/50 backdrop-blur-2xl shadow-2xl relative z-10 animate-fadeInUp">
         <div className="p-8">
           <div className="text-center mb-8 space-y-3">
-            <div className="inline-block animate-bounce">
-              <Sparkles className="h-12 w-12 text-primary mx-auto" style={{ color: 'hsl(210 60% 70%)' }} />
+            <div className="inline-block animate-bounce mb-4">
+              <img 
+                src={logoPath} 
+                alt="Finverse Logo" 
+                className="h-32 w-32 mx-auto drop-shadow-lg"
+                style={{
+                  filter: 'drop-shadow(0 0 20px rgba(100, 180, 255, 0.4))',
+                  animation: 'glow 2s ease-in-out infinite'
+                }}
+              />
             </div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent animate-pulse">
-              Finverse
-            </h1>
             <p className="text-lg text-gray-300 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
               Play. Learn. Conquer Financial Freedom.
             </p>
@@ -187,6 +194,8 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
 
             <Button
               data-testid="button-guest-mode"
+              className="animate-fadeIn"
+              style={{ animationDelay: '0.7s' }}>
               type="button"
               onClick={handleGuestMode}
               variant="outline"
