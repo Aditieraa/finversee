@@ -113,11 +113,14 @@ const ACHIEVEMENTS: Achievement[] = [
   { id: 'week-streak', title: 'Committed', description: '7 consecutive daily logins', unlocked: false, icon: '🔥' },
 ];
 
+const AVATARS = ['👾', '🤖', '🦄', '🎯', '🚀', '🌟', '💎', '⚡'];
+
 export default function FinQuest() {
   const { toast } = useToast();
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
   
   const [gameState, setGameState] = useState<GameState>({
     currentMonth: 1,
@@ -140,6 +143,7 @@ export default function FinQuest() {
     step: 1,
     name: '',
     career: '' as Career | '',
+    avatar: '🚀',
   });
 
   const [monthlyDecisions, setMonthlyDecisions] = useState({
