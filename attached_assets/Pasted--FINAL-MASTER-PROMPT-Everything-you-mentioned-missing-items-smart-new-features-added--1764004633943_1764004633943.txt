@@ -1,0 +1,237 @@
+✅ **FINAL MASTER PROMPT**
+(Everything you mentioned + missing items + smart new features added)
+
+---
+
+# 🚀 **FINQUEST INDIA — Single-File React Web Game Prompt (Replit-Ready)**
+
+**Build a futuristic, neon-themed, single-file React web app** hosted on Replit called **FinQuest India — The Financial Freedom Game**, where users learn Indian personal finance by playing, investing, facing life events, and interacting with an emotional AI mentor.
+
+---
+
+## ✅ **CORE TECH REQUIREMENTS**
+
+* ✅ **Single-file React app** (all UI + logic in one component, no routing, no extra files)
+* ✅ **Tailwind CSS only** (no external UI frameworks)
+* ✅ **Runs fully on Replit**
+* ✅ **Supabase** for:
+
+  * Authentication (email + password)
+  * Persistent game state storage:
+
+    * `user_id`
+    * `game_state` (JSON)
+    * `chat_history` (JSON)
+    * `achievements`
+    * `leaderboard_score`
+* ✅ **User-provided FREE Gemini API key** field (no paid subscription required)
+* ✅ No backend server required beyond Supabase and Gemini API
+
+---
+
+## ✅ **AESTHETIC & FRONTEND DESIGN**
+
+* **Background:** #0A0F1F (deep black-blue)
+* **Neon Accent Colors:**
+
+  * Cyan: #00E5FF
+  * Purple: #9D4BFF
+  * Pink: #FF2DAE
+  * Lime: #C6FF00
+* **Visual Style:**
+
+  * Soft neon glows using rgba shadows
+  * Glassmorphic panels (blur + transparency)
+  * Futuristic fonts
+  * Smooth hover animations + button pulses
+  * Clean and modern UI
+  * Minimal clutter, high contrast readability
+
+---
+
+## ✅ **RESPONSIVE LAYOUT**
+
+👾 **Desktop – 3 Columns**
+1️⃣ **Aura Twin Chat**
+2️⃣ **Dashboard & Decisions**
+3️⃣ **Portfolio & Progress**
+
+📱 **Mobile**
+→ Stacked vertical panels
+
+Floating Action Buttons on mobile for:
+
+* Decisions
+* AI Chat
+* Portfolio
+
+---
+
+## ✅ **GAME LOOP**
+
+1️⃣ Onboarding
+→ Choose career (Engineer, Designer, CA, Doctor, Sales)
+→ Salary & expense baseline changes per career
+
+2️⃣ Monthly Cycle:
+
+* Salary credited
+* Mandatory expenses deducted
+* Investment decision panel appears
+
+3️⃣ Investment Choices:
+
+* SIP (Mutual Funds)
+* Stocks
+* Gold
+* Real Estate
+* Savings
+
+4️⃣ Aura Twin AI Mentor:
+
+* Emotional Indian finance persona
+* Speaks conversational, motivational, empathetic tone
+* Triggers after:
+
+  * Investments
+  * Random events
+  * Monthly summary
+
+5️⃣ Random Life Event
+6️⃣ Portfolio Gain/Loss Simulation
+7️⃣ Net Worth Update
+8️⃣ Achievements / Milestones
+9️⃣ Auto-Save to Supabase
+
+---
+
+## ✅ **MARKET SIMULATION ENGINE**
+
+* SIP: **+0.6% to +1.2%**
+* Stocks: **–5% to +8%**
+* Gold: **–1% to +3%**
+* Real Estate: **0% to +1.2%**
+* Savings: **0% (safe)**
+
+Returns re-calculated monthly.
+
+---
+
+## ✅ **RANDOM LIFE EVENTS**
+
+Each with financial impact:
+
+* Job Loss
+* IPO Win
+* Medical Emergency
+* Inheritance
+* Market Dip
+* Promotion (NEW)
+* Salary Hike (NEW)
+* Tax Penalty (NEW)
+
+Aura Twin reacts emotionally.
+
+---
+
+## ✅ **AI MENTOR (Gemini)**
+
+Tone:
+
+* Warm, Indian, encouraging, slightly emotional
+* Contextual financial guidance
+* Predictive statements based on portfolio
+
+Examples:
+
+* “If you raise SIP by ₹800, your 3-year projection increases by ~27%. Want a simulation?”
+* “Gold looks weak this month. Patience may protect capital.”
+
+AI also:
+
+* Warns when risks are high
+* Motivates during losses
+* Celebrates achievements
+
+---
+
+## ✅ **REAL-TIME PORTFOLIO UI**
+
+* Neon animated bar charts
+* Percent growth indicators
+* Monthly summary cards
+* Hover tooltips
+* Profit/loss glow colors
+
+  * Gain → Lime glow
+  * Loss → Pink/Red glow
+
+---
+
+## ✅ **WIN & LOSS CONDITIONS**
+
+🏆 **Financial Freedom Achieved**
+→ Net worth target reached → Confetti animation + celebratory glow effect
+
+💀 **Bankruptcy**
+→ Negative net worth → Screen flicker + Game Over modal
+
+---
+
+## ✅ **BONUS FEATURES**
+
+* ✅ Theme Toggle (Neon Dark ↔ Minimal Light)
+* ✅ Reset Game (with confirmation modal)
+* ✅ Export Chat to TXT
+* ✅ Goal Setter Modal (set savings/investment goals)
+* ✅ Auto-Save Neon Indicator + Toast Alerts
+* ✅ Achievement Badges with glow animations
+* ✅ Daily Login Reward System (NEW)
+* ✅ XP & Leveling System (NEW)
+* ✅ Career Upgrade Opportunities (NEW)
+* ✅ **Supabase Leaderboard** (NEW)
+
+  * Rankings by net worth
+  * Anonymous usernames allowed
+* ✅ Sound Effects + Toggle (NEW)
+
+  * Success chime
+  * Loss rumble
+  * Button click pulses
+* ✅ First-Time Guided Tutorial (NEW)
+
+---
+
+## ✅ WHAT MAKES THIS EDUCATIONAL?
+
+* Real Indian salary norms
+* Realistic investment volatility
+* Emotional decision pressure
+* Adaptive AI financial coaching
+* Competitive leaderboard motivation
+
+---
+
+## ✅ FINAL APP GOAL
+
+Make Indians:
+✅ Money-confident
+✅ Investment-aware
+✅ Future-ready
+
+By learning through PLAY.
+
+---
+
+### ✅ OUTPUT EXPECTATION
+
+The final answer should:
+✅ Generate the **entire app in ONE React file**
+✅ Include all state logic + UI + Supabase + Gemini calls
+✅ Work immediately on Replit
+
+---
+
+If you want, I can now:
+✅ Convert this into a clean “Copy-Paste Prompt” OR
+✅ Generate the entire working code.

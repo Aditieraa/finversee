@@ -1,0 +1,280 @@
+✅ PERFECT — I’ve kept **EVERYTHING exactly the same**, added **ONLY the required changes**, and upgraded the prompt cleanly:
+
+✅ Use a **Free API Key** (public key field the user can paste — no paid dependency)
+✅ Replace Firestore with **Supabase** for database + authentication
+✅ Add an **official aesthetic neon color scheme**
+✅ Keep ALL original requirements, features, UI structure, AI triggers, game logic, responsiveness, Tailwind rules, and single-file constraint
+
+---
+
+# ✅ ✅ FINAL MASTER PROMPT FOR REPLIT
+
+**Copy–Paste This Entire Prompt**
+
+---
+
+## 🚀 BUILD: FINVERSE – Financial Freedom Game (Single-File React App)
+
+You must create a **complete, single-file React application (.jsx or .tsx)** for the FINVERSE Financial Freedom Game.
+
+---
+
+# ✅ 1. TECHNOLOGY REQUIREMENTS
+
+### ✅ Framework & Language
+
+* React Functional Components + Hooks
+* Single-file architecture (ALL UI + logic in ONE file)
+
+### ✅ Styling
+
+* **Tailwind CSS ONLY**
+* No UI libraries required (icons allowed)
+
+### ✅ Theme & Aesthetic
+
+* Dark, futuristic, neon cyber-finance vibe
+* Glowing edges, neon strokes, soft shadows, rounded cards
+* Sleek minimal typography
+* High contrast, readable content
+
+### ✅ Official Color Palette (Use Throughout UI)
+
+| Element         | Hex       | Usage                        |
+| --------------- | --------- | ---------------------------- |
+| Background Dark | `#0A0F1F` | Main app background          |
+| Neon Cyan       | `#00E5FF` | Highlights, borders, buttons |
+| Neon Purple     | `#9D4BFF` | Headers, accents, chart bars |
+| Electric Pink   | `#FF2DAE` | Alerts, events, badges       |
+| Neon Lime       | `#C6FF00` | Success, net worth growth    |
+| Soft White      | `#E6F1FF` | Text & labels                |
+
+Glow effects should use rgba glows derived from these colors.
+
+### ✅ Responsiveness
+
+* 3-column desktop layout
+* Stacks vertically on mobile
+* Smooth transitions
+* Touch-friendly UI components
+
+### ✅ UX Enhancements
+
+* Neon hover states
+* Animated buttons
+* Slide-in panels
+* Sticky headers
+* Floating action button (mobile decisions)
+* Skeleton loaders
+* Neon progress bars/radials
+* Toast alerts
+* Achievement animations
+
+---
+
+# ✅ 2. UI STRUCTURE
+
+### ✅ Desktop Layout (3 Columns)
+
+1️⃣ **Left Panel – Aura Twin Chat**
+
+* Scrollable chat window
+* Neon chat bubbles
+* Auto-scroll
+* Input docked at bottom
+
+2️⃣ **Center Panel – Dashboard & Decisions**
+
+* Shows:
+
+  * Month/Year
+  * Cash Balance
+  * Net Worth
+* Forms for:
+
+  * SIP
+  * Stocks
+  * Gold
+  * Real Estate
+  * Savings
+* Confirm button triggers AI
+* Monthly summary card
+
+3️⃣ **Right Panel – Portfolio & Progress**
+
+* Real-time values
+* Neon bar/percentage visuals
+* Leaderboard simulation
+* Achievement badges
+* Milestone tracker
+
+### ✅ Mobile Layout
+
+* Vertical stacking
+* Floating action buttons
+* Collapsible sections
+
+---
+
+# ✅ 3. AI INTEGRATION – Aura Twin Mentor
+
+### ✅ Model
+
+Use a **Free API Key Field** (user enters key manually).
+**Do NOT require paid subscription.**
+Call Gemini-compatible API like:
+
+```
+https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=USER_FREE_KEY
+```
+
+(Or equivalent free endpoint)
+
+### ✅ Persona
+
+* Emotional, encouraging, optimistic
+* Indian financial mentor vibe
+* Conversational tone (“it’s”, “you’ll”)
+
+### ✅ AI Trigger Events
+
+✅ After Monthly Decisions
+✅ After Random Life Events
+
+### ✅ Response Style
+
+* 2–5 lines
+* Friendly
+* Predictive
+* Actionable
+
+---
+
+# ✅ 4. GAME LOGIC & STATE
+
+### ✅ Single State Object Must Store:
+
+* currentMonth
+* currentYear
+* cashBalance
+* netWorth
+* userProfile (salary, expenses)
+* portfolio (SIP, Stocks, Gold, RE)
+* chatHistory
+* monthLog
+
+### ✅ Game Loop:
+
+Onboarding → Salary/Expenses → Decisions → AI Advice → Random Event → Net Worth Update → Repeat
+
+### ✅ Market Simulation:
+
+* SIP: +0.6% to +1.2%
+* Stocks: –5% to +8%
+* Gold: –1% to +3%
+* Real Estate: 0% to +1.2%
+
+### ✅ Random Events:
+
+* Job Loss
+* IPO Win
+* Medical Emergency
+* Inheritance
+* Market Dip
+  Each affects finances dynamically.
+
+---
+
+# ✅ 5. DATA PERSISTENCE — SUPABASE (NOT FIRESTORE)
+
+### ✅ Requirements
+
+* Replace Firestore entirely with **Supabase**
+* Use:
+
+  * Project URL
+  * Public ANON key
+  * Free tier only
+* Set up auth using Supabase
+* Save full game state + chat history in Supabase
+
+### ✅ Database Path/Structure
+
+Create a table:
+
+```
+finverse_save
+```
+
+Columns:
+
+* user_id
+* game_state (JSON)
+* chat_history (JSON)
+* updated_at
+
+### ✅ On Load
+
+* Fetch saved state
+* Restore UI
+* Display neon “Loaded Successfully” toast
+
+### ✅ On Save
+
+* Auto-save monthly
+* Neon save indicator
+* Success toast
+
+---
+
+# ✅ 6. BONUS FEATURES (Required)
+
+✅ Theme toggle (Dark Neon ⇆ Midnight Matte)
+✅ Reset game button
+✅ Export chat to TXT
+✅ Goal setter modal
+✅ Win condition: “Financial Freedom Achieved”
+✅ Loss condition: “Bankruptcy”
+✅ Confetti on milestones
+
+---
+
+# ✅ 7. OUTPUT REQUIREMENTS
+
+You MUST deliver:
+✅ One single .jsx or .tsx file
+✅ Fully functional game
+✅ Fully Tailwind styled
+✅ Fully responsive
+✅ AI integrated using a free API key field
+✅ Supabase database functional
+✅ Modern, clean, neon UI
+
+---
+
+# ✅ 8. DEPLOYMENT REQUIREMENTS
+
+Must:
+✅ Run instantly on Replit
+✅ Require **no backend server**
+✅ Use only client-side Supabase + API calls
+
+---
+
+# ✅ FINAL DIRECTIVE
+
+**DO NOT simplify.
+Do NOT split files.
+Everything must be inside ONE React file.
+Implement ALL features exactly.
+Make the UI visually stunning, modern, clean, and neon-aesthetic.**
+
+---
+
+If you want next:
+✅ Full working code
+✅ Brand/logo assets
+✅ Landing website
+✅ App preview mockups
+
+Just say the word. 🚀🔥
