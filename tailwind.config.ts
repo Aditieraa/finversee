@@ -16,6 +16,11 @@ export default {
         foreground: "hsl(var(--foreground) / <alpha-value>)",
         border: "hsl(var(--border) / <alpha-value>)",
         input: "hsl(var(--input) / <alpha-value>)",
+        // FinQuest neon colors
+        'neon-cyan': '#00E5FF',
+        'neon-purple': '#9D4BFF',
+        'neon-pink': '#FF2DAE',
+        'neon-lime': '#C6FF00',
         card: {
           DEFAULT: "hsl(var(--card) / <alpha-value>)",
           foreground: "hsl(var(--card-foreground) / <alpha-value>)",
@@ -96,10 +101,26 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "pulse-glow": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.6" },
+        },
+        "slide-in": {
+          from: { transform: "translateY(10px)", opacity: "0" },
+          to: { transform: "translateY(0)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "slide-in": "slide-in 0.3s ease-out",
+      },
+      boxShadow: {
+        'neon-cyan': '0 0 20px rgba(0, 229, 255, 0.5), 0 0 40px rgba(0, 229, 255, 0.2)',
+        'neon-purple': '0 0 20px rgba(157, 75, 255, 0.5), 0 0 40px rgba(157, 75, 255, 0.2)',
+        'neon-pink': '0 0 20px rgba(255, 45, 174, 0.5), 0 0 40px rgba(255, 45, 174, 0.2)',
+        'neon-lime': '0 0 20px rgba(198, 255, 0, 0.5), 0 0 40px rgba(198, 255, 0, 0.2)',
       },
     },
   },
