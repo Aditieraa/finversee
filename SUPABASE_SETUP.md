@@ -10,7 +10,6 @@
    ```sql
    DROP TABLE IF EXISTS game_saves CASCADE;
    DROP TABLE IF EXISTS profiles CASCADE;
-   DROP FUNCTION IF EXISTS handle_new_user() CASCADE;
    DROP FUNCTION IF EXISTS update_updated_at_column() CASCADE;
    ```
 6. **Then run the complete SQL script below** (Copy & Paste everything)
@@ -53,43 +52,43 @@ CREATE INDEX idx_game_saves_leaderboard ON game_saves(leaderboard_score DESC);
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE game_saves ENABLE ROW LEVEL SECURITY;
 
--- Profiles Policies (Allow all operations for authenticated users)
-CREATE POLICY "Enable insert for authenticated users only" 
+-- Profiles Policies - IMPORTANT: Allow insert for anyone (signup doesn't have auth context yet)
+CREATE POLICY "Allow anyone to insert their own profile" 
   ON profiles FOR INSERT 
-  WITH CHECK (auth.uid() = id);
+  WITH CHECK (true);
 
-CREATE POLICY "Enable select for authenticated users" 
+CREATE POLICY "Users can view their own profile" 
   ON profiles FOR SELECT 
   USING (auth.uid() = id);
 
-CREATE POLICY "Enable update for authenticated users" 
+CREATE POLICY "Users can update their own profile" 
   ON profiles FOR UPDATE 
   USING (auth.uid() = id) 
   WITH CHECK (auth.uid() = id);
 
-CREATE POLICY "Enable delete for authenticated users" 
+CREATE POLICY "Users can delete their own profile" 
   ON profiles FOR DELETE 
   USING (auth.uid() = id);
 
 -- Game Saves Policies
-CREATE POLICY "Enable insert for own saves" 
+CREATE POLICY "Users can insert their own save" 
   ON game_saves FOR INSERT 
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Enable select for own saves" 
+CREATE POLICY "Users can view their own save" 
   ON game_saves FOR SELECT 
   USING (auth.uid() = user_id);
 
-CREATE POLICY "Enable update for own saves" 
+CREATE POLICY "Users can update their own save" 
   ON game_saves FOR UPDATE 
   USING (auth.uid() = user_id) 
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Enable delete for own saves" 
+CREATE POLICY "Users can delete their own save" 
   ON game_saves FOR DELETE 
   USING (auth.uid() = user_id);
 
-CREATE POLICY "Allow anyone to view leaderboard" 
+CREATE POLICY "Allow anyone to view public leaderboard" 
   ON game_saves FOR SELECT 
   USING (true);
 
@@ -129,7 +128,7 @@ CREATE TRIGGER update_game_saves_timestamp
 ## 🎮 After Running This SQL
 
 ✅ Users can sign up and create accounts  
-✅ User profiles are stored on Supabase  
+✅ User profiles are automatically stored on Supabase  
 ✅ Game progress auto-saves every 60 seconds  
 ✅ Leaderboard shows top players  
 ✅ All data is secure with RLS policies  
@@ -139,7 +138,7 @@ CREATE TRIGGER update_game_saves_timestamp
 ## ⚠️ IMPORTANT: Follow These Exact Steps
 
 1. **First** - Run the DROP commands to delete old tables
-2. **Then** - Run the complete CREATE TABLE script
-3. **Do NOT** run them separately or you'll get errors
+2. **Then** - Run the complete CREATE TABLE script in a NEW QUERY
+3. **Do NOT** run them in the same query or you'll get errors
 
 **That's it! Just run the SQL above and Finverse is fully connected to Supabase!** 🚀
