@@ -1175,7 +1175,7 @@ export default function FinQuest() {
             {userId && userId !== 'guest' && (
               <Button
                 data-testid="button-save-game"
-                onClick={saveGameState}
+                onClick={() => saveGameState(false)}
                 variant="outline"
                 className="w-full border-neon-cyan/50 text-neon-cyan hover:bg-neon-cyan/20"
               >
