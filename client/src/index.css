@@ -93,55 +93,40 @@
   --opaque-button-border-intensity: 9;
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
-  /* Deep navy blue background */
-  --background: 220 40% 11%;
-  /* Pure white text */
-  --foreground: 0 0% 100%;
-  /* Dark blue borders */
-  --border: 220 35% 17%;
-  /* Dark blue cards/widgets */
-  --card: 220 30% 14%;
-  --card-foreground: 0 0% 100%;
-  --card-border: 220 35% 19%;
-  /* Sidebar styling */
-  --sidebar: 220 35% 9%;
-  --sidebar-foreground: 0 0% 100%;
-  --sidebar-border: 220 35% 15%;
-  /* Bright blue for active sidebar items */
-  --sidebar-primary: 210 100% 50%;
-  --sidebar-primary-foreground: 220 40% 11%;
-  --sidebar-accent: 220 30% 16%;
-  --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-ring: 210 100% 50%;
-  /* Popover styling */
-  --popover: 220 35% 16%;
-  --popover-foreground: 0 0% 100%;
-  --popover-border: 220 35% 21%;
-  /* Primary bright blue buttons and highlights */
-  --primary: 210 100% 50%;
-  --primary-foreground: 220 40% 11%;
-  /* Secondary dark blue */
-  --secondary: 220 30% 19%;
-  --secondary-foreground: 0 0% 100%;
-  /* Muted and secondary text - light grey */
-  --muted: 220 30% 17%;
-  --muted-foreground: 220 15% 74%;
-  /* Accent - vibrant green for positive values */
-  --accent: 163 72% 55%;
-  --accent-foreground: 220 40% 11%;
-  /* Destructive - red for negative values */
-  --destructive: 0 100% 58%;
+  --background: 220 50% 6%;
+  --foreground: 210 20% 95%;
+  --border: 220 40% 12%;
+  --card: 220 45% 8%;
+  --card-foreground: 210 20% 95%;
+  --card-border: 220 40% 10%;
+  --sidebar: 220 45% 10%;
+  --sidebar-foreground: 210 20% 95%;
+  --sidebar-border: 220 40% 13%;
+  --sidebar-primary: 210 60% 70%;
+  --sidebar-primary-foreground: 220 50% 6%;
+  --sidebar-accent: 220 40% 14%;
+  --sidebar-accent-foreground: 210 20% 95%;
+  --sidebar-ring: 210 60% 70%;
+  --popover: 220 40% 12%;
+  --popover-foreground: 210 20% 95%;
+  --popover-border: 220 35% 15%;
+  --primary: 210 60% 70%;
+  --primary-foreground: 220 50% 6%;
+  --secondary: 220 35% 16%;
+  --secondary-foreground: 210 20% 95%;
+  --muted: 220 35% 14%;
+  --muted-foreground: 210 15% 70%;
+  --accent: 270 55% 70%;
+  --accent-foreground: 220 50% 6%;
+  --destructive: 320 75% 70%;
   --destructive-foreground: 0 0% 100%;
-  /* Input styling */
-  --input: 220 35% 19%;
-  /* Ring color - bright blue */
-  --ring: 210 100% 50%;
-  /* Chart colors */
-  --chart-1: 210 100% 50%;
-  --chart-2: 163 72% 55%;
-  --chart-3: 48 100% 61%;
-  --chart-4: 0 100% 58%;
-  --chart-5: 210 100% 50%;
+  --input: 220 35% 25%;
+  --ring: 210 60% 70%;
+  --chart-1: 210 60% 70%;
+  --chart-2: 270 55% 70%;
+  --chart-3: 320 75% 70%;
+  --chart-4: 150 70% 70%;
+  --chart-5: 180 65% 70%;
   --shadow-2xs: 0px 2px 0px 0px hsl(187 100% 50% / 0.00);
   --shadow-xs: 0px 2px 0px 0px hsl(187 100% 50% / 0.00);
   --shadow-sm: 0px 2px 0px 0px hsl(187 100% 50% / 0.00), 0px 1px 2px -1px hsl(187 100% 50% / 0.00);
