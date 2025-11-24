@@ -101,7 +101,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
       <Card className="w-full max-w-md border-primary/40 bg-black/50 backdrop-blur-2xl shadow-2xl relative z-10 animate-fadeInUp">
         <div className="p-8">
           <div className="text-center mb-8 space-y-3">
-            <div className="inline-block animate-bounce mb-4">
+            <div className="inline-block mb-4">
               <img 
                 src={logoPath} 
                 alt="Finverse Logo" 
