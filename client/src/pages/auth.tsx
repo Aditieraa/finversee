@@ -194,12 +194,12 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
 
             <Button
               data-testid="button-guest-mode"
-              className="animate-fadeIn"
-              style={{ animationDelay: '0.7s' }}>
               type="button"
               onClick={handleGuestMode}
               variant="outline"
-              className="w-full border-neon-purple/50 text-neon-purple hover:bg-neon-purple/20"
+              className="w-full border-primary/50 text-gray-300 hover:bg-primary/20 animate-fadeIn"
+              style={{ animationDelay: '0.7s' }}
+              disabled={loading}
             >
               Continue as Guest
             </Button>
