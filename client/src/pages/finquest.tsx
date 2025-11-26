@@ -6,6 +6,7 @@ import Dashboard from './dashboard';
 import Analytics from './analytics';
 import Budget from './budget';
 import Stocks from './stocks';
+import Leaderboard from './leaderboard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,6 +45,7 @@ import {
   TrendingUpIcon,
   PieChart,
   DollarSign,
+  Users,
 } from 'lucide-react';
 
 type Career = 'Engineer' | 'Designer' | 'CA' | 'Doctor' | 'Sales';
@@ -181,7 +183,7 @@ export default function FinQuest() {
   const [processingMonth, setProcessingMonth] = useState(false);
   const [leaderboard, setLeaderboard] = useState<Array<{ name: string; score: number; level: number }>>([]);
   const [showAuraTwin, setShowAuraTwin] = useState(false);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'game' | 'analytics' | 'budget' | 'stocks'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'game' | 'analytics' | 'budget' | 'stocks' | 'leaderboard'>('dashboard');
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -1057,6 +1059,15 @@ export default function FinQuest() {
               <TrendingUpIcon className="h-4 w-4" />
               Stocks
             </Button>
+            <Button
+              variant={currentView === 'leaderboard' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setCurrentView('leaderboard')}
+              className="flex items-center gap-2"
+            >
+              <Trophy className="h-4 w-4" />
+              Leaderboard
+            </Button>
           </div>
         </div>
       </header>
@@ -1297,6 +1308,11 @@ export default function FinQuest() {
         {/* Stocks View */}
         {currentView === 'stocks' && (
           <Stocks gameState={gameState} setGameState={setGameState} />
+        )}
+
+        {/* Leaderboard View */}
+        {currentView === 'leaderboard' && (
+          <Leaderboard />
         )}
       </div>
 
