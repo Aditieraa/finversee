@@ -385,11 +385,21 @@ export default function FinQuest() {
       return;
     }
 
+    // Get current user's email from auth
+    let userEmail = '';
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      userEmail = session?.user?.email || '';
+    } catch (error) {
+      console.log('Could not fetch email:', error);
+    }
+
     const profile: UserProfile = {
       name: onboarding.name,
       career: onboarding.career as Career,
       salary: salary,
       expenses: expenses,
+      email: userEmail,
     };
 
     const initialCash = salary - expenses;
@@ -403,7 +413,7 @@ export default function FinQuest() {
             id: userId,
             name: onboarding.name,
             career: onboarding.career,
-            email: undefined,
+            email: userEmail,
             updated_at: new Date().toISOString(),
           });
         
