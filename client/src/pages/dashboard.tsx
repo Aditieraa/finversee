@@ -10,14 +10,14 @@ interface DashboardProps {
 }
 
 const CHART_COLORS = {
-  sip: '#2ECC71',
-  stocks: '#3498DB',
-  gold: '#E67E22',
-  realEstate: '#9B59B6',
-  savings: '#1ABC9C',
-  income: '#2ECC71',
-  expenses: '#E74C3C',
-  net: '#3498DB',
+  sip: '#A5D6A7',
+  stocks: '#FFD54F',
+  gold: '#FFAB91',
+  realEstate: '#CE93D8',
+  savings: '#80DEEA',
+  income: '#FF6B9D',
+  expenses: '#FF8C42',
+  net: '#64B5F6',
 };
 
 export default function Dashboard({ gameState, monthlyDecisions }: DashboardProps) {
@@ -146,9 +146,9 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
               <YAxis stroke="rgba(149, 165, 166, 0.6)" />
               <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
               <Legend />
-              <Line type="monotone" dataKey="income" stroke="#2ECC71" strokeWidth={2.5} />
-              <Line type="monotone" dataKey="expenses" stroke="#E74C3C" strokeWidth={2.5} />
-              <Line type="monotone" dataKey="net" stroke="#3498DB" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="income" stroke="#FF6B9D" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="expenses" stroke="#FF8C42" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="net" stroke="#64B5F6" strokeWidth={2.5} />
             </LineChart>
           </ResponsiveContainer>
         </Card>
@@ -214,7 +214,7 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
               <XAxis stroke="rgba(149, 165, 166, 0.6)" />
               <YAxis stroke="rgba(149, 165, 166, 0.6)" />
               <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(46, 204, 113, 0.3)' }} />
-              <Area type="monotone" dataKey="spending" stroke="#2ECC71" fill="rgba(46, 204, 113, 0.15)" />
+              <Area type="monotone" dataKey="spending" stroke="#FF6B9D" fill="rgba(255, 107, 157, 0.15)" />
             </AreaChart>
           </ResponsiveContainer>
         </Card>
@@ -270,9 +270,9 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
             <YAxis stroke="rgba(149, 165, 166, 0.6)" />
             <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
             <Legend />
-            <Bar dataKey="income" fill="#2ECC71" />
-            <Bar dataKey="expenses" fill="#E74C3C" />
-            <Bar dataKey="savings" fill="#3498DB" />
+            <Bar dataKey="income" fill="#FF6B9D" />
+            <Bar dataKey="expenses" fill="#FF8C42" />
+            <Bar dataKey="savings" fill="#64B5F6" />
           </BarChart>
         </ResponsiveContainer>
       </Card>

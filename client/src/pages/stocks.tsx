@@ -252,7 +252,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       }, 0)
     : 0;
 
-  const chartColors = ['#10B981', '#3B82F6', '#F59E0B', '#8B5CF6', '#6366F1', '#EC4899', '#14B8A6', '#F97316'];
+  const chartColors = ['#A5D6A7', '#FFD54F', '#FFAB91', '#CE93D8', '#80DEEA', '#FF6B9D', '#81C784', '#FFB74D'];
 
   return (
     <div className="space-y-6 pb-6">
@@ -420,18 +420,18 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                 <h3 className="text-lg font-bold text-white mb-4">24-Hour Price Chart</h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={stockHistory}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.1)" />
-                    <XAxis stroke="rgba(200, 200, 200, 0.5)" />
-                    <YAxis stroke="rgba(200, 200, 200, 0.5)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
+                    <XAxis stroke="rgba(149, 165, 166, 0.6)" />
+                    <YAxis stroke="rgba(149, 165, 166, 0.6)" />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(100, 150, 200, 0.3)' }}
+                      contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(255, 107, 157, 0.3)' }}
                       formatter={(value: any) => `₹${value.toFixed(2)}`}
                     />
                     <Line
                       type="monotone"
                       dataKey="price"
-                      stroke="#3B82F6"
-                      strokeWidth={2}
+                      stroke="#FF6B9D"
+                      strokeWidth={2.5}
                       dot={false}
                     />
                   </LineChart>
@@ -533,14 +533,14 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
         <h3 className="text-lg font-bold text-white mb-4">Top Performers - {activeTab === 'indian' ? 'Indian' : 'Global'} Stocks</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={stocks.sort((a, b) => b.changePercent - a.changePercent).slice(0, 5)}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.1)" />
-            <XAxis dataKey="symbol" stroke="rgba(200, 200, 200, 0.5)" />
-            <YAxis stroke="rgba(200, 200, 200, 0.5)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
+            <XAxis dataKey="symbol" stroke="rgba(149, 165, 166, 0.6)" />
+            <YAxis stroke="rgba(149, 165, 166, 0.6)" />
             <Tooltip
-              contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(100, 150, 200, 0.3)' }}
+              contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(255, 181, 76, 0.3)' }}
               formatter={(value: any) => `${value.toFixed(2)}%`}
             />
-            <Bar dataKey="changePercent" fill="#10B981" />
+            <Bar dataKey="changePercent" fill="#FFD54F" />
           </BarChart>
         </ResponsiveContainer>
       </Card>
