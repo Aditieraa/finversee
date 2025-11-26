@@ -29,26 +29,43 @@ CREATE INDEX IF NOT EXISTS idx_profiles_updated_at ON profiles(updated_at);
 -- Enable RLS on profiles
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
--- Profiles RLS Policies - PERMISSIVE (allows operations)
+-- ========================================
+-- CRITICAL: Drop all existing policies first
+-- ========================================
 DROP POLICY IF EXISTS "Users can view their own profile" ON profiles;
+DROP POLICY IF EXISTS "Users can update their own profile" ON profiles;
+DROP POLICY IF EXISTS "Users can insert their own profile" ON profiles;
+DROP POLICY IF EXISTS "Service role can insert profiles" ON profiles;
+DROP POLICY IF EXISTS "Allow all for authenticated users" ON profiles;
+DROP POLICY IF EXISTS "Users can create own profile" ON profiles;
+
+-- ========================================
+-- Profiles RLS Policies - PERMISSIVE (allows operations)
+-- ========================================
 CREATE POLICY "Users can view their own profile" 
   ON profiles FOR SELECT
   USING (auth.uid() = id);
 
-DROP POLICY IF EXISTS "Users can update their own profile" ON profiles;
 CREATE POLICY "Users can update their own profile"
   ON profiles FOR UPDATE
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
 
-DROP POLICY IF EXISTS "Users can insert their own profile" ON profiles;
 CREATE POLICY "Users can insert their own profile"
   ON profiles FOR INSERT
   WITH CHECK (auth.uid() = id);
 
-DROP POLICY IF EXISTS "Service role can insert profiles" ON profiles;
-CREATE POLICY "Service role can insert profiles"
+-- Service role bypass policy
+ALTER TABLE profiles DISABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public users can insert profiles"
   ON profiles FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Public users can update profiles"
+  ON profiles FOR UPDATE
+  USING (true)
   WITH CHECK (true);
 
 
@@ -75,32 +92,47 @@ CREATE INDEX IF NOT EXISTS idx_game_saves_leaderboard ON game_saves(leaderboard_
 -- Enable RLS on game_saves
 ALTER TABLE game_saves ENABLE ROW LEVEL SECURITY;
 
--- Game Saves RLS Policies - PERMISSIVE (allows operations)
+-- ========================================
+-- Drop all existing game_saves policies
+-- ========================================
 DROP POLICY IF EXISTS "Users can view their own game saves" ON game_saves;
+DROP POLICY IF EXISTS "Users can insert their own game saves" ON game_saves;
+DROP POLICY IF EXISTS "Users can update their own game saves" ON game_saves;
+DROP POLICY IF EXISTS "Users can delete their own game saves" ON game_saves;
+DROP POLICY IF EXISTS "Public can read leaderboard" ON game_saves;
+DROP POLICY IF EXISTS "Allow all operations" ON game_saves;
+
+-- ========================================
+-- Game Saves RLS Policies - PERMISSIVE
+-- ========================================
 CREATE POLICY "Users can view their own game saves"
   ON game_saves FOR SELECT
   USING (auth.uid() = user_id);
 
-DROP POLICY IF EXISTS "Users can insert their own game saves" ON game_saves;
 CREATE POLICY "Users can insert their own game saves"
   ON game_saves FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-DROP POLICY IF EXISTS "Users can update their own game saves" ON game_saves;
 CREATE POLICY "Users can update their own game saves"
   ON game_saves FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
-DROP POLICY IF EXISTS "Users can delete their own game saves" ON game_saves;
 CREATE POLICY "Users can delete their own game saves"
   ON game_saves FOR DELETE
   USING (auth.uid() = user_id);
 
-DROP POLICY IF EXISTS "Public can read leaderboard" ON game_saves;
 CREATE POLICY "Public can read leaderboard"
   ON game_saves FOR SELECT
   USING (true);
+
+-- Allow unauthenticated inserts and updates (for signup/guest mode)
+ALTER TABLE game_saves DISABLE ROW LEVEL SECURITY;
+ALTER TABLE game_saves ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow all authenticated operations"
+  ON game_saves FOR ALL
+  USING (auth.uid() IS NOT NULL);
 
 
 -- 3. CREATE TRIGGER FUNCTIONS FOR AUTO-UPDATING TIMESTAMPS
@@ -132,8 +164,9 @@ CREATE TRIGGER update_game_saves_updated_at
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO profiles (id)
-  VALUES (NEW.id);
+  INSERT INTO public.profiles (id, name, career)
+  VALUES (NEW.id, '', NULL)
+  ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
@@ -211,11 +244,12 @@ CREATE TRIGGER on_auth_user_created
 - Users can view their own profile
 - Users can update their own profile  
 - Users can insert their own profile (during signup)
-- Service role can insert profiles (for auto-creation)
+- Public users can insert and update profiles (for guest mode)
 
 ### Game Saves
 - Users can view/insert/update/delete only their own saves
 - Public can view leaderboard (all saves for ranking)
+- Authenticated users can perform all operations
 - Each user can only have one save (UNIQUE constraint)
 
 ## Performance Optimizations
@@ -226,53 +260,46 @@ CREATE TRIGGER on_auth_user_created
 - **JSONB columns** - Efficient storage of nested data
 - **UNIQUE(user_id)** - One save per user, prevents duplicates
 
-## Troubleshooting
-
-### "Permission denied" error when saving
-- ✅ Make sure RLS policies are created (they enable row-level security)
-- ✅ Verify user is authenticated (check browser dev tools: Application > Local Storage)
-- ✅ Check that user_id in the save matches the authenticated user
-
-### "Relation does not exist" error
-- ✅ Run the complete SQL script again
-- ✅ Check tables were created: `SELECT * FROM information_schema.tables WHERE table_schema = 'public';`
-
-### "Unique violation" error on game_saves
-- ✅ This means a user already has a save
-- ✅ Use UPSERT (update if exists) instead of INSERT
-- ✅ The code already does this - check for unique constraint violations
-
-### Still having issues?
-
-Run these diagnostic queries:
-
-```sql
--- Check if tables exist
-SELECT tablename FROM pg_tables WHERE table_schema = 'public';
-
--- Check RLS is enabled
-SELECT tablename, rowsecurity FROM pg_tables WHERE tablename IN ('profiles', 'game_saves');
-
--- Check policies
-SELECT schemaname, tablename, policyname FROM pg_policies WHERE tablename IN ('profiles', 'game_saves');
-
--- Check indexes
-SELECT indexname FROM pg_indexes WHERE tablename IN ('profiles', 'game_saves');
-```
-
 ## Environment Variables (Already Set)
 
 - `VITE_SUPABASE_URL` - Your project URL
 - `VITE_SUPABASE_ANON_KEY` - Your anonymous key
 
+## Troubleshooting
+
+### Still seeing "Permission denied" or profiles not appearing?
+
+1. **Run the updated SQL script above** - It includes fixes for RLS policies
+2. **Verify RLS is correctly enabled:**
+   ```sql
+   SELECT tablename, rowsecurity FROM pg_tables WHERE tablename IN ('profiles', 'game_saves');
+   ```
+   Should show: `rowsecurity = true` for both tables
+
+3. **Check all policies exist:**
+   ```sql
+   SELECT schemaname, tablename, policyname, permissive FROM pg_policies 
+   WHERE tablename IN ('profiles', 'game_saves') 
+   ORDER BY tablename, policyname;
+   ```
+
+4. **Check browser console for actual errors:**
+   - Press F12 in your browser
+   - Go to **Console** tab
+   - Try signing up and look for error messages
+
+5. **Verify environment variables:**
+   - Check that `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set in your project
+
 ## Next Steps
 
 1. Run the SQL script in Supabase
 2. Sign up in Finverse app
-3. Complete onboarding (enter name and career)
-4. Check Supabase Dashboard > game_saves table - you should see your save!
-5. Close app and reopen - game should load from save
+3. You should see your account in Supabase **Authentication** tab immediately
+4. Complete the onboarding (enter name and select career)
+5. Check Supabase Dashboard > **game_saves** table - you should see your game save!
+6. Close app and reopen - game should load from save
 
 ---
 
-**Need help?** Check browser console (F12) for error details when saving fails.
+**Having issues?** Check the browser console (F12 > Console tab) for detailed error messages when signing up or saving.
