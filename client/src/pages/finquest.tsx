@@ -52,7 +52,6 @@ interface UserProfile {
   career: Career;
   salary: number;
   expenses: number;
-  email?: string;
 }
 
 interface Portfolio {
@@ -281,44 +280,11 @@ export default function FinQuest() {
       if (error && error.code !== 'PGRST116') throw error;
 
       if (data) {
-        const loadedState = data.game_state;
-        
-        // Ensure email is loaded - get from profiles if not in saved state
-        if (loadedState.userProfile && !loadedState.userProfile.email) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('email')
-            .eq('id', userId)
-            .single();
-
-          if (profileData?.email) {
-            loadedState.userProfile.email = profileData.email;
-            console.log('📧 Email loaded from profiles:', profileData.email);
-          }
-        }
-        
-        setGameState(loadedState);
+        setGameState(data.game_state);
         toast({
           title: '✨ Progress Loaded',
           description: 'Welcome back! Your game has been restored.',
         });
-      } else {
-        // First time - load email from profiles
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('email')
-          .eq('id', userId)
-          .single();
-
-        if (profileData?.email && gameState.userProfile) {
-          setGameState(prev => ({
-            ...prev,
-            userProfile: {
-              ...prev.userProfile!,
-              email: profileData.email,
-            },
-          }));
-        }
       }
     } catch (error: any) {
       console.error('Load error:', error);
@@ -402,21 +368,11 @@ export default function FinQuest() {
       return;
     }
 
-    // Get current user's email from auth
-    let userEmail = '';
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      userEmail = session?.user?.email || '';
-    } catch (error) {
-      console.log('Could not fetch email:', error);
-    }
-
     const profile: UserProfile = {
       name: onboarding.name,
       career: onboarding.career as Career,
       salary: salary,
       expenses: expenses,
-      email: userEmail,
     };
 
     const initialCash = salary - expenses;
@@ -430,7 +386,7 @@ export default function FinQuest() {
             id: userId,
             name: onboarding.name,
             career: onboarding.career,
-            email: userEmail,
+            email: undefined,
             updated_at: new Date().toISOString(),
           });
         
@@ -547,43 +503,6 @@ export default function FinQuest() {
           title: `🏆 Achievement Unlocked!`,
           description: `${achievement.icon} ${achievement.title}`,
         });
-
-        // Send email notification for achievement
-        const userEmail = prev.userProfile?.email;
-        console.log('🎯 Achievement unlock triggered:', id);
-        console.log('📧 Current gameState.userProfile:', prev.userProfile);
-        console.log('📧 Email to send to:', userEmail);
-        
-        if (userEmail) {
-          const emailPayload = {
-            email: userEmail,
-            subject: `🏆 Achievement Unlocked: ${achievement.title}`,
-            title: achievement.title,
-            message: achievement.description,
-            type: 'achievement',
-            icon: achievement.icon,
-          };
-          console.log('📨 Sending email payload:', emailPayload);
-          
-          fetch('/api/send-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(emailPayload),
-          })
-            .then(res => {
-              console.log('✅ Email API responded with status:', res.status);
-              return res.json();
-            })
-            .then(data => {
-              console.log('✅ Email response data:', data);
-            })
-            .catch(err => {
-              console.error('❌ Email send error:', err);
-            });
-        } else {
-          console.warn('❌ No email available for achievement notification');
-          console.warn('userProfile:', prev.userProfile);
-        }
 
         confetti({
           particleCount: 100,

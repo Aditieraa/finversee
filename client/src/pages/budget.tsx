@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,7 +46,6 @@ export default function Budget({ gameState }: BudgetProps) {
   const [goalAmount, setGoalAmount] = useState('');
   const [goals, setGoals] = useState<Goal[]>([]);
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
-  const sentAlertsRef = useRef<Set<string>>(new Set());
 
   // Calculate budget categories based on user's actual expenses
   useEffect(() => {
@@ -115,88 +114,37 @@ export default function Budget({ gameState }: BudgetProps) {
     // Check for over-budget categories
     budgetCategories.forEach((cat, idx) => {
       if (cat.percentage > 100) {
-        const alertId = `over-${idx}`;
         alerts.push({
-          id: alertId,
+          id: `over-${idx}`,
           title: 'Over Budget Alert',
           description: `You've exceeded your ${cat.name} budget by ₹${Math.round(cat.spent - cat.budget)}`,
           type: 'over-budget',
           category: cat.name,
         });
-
-        // Send email if not sent before
-        if (!sentAlertsRef.current.has(alertId) && gameState.userProfile?.email) {
-          sentAlertsRef.current.add(alertId);
-          fetch('/api/send-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: gameState.userProfile.email,
-              subject: `⚠️ Over Budget Alert: ${cat.name}`,
-              title: 'Over Budget Alert',
-              message: `You've exceeded your ${cat.name} budget by ₹${Math.round(cat.spent - cat.budget)}`,
-              type: 'budget-alert',
-            }),
-          }).catch(err => console.log('Budget alert email sent'));
-        }
       }
     });
 
     // Check if emergency fund is low
     if (gameState.cashBalance < userExpenses * 3) {
-      const alertId = 'emergency';
       alerts.push({
-        id: alertId,
+        id: 'emergency',
         title: 'Low Emergency Fund',
         description: 'Your emergency fund is below 3 months of expenses. Consider saving more.',
         type: 'deadline',
         category: 'Emergency Fund',
       });
-
-      // Send email if not sent before
-      if (!sentAlertsRef.current.has(alertId) && gameState.userProfile?.email) {
-        sentAlertsRef.current.add(alertId);
-        fetch('/api/send-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: gameState.userProfile.email,
-            subject: '🚨 Low Emergency Fund Alert',
-            title: 'Low Emergency Fund',
-            message: 'Your emergency fund is below 3 months of expenses. Consider saving more.',
-            type: 'budget-alert',
-          }),
-        }).catch(err => console.log('Emergency fund alert email sent'));
-      }
     }
 
     // Check for completed goals
     goals.forEach((goal) => {
       if (goal.status === 'completed') {
-        const alertId = `complete-${goal.id}`;
         alerts.push({
-          id: alertId,
+          id: `complete-${goal.id}`,
           title: 'Goal Achieved',
           description: `Congratulations! You've achieved your ${goal.name} goal`,
           type: 'achieved',
           category: goal.name,
         });
-
-        // Send email if not sent before
-        if (!sentAlertsRef.current.has(alertId) && gameState.userProfile?.email) {
-          sentAlertsRef.current.add(alertId);
-          fetch('/api/send-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: gameState.userProfile.email,
-              subject: `🎉 Goal Achieved: ${goal.name}`,
-              title: 'Goal Achieved',
-              message: `Congratulations! You've achieved your ${goal.name} goal`,
-              type: 'budget-alert',
-            }),
-          }).catch(err => console.log('Goal achievement email sent'));
-        }
       }
     });
 
@@ -206,30 +154,13 @@ export default function Budget({ gameState }: BudgetProps) {
       : 0;
 
     if (savingRate < 20) {
-      const alertId = 'savings-rate';
       alerts.push({
-        id: alertId,
+        id: 'savings-rate',
         title: 'Low Savings Rate',
         description: `Your savings rate is ${savingRate.toFixed(1)}%. Aim for at least 20%.`,
         type: 'deadline',
         category: 'Savings',
       });
-
-      // Send email if not sent before
-      if (!sentAlertsRef.current.has(alertId) && gameState.userProfile?.email) {
-        sentAlertsRef.current.add(alertId);
-        fetch('/api/send-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: gameState.userProfile.email,
-            subject: `📉 Low Savings Rate Alert`,
-            title: 'Low Savings Rate',
-            message: `Your savings rate is ${savingRate.toFixed(1)}%. Aim for at least 20%.`,
-            type: 'budget-alert',
-          }),
-        }).catch(err => console.log('Savings rate alert email sent'));
-      }
     }
 
     return alerts.slice(0, 9); // Show max 9 alerts

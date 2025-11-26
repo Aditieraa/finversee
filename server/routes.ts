@@ -2,7 +2,6 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getFinancialAdvice } from "./gemini";
-import { sendEmail } from "./email";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // AI Chat endpoint
@@ -25,35 +24,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('AI chat error:', error);
       res.status(500).json({ error: "Failed to get AI response" });
-    }
-  });
-
-  // Email notification endpoint
-  app.post("/api/send-email", async (req, res) => {
-    try {
-      const { email, subject, title, message, type, icon } = req.body;
-      console.log('📨 Email endpoint hit with:', { email, subject, title, type });
-
-      if (!email || !subject || !title || !message) {
-        console.error('❌ Missing required fields:', { email, subject, title, message });
-        return res.status(400).json({ error: "Missing required fields" });
-      }
-
-      console.log('🚀 Calling sendEmail function...');
-      const success = await sendEmail({
-        email,
-        subject,
-        title,
-        message,
-        type: type || 'budget-alert',
-        icon,
-      });
-
-      console.log('📧 sendEmail result:', success);
-      res.json({ success, message: success ? 'Email sent successfully' : 'Failed to send email' });
-    } catch (error) {
-      console.error('❌ Email endpoint error:', error);
-      res.status(500).json({ error: "Failed to send email" });
     }
   });
 
