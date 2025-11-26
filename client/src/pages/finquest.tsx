@@ -944,7 +944,6 @@ export default function FinQuest() {
                       <div className="w-20 h-24 mx-auto rounded overflow-hidden">
                         <img src={getAvatarUrl(avatar.id)} alt={avatar.name} className="w-full h-full object-cover" />
                       </div>
-                      <p className="text-xs text-primary mt-1">{avatar.name}</p>
                     </button>
                   ))}
                 </div>
