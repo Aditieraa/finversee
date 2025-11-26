@@ -10,14 +10,14 @@ interface DashboardProps {
 }
 
 const CHART_COLORS = {
-  sip: '#10B981',
-  stocks: '#3B82F6',
-  gold: '#F59E0B',
-  realEstate: '#8B5CF6',
-  savings: '#6366F1',
-  income: '#10B981',
-  expenses: '#EF4444',
-  net: '#3B82F6',
+  sip: '#2ECC71',
+  stocks: '#3498DB',
+  gold: '#E67E22',
+  realEstate: '#9B59B6',
+  savings: '#1ABC9C',
+  income: '#2ECC71',
+  expenses: '#E74C3C',
+  net: '#3498DB',
 };
 
 export default function Dashboard({ gameState, monthlyDecisions }: DashboardProps) {
@@ -141,14 +141,14 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
           <h3 className="text-lg font-bold text-white mb-4">Monthly Cash Flow</h3>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={monthlyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.1)" />
-              <XAxis stroke="rgba(200, 200, 200, 0.5)" />
-              <YAxis stroke="rgba(200, 200, 200, 0.5)" />
-              <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(100, 150, 200, 0.3)' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
+              <XAxis stroke="rgba(149, 165, 166, 0.6)" />
+              <YAxis stroke="rgba(149, 165, 166, 0.6)" />
+              <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
               <Legend />
-              <Line type="monotone" dataKey="income" stroke="#10B981" strokeWidth={2} />
-              <Line type="monotone" dataKey="expenses" stroke="#EF4444" strokeWidth={2} />
-              <Line type="monotone" dataKey="net" stroke="#3B82F6" strokeWidth={2} />
+              <Line type="monotone" dataKey="income" stroke="#2ECC71" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="expenses" stroke="#E74C3C" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="net" stroke="#3498DB" strokeWidth={2.5} />
             </LineChart>
           </ResponsiveContainer>
         </Card>
@@ -201,11 +201,11 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
           <h3 className="text-lg font-bold text-white mb-4">Weekly Spending Pattern</h3>
           <ResponsiveContainer width="100%" height={250}>
             <AreaChart data={spendingData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.1)" />
-              <XAxis stroke="rgba(200, 200, 200, 0.5)" />
-              <YAxis stroke="rgba(200, 200, 200, 0.5)" />
-              <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(100, 150, 200, 0.3)' }} />
-              <Area type="monotone" dataKey="spending" stroke="#10B981" fill="rgba(16, 185, 129, 0.1)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
+              <XAxis stroke="rgba(149, 165, 166, 0.6)" />
+              <YAxis stroke="rgba(149, 165, 166, 0.6)" />
+              <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(46, 204, 113, 0.3)' }} />
+              <Area type="monotone" dataKey="spending" stroke="#2ECC71" fill="rgba(46, 204, 113, 0.15)" />
             </AreaChart>
           </ResponsiveContainer>
         </Card>
@@ -256,14 +256,14 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
         <h3 className="text-lg font-bold text-white mb-4">Monthly Income vs Expenses vs Savings</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={trendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.1)" />
-            <XAxis stroke="rgba(200, 200, 200, 0.5)" />
-            <YAxis stroke="rgba(200, 200, 200, 0.5)" />
-            <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(100, 150, 200, 0.3)' }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
+            <XAxis stroke="rgba(149, 165, 166, 0.6)" />
+            <YAxis stroke="rgba(149, 165, 166, 0.6)" />
+            <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
             <Legend />
-            <Bar dataKey="income" fill="#10B981" />
-            <Bar dataKey="expenses" fill="#EF4444" />
-            <Bar dataKey="savings" fill="#3B82F6" />
+            <Bar dataKey="income" fill="#2ECC71" />
+            <Bar dataKey="expenses" fill="#E74C3C" />
+            <Bar dataKey="savings" fill="#3498DB" />
           </BarChart>
         </ResponsiveContainer>
       </Card>

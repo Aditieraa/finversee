@@ -8,7 +8,7 @@ interface AnalyticsProps {
   gameState: any;
 }
 
-const COLORS = ['#10B981', '#EF4444', '#3B82F6', '#F59E0B', '#8B5CF6', '#06B6D4'];
+const COLORS = ['#2ECC71', '#E74C3C', '#3498DB', '#E67E22', '#9B59B6', '#1ABC9C'];
 
 export default function Analytics({ gameState }: AnalyticsProps) {
   // Generate trend data
@@ -177,14 +177,14 @@ export default function Analytics({ gameState }: AnalyticsProps) {
           <h3 className="text-lg font-bold text-white mb-4">Trend Analysis</h3>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={trendData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.1)" />
-              <XAxis stroke="rgba(200, 200, 200, 0.5)" />
-              <YAxis stroke="rgba(200, 200, 200, 0.5)" />
-              <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(100, 150, 200, 0.3)' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
+              <XAxis stroke="rgba(149, 165, 166, 0.6)" />
+              <YAxis stroke="rgba(149, 165, 166, 0.6)" />
+              <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
               <Legend />
-              <Line type="monotone" dataKey="income" stroke="#10B981" strokeWidth={2} />
-              <Line type="monotone" dataKey="expenses" stroke="#EF4444" strokeWidth={2} />
-              <Line type="monotone" dataKey="savings" stroke="#3B82F6" strokeWidth={2} />
+              <Line type="monotone" dataKey="income" stroke="#2ECC71" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="expenses" stroke="#E74C3C" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="savings" stroke="#3498DB" strokeWidth={2.5} />
             </LineChart>
           </ResponsiveContainer>
         </Card>
@@ -223,14 +223,14 @@ export default function Analytics({ gameState }: AnalyticsProps) {
         <h3 className="text-lg font-bold text-white mb-4">Monthly Income vs Expenses vs Savings</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={trendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.1)" />
-            <XAxis stroke="rgba(200, 200, 200, 0.5)" />
-            <YAxis stroke="rgba(200, 200, 200, 0.5)" />
-            <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(100, 150, 200, 0.3)' }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
+            <XAxis stroke="rgba(149, 165, 166, 0.6)" />
+            <YAxis stroke="rgba(149, 165, 166, 0.6)" />
+            <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
             <Legend />
-            <Bar dataKey="income" fill="#10B981" />
-            <Bar dataKey="expenses" fill="#EF4444" />
-            <Bar dataKey="savings" fill="#3B82F6" />
+            <Bar dataKey="income" fill="#2ECC71" />
+            <Bar dataKey="expenses" fill="#E74C3C" />
+            <Bar dataKey="savings" fill="#3498DB" />
           </BarChart>
         </ResponsiveContainer>
       </Card>
