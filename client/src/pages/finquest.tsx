@@ -19,6 +19,8 @@ import avatar4 from '@assets/generated_images/man_blonde_hair_avatar.png';
 import avatar5 from '@assets/generated_images/woman_red_hair_avatar.png';
 // @ts-ignore
 import avatar6 from '@assets/generated_images/man_brown_hair_avatar.png';
+// @ts-ignore
+import auraTwinImage from '@assets/generated_images/ai_mentor_assistant_icon.png';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -1398,9 +1400,14 @@ export default function FinQuest() {
               {gameState.chatHistory.map((msg, idx) => (
                 <div
                   key={idx}
-                  className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'}`}
+                  className={`flex gap-3 ${msg.role === 'ai' ? 'justify-start' : 'justify-end'}`}
                   data-testid={`chat-message-${idx}`}
                 >
+                  {msg.role === 'ai' && (
+                    <div className="w-8 h-8 flex-shrink-0 rounded-full overflow-hidden border border-blue-400/50 flex items-center justify-center bg-blue-600/30">
+                      <img src={auraTwinImage} alt="Aura Twin" className="w-full h-full object-cover" />
+                    </div>
+                  )}
                   <div
                     className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
                       msg.role === 'ai'
@@ -1413,10 +1420,20 @@ export default function FinQuest() {
                       {new Date(msg.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
+                  {msg.role === 'user' && (
+                    <div className="w-8 h-8 flex-shrink-0 rounded-full overflow-hidden border border-purple-400/50 flex items-center justify-center bg-purple-600/30">
+                      {gameState.userProfile?.avatar && (
+                        <img src={getAvatarUrl(gameState.userProfile.avatar)} alt={gameState.userProfile.name} className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
               {aiLoading && (
-                <div className="flex justify-start">
+                <div className="flex gap-3 justify-start">
+                  <div className="w-8 h-8 flex-shrink-0 rounded-full overflow-hidden border border-blue-400/50 flex items-center justify-center bg-blue-600/30">
+                    <img src={auraTwinImage} alt="Aura Twin" className="w-full h-full object-cover" />
+                  </div>
                   <div className="bg-gradient-to-br from-blue-600/40 to-blue-700/30 border border-blue-400/40 rounded-2xl px-4 py-3">
                     <p className="text-sm text-blue-50 animate-pulse">Aura Twin is thinking...</p>
                   </div>
