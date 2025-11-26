@@ -32,11 +32,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/send-email", async (req, res) => {
     try {
       const { email, subject, title, message, type, icon } = req.body;
+      console.log('📨 Email endpoint hit with:', { email, subject, title, type });
 
       if (!email || !subject || !title || !message) {
+        console.error('❌ Missing required fields:', { email, subject, title, message });
         return res.status(400).json({ error: "Missing required fields" });
       }
 
+      console.log('🚀 Calling sendEmail function...');
       const success = await sendEmail({
         email,
         subject,
@@ -46,9 +49,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         icon,
       });
 
+      console.log('📧 sendEmail result:', success);
       res.json({ success, message: success ? 'Email sent successfully' : 'Failed to send email' });
     } catch (error) {
-      console.error('Email endpoint error:', error);
+      console.error('❌ Email endpoint error:', error);
       res.status(500).json({ error: "Failed to send email" });
     }
   });

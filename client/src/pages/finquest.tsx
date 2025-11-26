@@ -533,26 +533,39 @@ export default function FinQuest() {
 
         // Send email notification for achievement
         const userEmail = prev.userProfile?.email;
-        console.log('Achievement unlock - User email:', userEmail);
+        console.log('🎯 Achievement unlock triggered:', id);
+        console.log('📧 Current gameState.userProfile:', prev.userProfile);
+        console.log('📧 Email to send to:', userEmail);
         
         if (userEmail) {
+          const emailPayload = {
+            email: userEmail,
+            subject: `🏆 Achievement Unlocked: ${achievement.title}`,
+            title: achievement.title,
+            message: achievement.description,
+            type: 'achievement',
+            icon: achievement.icon,
+          };
+          console.log('📨 Sending email payload:', emailPayload);
+          
           fetch('/api/send-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: userEmail,
-              subject: `🏆 Achievement Unlocked: ${achievement.title}`,
-              title: achievement.title,
-              message: achievement.description,
-              type: 'achievement',
-              icon: achievement.icon,
-            }),
+            body: JSON.stringify(emailPayload),
           })
-            .then(res => res.json())
-            .then(data => console.log('Email response:', data))
-            .catch(err => console.error('Email send error:', err));
+            .then(res => {
+              console.log('✅ Email API responded with status:', res.status);
+              return res.json();
+            })
+            .then(data => {
+              console.log('✅ Email response data:', data);
+            })
+            .catch(err => {
+              console.error('❌ Email send error:', err);
+            });
         } else {
-          console.warn('No email available for achievement notification');
+          console.warn('❌ No email available for achievement notification');
+          console.warn('userProfile:', prev.userProfile);
         }
 
         confetti({
