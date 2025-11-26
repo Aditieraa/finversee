@@ -151,10 +151,6 @@ export default function Leaderboard() {
                     <div className={`text-2xl font-bold ${textClass} w-8 text-center`}>
                       #{player.rank}
                     </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-white text-lg">{player.name}</p>
-                      <p className={`text-sm ${textClass}`}>Level {player.level}</p>
-                    </div>
                   </div>
                   <div className="text-right">
                     <p className={`text-2xl font-bold ${textClass}`}>
