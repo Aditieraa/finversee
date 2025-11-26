@@ -360,21 +360,62 @@ export default function FinQuest() {
       }
     }
 
-    setGameState(prev => ({
-      ...prev,
-      userProfile: profile,
+    const newGameState = {
+      currentMonth: 1,
+      currentYear: 2025,
       cashBalance: initialCash,
       netWorth: initialCash,
+      userProfile: profile,
+      portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
       chatHistory: [
         {
-          role: 'ai',
+          role: 'ai' as const,
           content: `Namaste ${onboarding.name}! Welcome to your financial freedom journey. I'm Aura Twin, your AI financial mentor. As a ${onboarding.career}, you're starting with ₹${careerData.salary.toLocaleString('en-IN')} monthly salary. After expenses of ₹${careerData.expenses.toLocaleString('en-IN')}, you have ₹${initialCash.toLocaleString('en-IN')} to invest. Let's build your wealth together! 🌟`,
           timestamp: Date.now(),
         },
       ],
-    }));
+      xp: 0,
+      level: 1,
+      achievements: ACHIEVEMENTS,
+      lastLoginDate: new Date().toISOString().split('T')[0],
+      consecutiveLogins: 1,
+      monthlyInvestments: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
+    };
 
+    setGameState(newGameState);
     setOnboarding({ active: false, step: 1, name: '', career: '' });
+
+    // Save game state immediately after onboarding to prevent data loss
+    if (userId && userId !== 'guest') {
+      try {
+        const { error } = await supabase
+          .from('game_saves')
+          .upsert({
+            user_id: userId,
+            game_state: newGameState,
+            chat_history: newGameState.chatHistory,
+            achievements: newGameState.achievements,
+            leaderboard_score: newGameState.netWorth,
+            updated_at: new Date().toISOString(),
+          });
+
+        if (error) {
+          console.error('Error saving game state after onboarding:', error);
+          toast({
+            title: 'Save Warning',
+            description: 'Could not save game state. Your progress may be lost if you close the app.',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: '💾 Game Saved',
+            description: 'Your financial profile has been created and saved!',
+          });
+        }
+      } catch (error) {
+        console.error('Unexpected error saving game state:', error);
+      }
+    }
   };
 
   const calculateReturns = (amount: number, type: keyof Portfolio): number => {
@@ -725,12 +766,44 @@ export default function FinQuest() {
 
   const handleLogout = async () => {
     if (userId !== 'guest') {
-      await saveGameState();
-      await supabase.auth.signOut();
+      try {
+        // Save game state before logout
+        await saveGameState(true);
+        
+        // Wait a moment to ensure save completes
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Then sign out
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error('Logout error:', error);
+          toast({
+            title: 'Logout Error',
+            description: 'Could not sign out. Please try again.',
+            variant: 'destructive',
+          });
+          return;
+        }
+      } catch (error) {
+        console.error('Error during logout:', error);
+        toast({
+          title: 'Logout Error',
+          description: 'An error occurred while logging out.',
+          variant: 'destructive',
+        });
+        return;
+      }
     }
+    
+    // Clear local state
     setUserId(null);
     setAuthChecked(false);
     resetGame();
+    
+    toast({
+      title: 'Logged Out',
+      description: 'You have been signed out successfully.',
+    });
   };
 
   if (!authChecked) {
