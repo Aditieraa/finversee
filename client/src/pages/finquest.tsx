@@ -829,35 +829,35 @@ export default function FinQuest() {
   }
 
   return (
-    <div className="min-h-screen w-full" style={{ background: '#0A0F1F', color: '#E6F1FF' }}>
+    <div className="min-h-screen w-full" style={{ background: 'linear-gradient(135deg, #1B263B 0%, #2E4057 50%, #4A90E2 100%)', color: '#E6F1FF' }}>
       {/* Header */}
-      <header className="border-b border-neon-cyan/20 bg-black/40 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-primary/20 glassmorphic sticky top-0 z-50">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               data-testid="button-mobile-menu"
-              className="lg:hidden"
+              className="lg:hidden text-primary"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? <X className="h-6 w-6 text-neon-cyan" /> : <Menu className="h-6 w-6 text-neon-cyan" />}
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <h1 className="text-2xl font-bold text-neon-cyan flex items-center gap-2">
-              <Sparkles className="h-6 w-6" />
+            <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
+              <Sparkles className="h-6 w-6 glow" />
               Finverse
             </h1>
           </div>
 
           <div className="flex items-center gap-3">
-            <Badge className="bg-primary/20 text-primary border-primary/50">
+            <Badge className="bg-primary/20 text-primary border-primary/50 neon-glow">
               Level {gameState.level}
             </Badge>
-            <Badge className="bg-primary/30 text-white border-primary/50">
+            <Badge className="bg-primary/30 text-white border-primary/50 neon-glow">
               {gameState.xp} XP
             </Badge>
             <Button
               data-testid="button-aura-twin"
               variant="outline"
-              className="border-primary/50 text-primary hover:bg-primary/20"
+              className="border-primary/50 text-primary hover:bg-primary/20 neon-glow interactive-hover"
               onClick={() => setShowAuraTwin(true)}
             >
               <Sparkles className="h-4 w-4 mr-2" />
@@ -868,7 +868,7 @@ export default function FinQuest() {
               size="icon"
               variant="ghost"
               onClick={() => setShowSettings(true)}
-              className="text-primary hover:bg-primary/20"
+              className="text-primary hover:bg-primary/20 interactive-hover"
             >
               <Settings className="h-5 w-5" />
             </Button>
@@ -883,33 +883,33 @@ export default function FinQuest() {
           <div className="lg:col-span-8">
             <div className="space-y-6">
               {/* Current Status */}
-              <Card className="border-neon-cyan/30 bg-black/40 backdrop-blur-xl shadow-neon-cyan">
+              <Card className="border-primary/30 glassmorphic">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-2xl font-bold text-neon-cyan">
+                      <h3 className="text-2xl font-bold text-primary">
                         {gameState.userProfile?.name}
                       </h3>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-foreground/60">
                         {gameState.userProfile?.career} • Month {gameState.currentMonth}, {gameState.currentYear}
                       </p>
                     </div>
-                    <Badge className="bg-neon-lime/20 text-neon-lime border-neon-lime/50 text-lg px-4 py-2">
+                    <Badge className="bg-primary/20 text-primary border-primary/50 text-lg px-4 py-2 neon-glow">
                       <Coins className="mr-2 h-5 w-5" />
                       ₹{Math.round(gameState.netWorth).toLocaleString('en-IN')}
                     </Badge>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-lg border border-neon-cyan/30 bg-neon-cyan/5">
-                      <p className="text-xs text-gray-400 mb-1">Cash Balance</p>
-                      <p className="text-xl font-bold text-neon-cyan" data-testid="text-cash-balance">
+                    <div className="p-4 rounded-lg border border-primary/30 glassmorphic interactive-hover">
+                      <p className="text-xs text-foreground/60 mb-1">Cash Balance</p>
+                      <p className="text-xl font-bold text-primary" data-testid="text-cash-balance">
                         ₹{Math.round(gameState.cashBalance).toLocaleString('en-IN')}
                       </p>
                     </div>
-                    <div className="p-4 rounded-lg border border-neon-lime/30 bg-neon-lime/5">
-                      <p className="text-xs text-gray-400 mb-1">Portfolio Value</p>
-                      <p className="text-xl font-bold text-neon-lime" data-testid="text-portfolio-value">
+                    <div className="p-4 rounded-lg border border-primary/30 glassmorphic interactive-hover">
+                      <p className="text-xs text-foreground/60 mb-1">Portfolio Value</p>
+                      <p className="text-xl font-bold text-primary" data-testid="text-portfolio-value">
                         ₹{Math.round(Object.values(gameState.portfolio).reduce((a, b) => a + b, 0)).toLocaleString('en-IN')}
                       </p>
                     </div>
@@ -918,9 +918,9 @@ export default function FinQuest() {
               </Card>
 
               {/* Investment Decisions */}
-              <Card className="border-neon-purple/30 bg-black/40 backdrop-blur-xl shadow-neon-purple">
+              <Card className="border-primary/30 glassmorphic">
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-neon-purple mb-4 flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
                     <Target className="h-5 w-5" />
                     Monthly Investment Decisions
                   </h3>
@@ -928,7 +928,7 @@ export default function FinQuest() {
                   <div className="space-y-4">
                     {(['sip', 'stocks', 'gold', 'realEstate', 'savings'] as const).map((type) => (
                       <div key={type}>
-                        <Label htmlFor={type} className="text-sm text-gray-300 capitalize">
+                        <Label htmlFor={type} className="text-sm text-foreground/70 capitalize">
                           {type === 'realEstate' ? 'Real Estate' : type}
                         </Label>
                         <Input
@@ -940,16 +940,16 @@ export default function FinQuest() {
                             setMonthlyDecisions(prev => ({ ...prev, [type]: Number(e.target.value) || 0 }))
                           }
                           placeholder="₹0"
-                          className="mt-1 bg-black/60 border-neon-cyan/50 text-white placeholder:text-gray-500 focus:border-neon-cyan focus:shadow-neon-cyan"
+                          className="mt-1 interactive-hover"
                         />
                       </div>
                     ))}
 
-                    <Separator className="bg-neon-cyan/20" />
+                    <Separator className="bg-primary/20" />
 
-                    <div className="flex items-center justify-between p-3 rounded-lg border border-neon-lime/30 bg-neon-lime/5">
-                      <span className="font-semibold">Total Investment</span>
-                      <span className="text-xl font-bold text-neon-lime" data-testid="text-total-investment">
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-primary/30 glassmorphic interactive-hover">
+                      <span className="font-semibold text-foreground">Total Investment</span>
+                      <span className="text-xl font-bold text-primary" data-testid="text-total-investment">
                         ₹{Object.values(monthlyDecisions).reduce((a, b) => a + b, 0).toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -958,7 +958,7 @@ export default function FinQuest() {
                       data-testid="button-confirm-investments"
                       onClick={processMonthlyDecisions}
                       disabled={processingMonth || Object.values(monthlyDecisions).reduce((a, b) => a + b, 0) === 0}
-                      className="w-full bg-neon-cyan text-black hover:bg-neon-cyan/90 shadow-neon-cyan font-bold text-lg py-6 animate-pulse-glow"
+                      className="w-full neon-glow interactive-hover font-bold text-lg py-6"
                     >
                       {processingMonth ? (
                         <>Processing...</>
@@ -979,9 +979,9 @@ export default function FinQuest() {
           <div className="lg:col-span-4">
             <div className="space-y-6">
               {/* Portfolio Breakdown */}
-              <Card className="border-neon-lime/30 bg-black/40 backdrop-blur-xl shadow-neon-lime">
+              <Card className="border-primary/30 glassmorphic">
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-neon-lime mb-4 flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
                     <BarChart3 className="h-5 w-5" />
                     Portfolio
                   </h3>
@@ -992,17 +992,17 @@ export default function FinQuest() {
                       const percentage = total > 0 ? (value / total) * 100 : 0;
 
                       return (
-                        <div key={type} data-testid={`portfolio-${type}`}>
+                        <div key={type} data-testid={`portfolio-${type}`} className="interactive-hover p-2 rounded-md">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs text-gray-400 capitalize">
+                            <span className="text-xs text-foreground/60 capitalize">
                               {type === 'realEstate' ? 'Real Estate' : type}
                             </span>
-                            <span className="text-sm font-semibold">
+                            <span className="text-sm font-semibold text-primary">
                               ₹{Math.round(value).toLocaleString('en-IN')}
                             </span>
                           </div>
-                          <Progress value={percentage} className="h-2 bg-black/60" />
-                          <p className="text-xs text-gray-500 mt-1">{percentage.toFixed(1)}%</p>
+                          <Progress value={percentage} className="h-2 progress-fill" />
+                          <p className="text-xs text-foreground/50 mt-1">{percentage.toFixed(1)}%</p>
                         </div>
                       );
                     })}
