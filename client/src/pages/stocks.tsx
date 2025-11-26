@@ -400,13 +400,20 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                     />
                   </div>
 
-                  {investmentAmount && (
+                  {investmentAmount && selectedStockData.price > 0 && (
                     <div className="p-3 rounded-lg border border-green-400/20 bg-green-400/5">
                       <p className="text-green-200/70 text-sm">
                         You will get{' '}
                         <span className="font-bold text-green-300">
                           {(parseInt(investmentAmount || '0') / selectedStockData.price).toFixed(2)} shares
                         </span>
+                      </p>
+                    </div>
+                  )}
+                  {investmentAmount && selectedStockData.price === 0 && (
+                    <div className="p-3 rounded-lg border border-yellow-400/20 bg-yellow-400/5">
+                      <p className="text-yellow-200/70 text-sm">
+                        Waiting for real-time prices to load...
                       </p>
                     </div>
                   )}
