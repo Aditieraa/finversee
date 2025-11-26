@@ -42,6 +42,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
               .from('profiles')
               .upsert({
                 id: data.user.id,
+                email: data.user.email,
                 name: '',
                 career: null,
               });

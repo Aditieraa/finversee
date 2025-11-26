@@ -16,16 +16,20 @@ DROP POLICY IF EXISTS "Public users can update profiles" ON profiles CASCADE;
 DROP POLICY IF EXISTS "Service role can insert profiles" ON profiles CASCADE;
 DROP POLICY IF EXISTS "Allow all for authenticated users" ON profiles CASCADE;
 DROP POLICY IF EXISTS "Users can create own profile" ON profiles CASCADE;
+DROP POLICY IF EXISTS "Anyone can insert profiles" ON profiles CASCADE;
+DROP POLICY IF EXISTS "Anyone can update profiles" ON profiles CASCADE;
+DROP POLICY IF EXISTS "Anyone can view profiles" ON profiles CASCADE;
 
 -- Drop table and recreate fresh
 DROP TABLE IF EXISTS profiles CASCADE;
 DROP TABLE IF EXISTS game_saves CASCADE;
 
 -- ========================================
--- CREATE PROFILES TABLE - FRESH
+-- CREATE PROFILES TABLE - FRESH WITH EMAIL
 -- ========================================
 CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT,
   name TEXT DEFAULT '',
   career TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -33,6 +37,7 @@ CREATE TABLE profiles (
 );
 
 CREATE INDEX idx_profiles_id ON profiles(id);
+CREATE INDEX idx_profiles_email ON profiles(email);
 CREATE INDEX idx_profiles_created_at ON profiles(created_at);
 
 -- Enable and configure RLS
@@ -94,8 +99,8 @@ CREATE TRIGGER game_saves_update_timestamp BEFORE UPDATE ON game_saves
 CREATE OR REPLACE FUNCTION create_profile_on_signup()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, name, career)
-  VALUES (NEW.id, '', NULL)
+  INSERT INTO public.profiles (id, email, name, career)
+  VALUES (NEW.id, NEW.email, '', NULL)
   ON CONFLICT DO NOTHING;
   RETURN NEW;
 END;
@@ -135,8 +140,6 @@ You should see:
 
 1. In Finverse app, create a NEW account
 2. Check Supabase → **Authentication** tab → you should see your user
-3. Check Supabase → **profiles table** → you should see your profile row
+3. Check Supabase → **profiles table** → you should see your profile row WITH EMAIL
 4. Complete onboarding
 5. Check Supabase → **game_saves table** → you should see your save
-
-If profile STILL doesn't appear, check browser console (F12) for error messages when you sign up.
