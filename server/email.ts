@@ -34,7 +34,7 @@ export async function sendEmail(payload: EmailPayload): Promise<boolean> {
         key: MAILCHIMP_API_KEY,
         message: {
           subject: payload.subject,
-          from_email: 'noreply@finverse.app',
+          from_email: 'adititalekar2005@gmail.com',
           from_name: 'Finverse',
           to: [
             {
