@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import Auth from './auth';
+import Dashboard from './dashboard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +37,10 @@ import {
   Clock,
   AlertCircle,
   Check,
+  LayoutDashboard,
+  TrendingUpIcon,
+  PieChart,
+  DollarSign,
 } from 'lucide-react';
 
 type Career = 'Engineer' | 'Designer' | 'CA' | 'Doctor' | 'Sales';
@@ -163,6 +168,7 @@ export default function FinQuest() {
   const [processingMonth, setProcessingMonth] = useState(false);
   const [leaderboard, setLeaderboard] = useState<Array<{ name: string; score: number; level: number }>>([]);
   const [showAuraTwin, setShowAuraTwin] = useState(false);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'game' | 'analytics' | 'budget'>('dashboard');
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -947,45 +953,87 @@ export default function FinQuest() {
     <div className="min-h-screen w-full" style={{ background: 'linear-gradient(135deg, #1B263B 0%, #2E4057 50%, #4A90E2 100%)', color: '#E6F1FF' }}>
       {/* Header */}
       <header className="border-b border-primary/20 glassmorphic sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              data-testid="button-mobile-menu"
-              className="lg:hidden text-primary"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-            <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
-              <Sparkles className="h-6 w-6 glow" />
-              Finverse
-            </h1>
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between py-3 mb-2">
+            <div className="flex items-center gap-4">
+              <button
+                data-testid="button-mobile-menu"
+                className="lg:hidden text-primary"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+              <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
+                <Sparkles className="h-6 w-6 glow" />
+                Finverse
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Badge className="bg-primary/20 text-primary border-primary/50 neon-glow">
+                Level {gameState.level}
+              </Badge>
+              <Badge className="bg-primary/30 text-white border-primary/50 neon-glow">
+                {gameState.xp} XP
+              </Badge>
+              <Button
+                data-testid="button-aura-twin"
+                variant="outline"
+                className="border-primary/50 text-primary hover:bg-primary/20 neon-glow interactive-hover"
+                onClick={() => setShowAuraTwin(true)}
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Aura Twin
+              </Button>
+              <Button
+                data-testid="button-settings"
+                size="icon"
+                variant="ghost"
+                onClick={() => setShowSettings(true)}
+                className="text-primary hover:bg-primary/20 interactive-hover"
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Badge className="bg-primary/20 text-primary border-primary/50 neon-glow">
-              Level {gameState.level}
-            </Badge>
-            <Badge className="bg-primary/30 text-white border-primary/50 neon-glow">
-              {gameState.xp} XP
-            </Badge>
+          {/* Navigation Tabs */}
+          <div className="flex gap-2 flex-wrap">
             <Button
-              data-testid="button-aura-twin"
-              variant="outline"
-              className="border-primary/50 text-primary hover:bg-primary/20 neon-glow interactive-hover"
-              onClick={() => setShowAuraTwin(true)}
+              variant={currentView === 'dashboard' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setCurrentView('dashboard')}
+              className="flex items-center gap-2"
             >
-              <Sparkles className="h-4 w-4 mr-2" />
-              Aura Twin
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
             </Button>
             <Button
-              data-testid="button-settings"
-              size="icon"
-              variant="ghost"
-              onClick={() => setShowSettings(true)}
-              className="text-primary hover:bg-primary/20 interactive-hover"
+              variant={currentView === 'game' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setCurrentView('game')}
+              className="flex items-center gap-2"
             >
-              <Settings className="h-5 w-5" />
+              <Zap className="h-4 w-4" />
+              Game
+            </Button>
+            <Button
+              variant={currentView === 'analytics' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setCurrentView('analytics')}
+              className="flex items-center gap-2"
+            >
+              <TrendingUpIcon className="h-4 w-4" />
+              Analytics
+            </Button>
+            <Button
+              variant={currentView === 'budget' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setCurrentView('budget')}
+              className="flex items-center gap-2"
+            >
+              <DollarSign className="h-4 w-4" />
+              Budget
             </Button>
           </div>
         </div>
@@ -993,6 +1041,13 @@ export default function FinQuest() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
+        {/* Dashboard View */}
+        {currentView === 'dashboard' && (
+          <Dashboard gameState={gameState} monthlyDecisions={monthlyDecisions} />
+        )}
+
+        {/* Game View */}
+        {currentView === 'game' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Full Width - Dashboard & Decisions */}
           <div className="lg:col-span-8">
@@ -1205,6 +1260,23 @@ export default function FinQuest() {
             </div>
           </div>
         </div>
+        )}
+
+        {/* Analytics View */}
+        {currentView === 'analytics' && (
+          <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-8">
+            <h2 className="text-2xl font-bold text-white mb-4">Analytics Coming Soon</h2>
+            <p className="text-purple-200">Detailed financial analytics and performance metrics will be available here.</p>
+          </Card>
+        )}
+
+        {/* Budget View */}
+        {currentView === 'budget' && (
+          <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-8">
+            <h2 className="text-2xl font-bold text-white mb-4">Budget & Goals</h2>
+            <p className="text-cyan-200">Track your spending, set budgets, and achieve your financial goals.</p>
+          </Card>
+        )}
       </div>
 
       {/* Aura Twin Modal */}
