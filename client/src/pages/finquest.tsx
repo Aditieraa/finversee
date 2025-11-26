@@ -864,15 +864,6 @@ export default function FinQuest() {
               Aura Twin
             </Button>
             <Button
-              data-testid="button-theme-toggle"
-              size="icon"
-              variant="ghost"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="text-primary hover:bg-primary/20"
-            >
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-            <Button
               data-testid="button-settings"
               size="icon"
               variant="ghost"
