@@ -52,6 +52,7 @@ interface UserProfile {
   career: Career;
   salary: number;
   expenses: number;
+  email?: string;
 }
 
 interface Portfolio {
@@ -280,7 +281,23 @@ export default function FinQuest() {
       if (error && error.code !== 'PGRST116') throw error;
 
       if (data) {
-        setGameState(data.game_state);
+        const loadedState = data.game_state;
+        
+        // Ensure email is loaded - get from profiles if not in saved state
+        if (loadedState.userProfile && !loadedState.userProfile.email) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('id', userId)
+            .single();
+
+          if (profileData?.email) {
+            loadedState.userProfile.email = profileData.email;
+            console.log('📧 Email loaded from profiles:', profileData.email);
+          }
+        }
+        
+        setGameState(loadedState);
         toast({
           title: '✨ Progress Loaded',
           description: 'Welcome back! Your game has been restored.',
