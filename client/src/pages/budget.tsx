@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,86 +32,150 @@ interface Goal {
   status: 'active' | 'completed';
 }
 
-const BUDGET_CATEGORIES = [
-  { name: 'Shopping', budget: 5000, spent: 4700, icon: '🛍️' },
-  { name: 'Food & Dining', budget: 8000, spent: 6500, icon: '🍽️' },
-  { name: 'Transportation', budget: 3000, spent: 2800, icon: '🚗' },
-  { name: 'Entertainment', budget: 2000, spent: 1200, icon: '🎬' },
-  { name: 'Utilities', budget: 4000, spent: 3800, icon: '💡' },
-  { name: 'Education', budget: 3000, spent: 2500, icon: '📚' },
-];
+interface BudgetCategory {
+  name: string;
+  budget: number;
+  spent: number;
+  icon: string;
+  percentage: number;
+}
 
 export default function Budget({ gameState }: BudgetProps) {
   const [showAddGoal, setShowAddGoal] = useState(false);
   const [goalName, setGoalName] = useState('');
   const [goalAmount, setGoalAmount] = useState('');
-  const [goals, setGoals] = useState<Goal[]>([
-    {
-      id: '1',
-      name: 'Emergency Fund',
-      targetAmount: 200000,
-      currentAmount: 85000,
-      deadline: '10/10/2025',
-      priority: 'high',
-      status: 'active',
-    },
-    {
-      id: '2',
-      name: 'Vacation Trip',
-      targetAmount: 150000,
-      currentAmount: 120000,
-      deadline: '12/31/2025',
-      priority: 'medium',
-      status: 'active',
-    },
-    {
-      id: '3',
-      name: 'Car Down Payment',
-      targetAmount: 500000,
-      currentAmount: 250000,
-      deadline: '03/31/2026',
-      priority: 'high',
-      status: 'active',
-    },
-  ]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
 
-  const budgetAlerts: BudgetAlert[] = [
-    {
-      id: '1',
-      title: 'Deadline Approaching',
-      description: 'Your Food goal deadline is approaching in 6 days',
-      type: 'deadline',
-      category: 'Food',
-      daysLeft: 6,
-    },
-    {
-      id: '2',
-      title: 'Deadline Approaching',
-      description: 'Your Food goal deadline is approaching in 6 days',
-      type: 'deadline',
-      category: 'Food',
-      daysLeft: 6,
-    },
-    {
-      id: '3',
-      title: 'Over Budget Alert',
-      description: "You've exceeded your Food budget by ₹800",
-      type: 'over-budget',
-      category: 'Food',
-    },
-    {
-      id: '4',
-      title: 'Goal Achieved',
-      description: "Congratulations! You've achieved your Food goal",
-      type: 'achieved',
-      category: 'Food',
-    },
-  ];
+  // Calculate budget categories based on user's actual expenses
+  useEffect(() => {
+    const userExpenses = gameState.userProfile?.expenses || 0;
+    const portfolio = gameState.portfolio || {};
+    const investments = gameState.monthlyInvestments || {};
 
-  const totalBudget = BUDGET_CATEGORIES.reduce((sum, cat) => sum + cat.budget, 0);
-  const totalSpent = BUDGET_CATEGORIES.reduce((sum, cat) => sum + cat.spent, 0);
+    // Break down expenses into proportional categories
+    const categories: BudgetCategory[] = [
+      { name: 'Food & Dining', budget: Math.round(userExpenses * 0.25), spent: Math.round(userExpenses * 0.22), icon: '🍽️', percentage: 0 },
+      { name: 'Transportation', budget: Math.round(userExpenses * 0.15), spent: Math.round(userExpenses * 0.13), icon: '🚗', percentage: 0 },
+      { name: 'Shopping', budget: Math.round(userExpenses * 0.2), spent: Math.round(userExpenses * 0.18), icon: '🛍️', percentage: 0 },
+      { name: 'Utilities & Bills', budget: Math.round(userExpenses * 0.2), spent: Math.round(userExpenses * 0.19), icon: '💡', percentage: 0 },
+      { name: 'Entertainment', budget: Math.round(userExpenses * 0.1), spent: Math.round(userExpenses * 0.08), icon: '🎬', percentage: 0 },
+      { name: 'Education', budget: Math.round(userExpenses * 0.1), spent: Math.round(userExpenses * 0.09), icon: '📚', percentage: 0 },
+    ];
+
+    // Calculate percentages
+    const updatedCategories = categories.map(cat => ({
+      ...cat,
+      percentage: cat.budget > 0 ? (cat.spent / cat.budget) * 100 : 0,
+    }));
+
+    setBudgetCategories(updatedCategories);
+
+    // Initialize goals based on portfolio
+    const totalPortfolio = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
+    const initialGoals: Goal[] = [
+      {
+        id: '1',
+        name: 'Emergency Fund',
+        targetAmount: userExpenses * 6,
+        currentAmount: gameState.cashBalance,
+        deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
+        priority: 'high',
+        status: gameState.cashBalance >= userExpenses * 6 ? 'completed' : 'active',
+      },
+      {
+        id: '2',
+        name: 'Investment Portfolio',
+        targetAmount: userExpenses * 10,
+        currentAmount: totalPortfolio,
+        deadline: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
+        priority: 'high',
+        status: totalPortfolio >= userExpenses * 10 ? 'completed' : 'active',
+      },
+      {
+        id: '3',
+        name: 'Net Worth Target',
+        targetAmount: gameState.userProfile?.salary * 12,
+        currentAmount: gameState.netWorth,
+        deadline: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
+        priority: 'medium',
+        status: gameState.netWorth >= gameState.userProfile?.salary * 12 ? 'completed' : 'active',
+      },
+    ];
+
+    setGoals(initialGoals);
+  }, [gameState]);
+
+  // Generate real-time alerts based on actual data
+  const generateAlerts = (): BudgetAlert[] => {
+    const alerts: BudgetAlert[] = [];
+    const userExpenses = gameState.userProfile?.expenses || 0;
+
+    // Check for over-budget categories
+    budgetCategories.forEach((cat, idx) => {
+      if (cat.percentage > 100) {
+        alerts.push({
+          id: `over-${idx}`,
+          title: 'Over Budget Alert',
+          description: `You've exceeded your ${cat.name} budget by ₹${Math.round(cat.spent - cat.budget)}`,
+          type: 'over-budget',
+          category: cat.name,
+        });
+      }
+    });
+
+    // Check if emergency fund is low
+    if (gameState.cashBalance < userExpenses * 3) {
+      alerts.push({
+        id: 'emergency',
+        title: 'Low Emergency Fund',
+        description: 'Your emergency fund is below 3 months of expenses. Consider saving more.',
+        type: 'deadline',
+        category: 'Emergency Fund',
+      });
+    }
+
+    // Check for completed goals
+    goals.forEach((goal) => {
+      if (goal.status === 'completed') {
+        alerts.push({
+          id: `complete-${goal.id}`,
+          title: 'Goal Achieved',
+          description: `Congratulations! You've achieved your ${goal.name} goal`,
+          type: 'achieved',
+          category: goal.name,
+        });
+      }
+    });
+
+    // Add savings rate alert
+    const savingRate = gameState.userProfile?.salary
+      ? ((gameState.userProfile.salary - gameState.userProfile.expenses) / gameState.userProfile.salary) * 100
+      : 0;
+
+    if (savingRate < 20) {
+      alerts.push({
+        id: 'savings-rate',
+        title: 'Low Savings Rate',
+        description: `Your savings rate is ${savingRate.toFixed(1)}%. Aim for at least 20%.`,
+        type: 'deadline',
+        category: 'Savings',
+      });
+    }
+
+    return alerts.slice(0, 9); // Show max 9 alerts
+  };
+
+  const budgetAlerts = generateAlerts();
+
+  // Calculate totals
+  const totalBudget = budgetCategories.reduce((sum, cat) => sum + cat.budget, 0);
+  const totalSpent = budgetCategories.reduce((sum, cat) => sum + cat.spent, 0);
   const remaining = totalBudget - totalSpent;
-  const budgetUsed = (totalSpent / totalBudget) * 100;
+  const userExpenses = gameState.userProfile?.expenses || 0;
+  const userSalary = gameState.userProfile?.salary || 0;
+  const monthlyIncome = userSalary;
+  const savingsPerMonth = monthlyIncome - userExpenses;
 
   const handleAddGoal = () => {
     if (goalName && goalAmount) {
@@ -138,89 +202,85 @@ export default function Budget({ gameState }: BudgetProps) {
   return (
     <div className="space-y-6 pb-6">
       {/* Budget Alerts */}
-      <Card className="border-red-400/30 bg-red-950/40 backdrop-blur-sm p-6">
-        <h3 className="text-lg font-bold text-red-100 mb-4 flex items-center gap-2">
-          <AlertCircle className="h-5 w-5 text-red-400" />
-          Budget Alerts
-        </h3>
-        <p className="text-red-200/60 text-sm mb-4">Stay informed about your spending and budget status</p>
+      {budgetAlerts.length > 0 && (
+        <Card className="border-red-400/30 bg-red-950/40 backdrop-blur-sm p-6">
+          <h3 className="text-lg font-bold text-red-100 mb-4 flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-red-400" />
+            Budget Alerts
+          </h3>
+          <p className="text-red-200/60 text-sm mb-4">Stay informed about your spending and budget status</p>
 
-        <ScrollArea className="h-64 pr-4">
-          <div className="space-y-3">
-            {budgetAlerts.map((alert) => (
-              <div
-                key={alert.id}
-                className={`p-4 rounded-lg border flex items-start justify-between ${
-                  alert.type === 'deadline'
-                    ? 'border-yellow-500/30 bg-yellow-500/10'
-                    : alert.type === 'over-budget'
-                      ? 'border-red-500/30 bg-red-500/10'
-                      : 'border-green-500/30 bg-green-500/10'
-                }`}
-              >
-                <div className="flex-1">
-                  <p className={`font-semibold text-sm ${
+          <ScrollArea className="h-64 pr-4">
+            <div className="space-y-3">
+              {budgetAlerts.map((alert) => (
+                <div
+                  key={alert.id}
+                  className={`p-4 rounded-lg border flex items-start justify-between ${
                     alert.type === 'deadline'
-                      ? 'text-yellow-300'
+                      ? 'border-yellow-500/30 bg-yellow-500/10'
                       : alert.type === 'over-budget'
-                        ? 'text-red-300'
-                        : 'text-green-300'
-                  }`}>
-                    {alert.title}
-                  </p>
-                  <p className="text-xs mt-1 opacity-80">{alert.description}</p>
+                        ? 'border-red-500/30 bg-red-500/10'
+                        : 'border-green-500/30 bg-green-500/10'
+                  }`}
+                >
+                  <div className="flex-1">
+                    <p className={`font-semibold text-sm ${
+                      alert.type === 'deadline'
+                        ? 'text-yellow-300'
+                        : alert.type === 'over-budget'
+                          ? 'text-red-300'
+                          : 'text-green-300'
+                    }`}>
+                      {alert.title}
+                    </p>
+                    <p className="text-xs mt-1 opacity-80">{alert.description}</p>
+                  </div>
                 </div>
-                <button className="text-red-400 hover:text-red-300 ml-2">
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
+              ))}
+            </div>
+          </ScrollArea>
 
-        <p className="text-xs text-red-300/50 mt-4">Showing 1-5 of 9 alerts</p>
-      </Card>
+          <p className="text-xs text-red-300/50 mt-4">Showing 1-{Math.min(budgetAlerts.length, 9)} of {budgetAlerts.length} alerts</p>
+        </Card>
+      )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-blue-400/20 bg-gradient-to-br from-blue-900/20 to-blue-800/10 backdrop-blur-sm p-6">
-          <p className="text-sm text-blue-200/60 mb-2">Total Budget</p>
-          <p className="text-3xl font-bold text-blue-100">₹{totalBudget.toLocaleString('en-IN')}</p>
-          <p className="text-xs text-blue-200/40 mt-2">4 categories</p>
+          <p className="text-sm text-blue-200/60 mb-2">Monthly Income</p>
+          <p className="text-2xl font-bold text-blue-100">₹{monthlyIncome.toLocaleString('en-IN')}</p>
+          <p className="text-xs text-blue-200/40 mt-2">Your salary</p>
         </Card>
 
         <Card className="border-purple-400/20 bg-gradient-to-br from-purple-900/20 to-purple-800/10 backdrop-blur-sm p-6">
-          <p className="text-sm text-purple-200/60 mb-2">Total Spent</p>
-          <p className="text-3xl font-bold text-purple-100">₹{totalSpent.toLocaleString('en-IN')}</p>
-          <p className="text-xs text-purple-200/40 mt-2">148.6% of budget used</p>
+          <p className="text-sm text-purple-200/60 mb-2">Total Expenses</p>
+          <p className="text-2xl font-bold text-purple-100">₹{userExpenses.toLocaleString('en-IN')}</p>
+          <p className="text-xs text-purple-200/40 mt-2">Monthly spending</p>
         </Card>
 
-        <Card className={`border-cyan-400/20 backdrop-blur-sm p-6 ${
-          remaining < 0
-            ? 'bg-gradient-to-br from-red-900/20 to-red-800/10'
-            : 'bg-gradient-to-br from-green-900/20 to-green-800/10'
-        }`}>
-          <p className={`text-sm mb-2 ${remaining < 0 ? 'text-red-200/60' : 'text-green-200/60'}`}>
-            Remaining
+        <Card className="border-cyan-400/20 bg-gradient-to-br from-cyan-900/20 to-cyan-800/10 backdrop-blur-sm p-6">
+          <p className="text-sm text-cyan-200/60 mb-2">Monthly Savings</p>
+          <p className="text-2xl font-bold text-cyan-100">₹{savingsPerMonth.toLocaleString('en-IN')}</p>
+          <p className="text-xs text-cyan-200/40 mt-2">Available to invest</p>
+        </Card>
+
+        <Card className="border-green-400/20 bg-gradient-to-br from-green-900/20 to-green-800/10 backdrop-blur-sm p-6">
+          <p className="text-sm text-green-200/60 mb-2">Savings Rate</p>
+          <p className="text-2xl font-bold text-green-100">
+            {monthlyIncome > 0 ? ((savingsPerMonth / monthlyIncome) * 100).toFixed(1) : 0}%
           </p>
-          <p className={`text-3xl font-bold ${remaining < 0 ? 'text-red-100' : 'text-green-100'}`}>
-            {remaining < 0 ? '-' : ''}₹{Math.abs(remaining).toLocaleString('en-IN')}
-          </p>
-          <p className={`text-xs mt-2 ${remaining < 0 ? 'text-red-200/40' : 'text-green-200/40'}`}>
-            {remaining < 0 ? 'Over budget' : 'Under budget'}
-          </p>
+          <p className="text-xs text-green-200/40 mt-2">Of income saved</p>
         </Card>
       </div>
 
       {/* Budget Tracking */}
       <Card className="border-purple-400/30 bg-purple-950/40 backdrop-blur-sm p-6">
         <h3 className="text-lg font-bold text-white mb-4">Budget Tracking</h3>
-        <p className="text-purple-200/60 text-sm mb-6">Monitor your spending against budget limits</p>
+        <p className="text-purple-200/60 text-sm mb-6">Monitor your spending against budget limits based on your monthly expenses</p>
 
         <div className="space-y-5">
-          {BUDGET_CATEGORIES.map((category, idx) => {
-            const percentage = (category.spent / category.budget) * 100;
-            const isOverBudget = percentage > 100;
+          {budgetCategories.map((category, idx) => {
+            const isOverBudget = category.percentage > 100;
 
             return (
               <div key={idx}>
@@ -234,11 +294,11 @@ export default function Budget({ gameState }: BudgetProps) {
                   </span>
                 </div>
                 <Progress
-                  value={Math.min(percentage, 100)}
+                  value={Math.min(category.percentage, 100)}
                   className="h-2"
                 />
                 <div className="flex justify-between mt-1">
-                  <span className="text-xs text-purple-200/50">{percentage.toFixed(1)}% used</span>
+                  <span className="text-xs text-purple-200/50">{category.percentage.toFixed(1)}% used</span>
                   {isOverBudget && (
                     <span className="text-xs text-red-400">₹{(category.spent - category.budget).toLocaleString('en-IN')} over</span>
                   )}
@@ -246,6 +306,19 @@ export default function Budget({ gameState }: BudgetProps) {
               </div>
             );
           })}
+        </div>
+
+        {/* Overall Budget Summary */}
+        <div className="mt-6 p-4 rounded-lg border border-purple-400/20 bg-purple-950/30">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-white font-semibold">Total Monthly Budget</span>
+            <span className="text-white font-bold">₹{totalBudget.toLocaleString('en-IN')}</span>
+          </div>
+          <Progress value={(totalSpent / totalBudget) * 100} className="h-2 mb-3" />
+          <div className="flex justify-between text-xs text-purple-200/60">
+            <span>Spent: ₹{totalSpent.toLocaleString('en-IN')}</span>
+            <span>Remaining: ₹{remaining.toLocaleString('en-IN')}</span>
+          </div>
         </div>
       </Card>
 
@@ -268,7 +341,7 @@ export default function Budget({ gameState }: BudgetProps) {
 
         <div className="space-y-4">
           {goals.map((goal) => {
-            const percentage = (goal.currentAmount / goal.targetAmount) * 100;
+            const percentage = goal.targetAmount > 0 ? (goal.currentAmount / goal.targetAmount) * 100 : 0;
             const priorityColor = {
               high: 'bg-red-500/20 text-red-300 border-red-400/30',
               medium: 'bg-yellow-500/20 text-yellow-300 border-yellow-400/30',
@@ -283,28 +356,30 @@ export default function Budget({ gameState }: BudgetProps) {
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h4 className="text-white font-semibold text-sm">{goal.name}</h4>
-                    <p className="text-blue-200/60 text-xs">Target: 10/10/2025</p>
+                    <p className="text-blue-200/60 text-xs">Target: {goal.deadline}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge className={`text-xs ${priorityColor[goal.priority]}`}>
                       {goal.priority.charAt(0).toUpperCase() + goal.priority.slice(1)} Priority
                     </Badge>
-                    <button
-                      onClick={() => removeGoal(goal.id)}
-                      className="text-blue-400 hover:text-blue-300"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
+                    {goal.id !== '1' && goal.id !== '2' && goal.id !== '3' && (
+                      <button
+                        onClick={() => removeGoal(goal.id)}
+                        className="text-blue-400 hover:text-blue-300"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
 
-                <Progress value={percentage} className="h-2 mb-2" />
+                <Progress value={Math.min(percentage, 100)} className="h-2 mb-2" />
 
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-blue-200">
                     ₹{goal.currentAmount.toLocaleString('en-IN')} of ₹{goal.targetAmount.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-xs font-bold text-blue-400">{percentage.toFixed(1)}%</span>
+                  <span className="text-xs font-bold text-blue-400">{Math.min(percentage, 100).toFixed(1)}%</span>
                 </div>
 
                 {goal.status === 'completed' && (
@@ -367,22 +442,22 @@ export default function Budget({ gameState }: BudgetProps) {
           <div className="flex items-start gap-3">
             <TrendingDown className="h-5 w-5 text-cyan-400 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-cyan-200 font-semibold text-sm">Reduce discretionary spending</p>
-              <p className="text-cyan-200/60 text-xs">Cut back on non-essential categories to increase savings</p>
+              <p className="text-cyan-200 font-semibold text-sm">Track Every Rupee</p>
+              <p className="text-cyan-200/60 text-xs">Review your spending regularly to identify patterns and opportunities to save</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <TrendingUp className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-green-200 font-semibold text-sm">Track irregular expenses</p>
-              <p className="text-green-200/60 text-xs">Monitor one-time purchases to maintain budget accuracy</p>
+              <p className="text-green-200 font-semibold text-sm">Build Emergency Fund</p>
+              <p className="text-green-200/60 text-xs">Aim to save 6 months of expenses for unexpected situations</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <Target className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-yellow-200 font-semibold text-sm">Set realistic goals</p>
-              <p className="text-yellow-200/60 text-xs">Achieve your financial goals by setting achievable milestones</p>
+              <p className="text-yellow-200 font-semibold text-sm">Set Realistic Goals</p>
+              <p className="text-yellow-200/60 text-xs">Achieve your financial goals by breaking them into smaller milestones</p>
             </div>
           </div>
         </div>
