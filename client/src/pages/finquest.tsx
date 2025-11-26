@@ -1468,12 +1468,12 @@ export default function FinQuest() {
 
       {/* Profile Modal */}
       <Dialog open={showProfile} onOpenChange={setShowProfile}>
-        <DialogContent className="border-primary/30 glassmorphic modal-slide max-h-[90vh] flex flex-col p-0">
-          <DialogHeader className="px-6 pt-6 pb-0 flex-shrink-0">
+        <DialogContent className="border-primary/30 glassmorphic modal-slide w-full max-w-md max-h-screen flex flex-col p-0">
+          <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0 border-b border-primary/20">
             <DialogTitle className="text-primary">Your Profile</DialogTitle>
           </DialogHeader>
-          <ScrollArea className="flex-1 px-6">
-            <div className="space-y-4 pr-4">
+          <div className="flex-1 overflow-y-auto px-6">
+            <div className="space-y-4 pr-2">
               <div className="text-center pt-4">
                 {gameState.userProfile?.avatar && (
                   <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/50 mx-auto mb-3">
@@ -1561,7 +1561,7 @@ export default function FinQuest() {
                 </Button>
               </div>
             </div>
-          </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
 
