@@ -5,6 +5,7 @@ import Auth from './auth';
 import Dashboard from './dashboard';
 import Analytics from './analytics';
 import Budget from './budget';
+import Stocks from './stocks';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -170,7 +171,7 @@ export default function FinQuest() {
   const [processingMonth, setProcessingMonth] = useState(false);
   const [leaderboard, setLeaderboard] = useState<Array<{ name: string; score: number; level: number }>>([]);
   const [showAuraTwin, setShowAuraTwin] = useState(false);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'game' | 'analytics' | 'budget'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'game' | 'analytics' | 'budget' | 'stocks'>('dashboard');
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -1037,6 +1038,15 @@ export default function FinQuest() {
               <DollarSign className="h-4 w-4" />
               Budget
             </Button>
+            <Button
+              variant={currentView === 'stocks' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setCurrentView('stocks')}
+              className="flex items-center gap-2"
+            >
+              <TrendingUpIcon className="h-4 w-4" />
+              Stocks
+            </Button>
           </div>
         </div>
       </header>
@@ -1272,6 +1282,11 @@ export default function FinQuest() {
         {/* Budget View */}
         {currentView === 'budget' && (
           <Budget gameState={gameState} />
+        )}
+
+        {/* Stocks View */}
+        {currentView === 'stocks' && (
+          <Stocks />
         )}
       </div>
 
