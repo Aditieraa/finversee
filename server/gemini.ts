@@ -8,6 +8,15 @@ if (!apiKey) {
 
 const ai = new GoogleGenAI({ apiKey });
 
+// Clean markdown formatting from Gemini responses
+function cleanMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1')  // Remove **bold**
+    .replace(/\*(.*?)\*/g, '$1')      // Remove *italic*
+    .replace(/_(.*?)_/g, '$1')        // Remove _underscore_
+    .replace(/\n\n+/g, '\n');         // Normalize multiple newlines
+}
+
 export async function getFinancialAdvice(
   message: string,
   context: {
@@ -62,7 +71,9 @@ Guidelines:
       return "I'm here to assist with your financial planning. Please feel free to ask any questions.";
     }
 
-    return text;
+    const cleanedText = cleanMarkdown(text);
+    console.log('✨ Cleaned response:', cleanedText);
+    return cleanedText;
   } catch (error) {
     console.error('❌ Gemini API error:', {
       message: error instanceof Error ? error.message : String(error),
