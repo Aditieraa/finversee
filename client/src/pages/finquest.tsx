@@ -285,6 +285,23 @@ export default function FinQuest() {
           title: '✨ Progress Loaded',
           description: 'Welcome back! Your game has been restored.',
         });
+      } else {
+        // First time - load email from profiles
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('id', userId)
+          .single();
+
+        if (profileData?.email && gameState.userProfile) {
+          setGameState(prev => ({
+            ...prev,
+            userProfile: {
+              ...prev.userProfile!,
+              email: profileData.email,
+            },
+          }));
+        }
       }
     } catch (error: any) {
       console.error('Load error:', error);
