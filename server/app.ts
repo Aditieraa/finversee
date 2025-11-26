@@ -1,4 +1,5 @@
 import { type Server } from "node:http";
+import path from "node:path";
 
 import express, {
   type Express,
@@ -33,6 +34,10 @@ app.use(express.json({
   }
 }));
 app.use(express.urlencoded({ extended: false }));
+
+// Serve public folder for favicon and other static assets
+const publicPath = path.resolve(import.meta.dirname, "..", "public");
+app.use(express.static(publicPath, { maxAge: "1h" }));
 
 app.use((req, res, next) => {
   const start = Date.now();
