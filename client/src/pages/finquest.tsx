@@ -797,8 +797,10 @@ export default function FinQuest() {
     
     // Clear local state
     setUserId(null);
-    setAuthChecked(false);
     resetGame();
+    
+    // Set authChecked to true so the Auth page shows (don't set to false to avoid infinite loading)
+    setAuthChecked(true);
     
     toast({
       title: 'Logged Out',
