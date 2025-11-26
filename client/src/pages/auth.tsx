@@ -34,17 +34,24 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         if (error) throw error;
 
         if (data.user) {
-          await supabase
-            .from('profiles')
-            .insert([
-              {
+          try {
+            // Try to upsert profile (create or update) - this handles RLS better than insert
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .upsert({
                 id: data.user.id,
-                email: email,
                 name: '',
                 career: null,
-              },
-            ])
-            .single();
+              });
+            
+            if (profileError) {
+              console.warn('Profile creation warning (not critical):', profileError);
+              // Don't fail - the trigger might create it or user can continue
+            }
+          } catch (profileErr) {
+            console.warn('Profile creation attempt failed:', profileErr);
+            // Don't throw - continue with login anyway
+          }
 
           toast({
             title: 'Account Created!',
