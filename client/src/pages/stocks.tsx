@@ -157,7 +157,9 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     const currentValue = holding.shares * currentPrice;
     const profitLoss = currentValue - holding.investmentAmount;
 
-    const updatedHoldings = gameState.stockHoldings.filter(h => h.symbol !== holding.symbol);
+    const updatedHoldings = gameState.stockHoldings && gameState.stockHoldings.length > 0
+      ? gameState.stockHoldings.filter(h => h.symbol !== holding.symbol)
+      : [];
     
     setGameState({
       ...gameState,
@@ -173,17 +175,21 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
   };
 
   // Calculate portfolio values
-  const portfolioValue = gameState.stockHoldings.reduce((total, holding) => {
-    const currentStock = stocks.find(s => s.symbol === holding.symbol);
-    const currentPrice = currentStock?.price || holding.buyPrice;
-    return total + (holding.shares * currentPrice);
-  }, 0);
+  const portfolioValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
+    ? gameState.stockHoldings.reduce((total, holding) => {
+        const currentStock = stocks.find(s => s.symbol === holding.symbol);
+        const currentPrice = currentStock?.price || holding.buyPrice;
+        return total + (holding.shares * currentPrice);
+      }, 0)
+    : 0;
 
-  const portfolioGainLoss = gameState.stockHoldings.reduce((total, holding) => {
-    const currentStock = stocks.find(s => s.symbol === holding.symbol);
-    const currentPrice = currentStock?.price || holding.buyPrice;
-    return total + ((currentPrice - holding.buyPrice) * holding.shares);
-  }, 0);
+  const portfolioGainLoss = gameState.stockHoldings && gameState.stockHoldings.length > 0
+    ? gameState.stockHoldings.reduce((total, holding) => {
+        const currentStock = stocks.find(s => s.symbol === holding.symbol);
+        const currentPrice = currentStock?.price || holding.buyPrice;
+        return total + ((currentPrice - holding.buyPrice) * holding.shares);
+      }, 0)
+    : 0;
 
   const chartColors = ['#10B981', '#3B82F6', '#F59E0B', '#8B5CF6', '#6366F1', '#EC4899', '#14B8A6', '#F97316'];
 
@@ -201,7 +207,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       </div>
 
       {/* Portfolio Summary */}
-      {gameState.stockHoldings.length > 0 && (
+      {gameState.stockHoldings && gameState.stockHoldings.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-4">
             <p className="text-cyan-200/60 text-xs mb-1">Portfolio Value</p>
@@ -420,7 +426,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       </div>
 
       {/* Your Stock Holdings */}
-      {gameState.stockHoldings.length > 0 && (
+      {gameState.stockHoldings && gameState.stockHoldings.length > 0 && (
         <Card className="border-indigo-400/30 bg-indigo-950/40 backdrop-blur-sm p-6">
           <h3 className="text-lg font-bold text-white mb-4">Your Stock Holdings</h3>
           <div className="space-y-3">
