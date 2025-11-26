@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, LogIn, UserPlus } from 'lucide-react';
+import { Sparkles, LogIn, UserPlus, Mail, Lock, ArrowRight } from 'lucide-react';
 // @ts-ignore
 import logoPath from '@assets/WhatsApp Image 2025-11-22 at 20.10.06_10cdf760_1764008354697.jpg';
 
@@ -37,7 +37,6 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
           console.log('User created with ID:', data.user.id);
           
           try {
-            // Try to upsert profile (create or update) - this handles RLS better than insert
             const { data: profileData, error: profileError } = await supabase
               .from('profiles')
               .upsert({
@@ -56,7 +55,6 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
                 details: profileError.details,
                 hint: profileError.hint,
               });
-              // Still continue - try to fetch or create on first login
             } else {
               console.log('✅ Profile created successfully');
             }
@@ -108,122 +106,232 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden" style={{
-      background: 'linear-gradient(135deg, #0a1f3f 0%, #0f2847 25%, #1a1f4d 50%, #2d1b4e 75%, #1a0f3f 100%)',
-      animation: 'gradientShift 15s ease infinite'
+      background: 'linear-gradient(135deg, #1B263B 0%, #2E4057 50%, #4A90E2 100%)',
     }}>
-      {/* Animated background blobs */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-blob" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
-      <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-blob animation-delay-4000" />
-      
-      <Card className="w-full max-w-md border-primary/40 bg-black/50 backdrop-blur-2xl shadow-2xl relative z-10 animate-fadeInUp">
-        <div className="p-8">
-          <div className="text-center mb-8 space-y-3">
-            <div className="inline-block mb-4">
-              <img 
-                src={logoPath} 
-                alt="Finverse Logo" 
-                className="h-32 w-32 mx-auto drop-shadow-lg"
-                style={{
-                  filter: 'drop-shadow(0 0 20px rgba(100, 180, 255, 0.4))',
-                  animation: 'glow 2s ease-in-out infinite'
-                }}
-              />
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
+      </div>
+
+      <div className="w-full max-w-5xl relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          {/* Left side - Branding */}
+          <div className="hidden lg:flex flex-col space-y-8 text-white animate-fadeInUp">
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 rounded-lg bg-gradient-to-br from-blue-400/20 to-purple-400/20 border border-blue-400/30">
+                  <Sparkles className="h-8 w-8 text-blue-400 glow" />
+                </div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
+                  Finverse
+                </h1>
+              </div>
+              <p className="text-xl text-blue-100 font-light mb-4">Financial Intelligence Platform</p>
+              <p className="text-blue-200/70">Master your money, build your wealth, achieve financial freedom through intelligent gameplay and real-world learning.</p>
             </div>
-            <p className="text-lg text-gray-300 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-              Play. Learn. Conquer Financial Freedom.
-            </p>
+
+            <div className="space-y-4">
+              <div className="flex items-start gap-4 group">
+                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-green-400/20 to-blue-400/20 flex items-center justify-center border border-green-400/30 group-hover:border-green-400/60 transition-colors">
+                  <span className="text-2xl">📊</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-blue-100 mb-1">Real Market Simulation</h3>
+                  <p className="text-blue-200/60 text-sm">Experience authentic market dynamics with AI-driven scenarios</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 group">
+                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-purple-400/20 to-pink-400/20 flex items-center justify-center border border-purple-400/30 group-hover:border-purple-400/60 transition-colors">
+                  <span className="text-2xl">🤖</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-blue-100 mb-1">AI Mentor - Aura Twin</h3>
+                  <p className="text-blue-200/60 text-sm">Get personalized financial guidance in your preferred language</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 group">
+                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-400/20 to-blue-400/20 flex items-center justify-center border border-cyan-400/30 group-hover:border-cyan-400/60 transition-colors">
+                  <span className="text-2xl">🏆</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-blue-100 mb-1">Compete & Learn</h3>
+                  <p className="text-blue-200/60 text-sm">Join global leaderboards and master financial strategies</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <form onSubmit={handleAuth} className="space-y-6">
-            <div className="animate-fadeIn" style={{ animationDelay: '0.3s' }}>
-              <Label htmlFor="email" className="text-gray-200 font-semibold">Email</Label>
-              <Input
-                id="email"
-                data-testid="input-auth-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                required
-                className="mt-2 bg-black/40 border-primary/30 text-white placeholder:text-gray-500 focus:border-primary/70 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
-              />
-            </div>
+          {/* Right side - Auth Form */}
+          <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+            <Card className="border-blue-400/30 bg-gradient-to-br from-slate-900/60 via-blue-900/40 to-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+              {/* Gradient border effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+              
+              <div className="relative p-8">
+                {/* Logo/Title - Mobile */}
+                <div className="lg:hidden text-center mb-8">
+                  <div className="inline-flex items-center justify-center mb-4">
+                    <img 
+                      src={logoPath} 
+                      alt="Finverse Logo" 
+                      className="h-20 w-20 drop-shadow-lg"
+                      style={{
+                        filter: 'drop-shadow(0 0 15px rgba(100, 180, 255, 0.3))',
+                      }}
+                    />
+                  </div>
+                  <h1 className="text-3xl font-bold text-white mb-2">Finverse</h1>
+                  <p className="text-blue-200/60 text-sm">Play. Learn. Conquer Financial Freedom.</p>
+                </div>
 
-            <div className="animate-fadeIn" style={{ animationDelay: '0.4s' }}>
-              <Label htmlFor="password" className="text-gray-200 font-semibold">Password</Label>
-              <Input
-                id="password"
-                data-testid="input-auth-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                minLength={6}
-                className="mt-2 bg-black/40 border-primary/30 text-white placeholder:text-gray-500 focus:border-primary/70 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
-              />
-            </div>
+                {/* Form Title */}
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    {isSignUp ? 'Create Your Account' : 'Welcome Back'}
+                  </h2>
+                  <p className="text-blue-200/60 text-sm">
+                    {isSignUp 
+                      ? 'Start your journey to financial freedom today'
+                      : 'Sign in to continue your financial journey'
+                    }
+                  </p>
+                </div>
 
-            <Button
-              data-testid="button-auth-submit"
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 font-bold text-lg py-6 transition-all duration-300 transform hover:scale-105 active:scale-95 animate-fadeIn shadow-lg"
-              style={{ animationDelay: '0.5s' }}
-            >
-              {loading ? (
-                <span className="inline-flex items-center">
-                  <span className="animate-spin mr-2">⏳</span>
-                  Processing...
-                </span>
-              ) : isSignUp ? (
-                <>
-                  <UserPlus className="mr-2 h-5 w-5" />
-                  Create Account
-                </>
-              ) : (
-                <>
-                  <LogIn className="mr-2 h-5 w-5" />
-                  Sign In
-                </>
-              )}
-            </Button>
+                <form onSubmit={handleAuth} className="space-y-6">
+                  {/* Email Input */}
+                  <div className="space-y-2 group">
+                    <Label htmlFor="email" className="text-blue-100 font-semibold text-sm">Email Address</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-5 w-5 text-blue-400/50 pointer-events-none" />
+                      <Input
+                        id="email"
+                        data-testid="input-auth-email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        required
+                        className="pl-10 bg-blue-950/30 border border-blue-400/20 text-white placeholder:text-blue-300/30 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 group-hover:border-blue-400/40 rounded-lg"
+                      />
+                    </div>
+                  </div>
 
-            <div className="text-center animate-fadeIn" style={{ animationDelay: '0.6s' }}>
-              <button
-                type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-gray-300 hover:text-primary/80 text-sm transition-colors duration-300"
-                data-testid="button-toggle-auth-mode"
-              >
-                {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
-              </button>
-            </div>
+                  {/* Password Input */}
+                  <div className="space-y-2 group">
+                    <Label htmlFor="password" className="text-blue-100 font-semibold text-sm">Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-5 w-5 text-blue-400/50 pointer-events-none" />
+                      <Input
+                        id="password"
+                        data-testid="input-auth-password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        required
+                        minLength={6}
+                        className="pl-10 bg-blue-950/30 border border-blue-400/20 text-white placeholder:text-blue-300/30 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 group-hover:border-blue-400/40 rounded-lg"
+                      />
+                    </div>
+                  </div>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-700" />
+                  {/* Submit Button */}
+                  <Button
+                    data-testid="button-auth-submit"
+                    type="submit"
+                    disabled={loading}
+                    className="w-full mt-8 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  >
+                    {loading ? (
+                      <>
+                        <span className="inline-block animate-spin">⏳</span>
+                        Processing...
+                      </>
+                    ) : isSignUp ? (
+                      <>
+                        <UserPlus className="h-5 w-5" />
+                        Create Account
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    ) : (
+                      <>
+                        <LogIn className="h-5 w-5" />
+                        Sign In
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+
+                  {/* Divider */}
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-blue-400/10" />
+                    </div>
+                    <div className="relative flex justify-center text-xs">
+                      <span className="px-2 bg-slate-900 text-blue-300/50">OR</span>
+                    </div>
+                  </div>
+
+                  {/* Guest Button */}
+                  <Button
+                    data-testid="button-guest-mode"
+                    type="button"
+                    onClick={handleGuestMode}
+                    disabled={loading}
+                    className="w-full border border-blue-400/30 bg-transparent hover:bg-blue-400/10 text-blue-200 font-semibold py-3 rounded-lg transition-all duration-300 hover:border-blue-400/60"
+                  >
+                    Continue as Guest
+                  </Button>
+
+                  {/* Toggle Auth Mode */}
+                  <div className="text-center pt-4">
+                    <p className="text-blue-200/60 text-sm">
+                      {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsSignUp(!isSignUp);
+                          setEmail('');
+                          setPassword('');
+                        }}
+                        className="text-blue-400 hover:text-blue-300 font-semibold transition-colors underline"
+                        data-testid="button-toggle-auth-mode"
+                      >
+                        {isSignUp ? 'Sign In' : 'Sign Up'}
+                      </button>
+                    </p>
+                  </div>
+                </form>
+
+                {/* Footer Note */}
+                <p className="text-xs text-blue-300/40 text-center mt-8">
+                  By signing in, you agree to our Terms of Service and Privacy Policy
+                </p>
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-black px-2 text-gray-500">Or</span>
+            </Card>
+
+            {/* Additional Info Cards - Mobile */}
+            <div className="lg:hidden grid grid-cols-3 gap-3 mt-6">
+              <div className="bg-blue-950/40 backdrop-blur border border-blue-400/20 rounded-lg p-3 text-center hover:border-blue-400/40 transition-colors">
+                <div className="text-xl mb-1">📊</div>
+                <p className="text-xs text-blue-200/60">Simulate</p>
+              </div>
+              <div className="bg-purple-950/40 backdrop-blur border border-purple-400/20 rounded-lg p-3 text-center hover:border-purple-400/40 transition-colors">
+                <div className="text-xl mb-1">🤖</div>
+                <p className="text-xs text-purple-200/60">Learn</p>
+              </div>
+              <div className="bg-cyan-950/40 backdrop-blur border border-cyan-400/20 rounded-lg p-3 text-center hover:border-cyan-400/40 transition-colors">
+                <div className="text-xl mb-1">🏆</div>
+                <p className="text-xs text-cyan-200/60">Compete</p>
               </div>
             </div>
-
-            <Button
-              data-testid="button-guest-mode"
-              type="button"
-              onClick={handleGuestMode}
-              variant="outline"
-              className="w-full border-primary/50 text-gray-300 hover:bg-primary/20 animate-fadeIn"
-              style={{ animationDelay: '0.7s' }}
-              disabled={loading}
-            >
-              Continue as Guest
-            </Button>
-          </form>
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
