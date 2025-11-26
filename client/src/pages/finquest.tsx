@@ -1101,6 +1101,62 @@ export default function FinQuest() {
         </div>
       </div>
 
+      {/* Aura Twin Modal */}
+      <Dialog open={showAuraTwin} onOpenChange={setShowAuraTwin}>
+        <DialogContent className="max-w-2xl h-[600px] flex flex-col border-primary/30 bg-black/50 backdrop-blur-xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-primary flex items-center gap-2">
+              <Sparkles className="h-5 w-5" />
+              Aura Twin - Your AI Financial Mentor
+            </DialogTitle>
+          </DialogHeader>
+
+          <ScrollArea className="flex-1 pr-4">
+            <div className="space-y-4">
+              {gameState.chatHistory.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`p-3 rounded-lg ${
+                    msg.role === 'ai'
+                      ? 'bg-primary/10 border border-primary/30'
+                      : 'bg-primary/20 border border-primary/40 ml-4'
+                  }`}
+                  data-testid={`chat-message-${idx}`}
+                >
+                  <p className="text-sm whitespace-pre-line text-gray-200">{msg.content}</p>
+                </div>
+              ))}
+              {aiLoading && (
+                <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
+                  <p className="text-sm text-primary animate-pulse">Aura Twin is thinking...</p>
+                </div>
+              )}
+              <div ref={chatEndRef} />
+            </div>
+          </ScrollArea>
+
+          <div className="flex gap-2 pt-4 border-t border-primary/20">
+            <Input
+              data-testid="input-chat"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && sendAIMessage(chatInput)}
+              placeholder="Ask Aura Twin..."
+              className="bg-black/60 border-primary/50 text-white placeholder:text-gray-500 focus:border-primary focus:ring-2 focus:ring-primary/20"
+            />
+            <Button
+              data-testid="button-send-chat"
+              size="icon"
+              onClick={() => sendAIMessage(chatInput)}
+              disabled={aiLoading}
+              className="bg-primary text-white hover:bg-primary/90"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Settings Modal */}
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
         <DialogContent className="bg-black border-neon-cyan/50 text-white">
