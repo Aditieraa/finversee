@@ -34,9 +34,11 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         if (error) throw error;
 
         if (data.user) {
+          console.log('User created with ID:', data.user.id);
+          
           try {
             // Try to upsert profile (create or update) - this handles RLS better than insert
-            const { error: profileError } = await supabase
+            const { data: profileData, error: profileError } = await supabase
               .from('profiles')
               .upsert({
                 id: data.user.id,
@@ -44,13 +46,21 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
                 career: null,
               });
             
+            console.log('Profile upsert result:', { profileData, profileError });
+            
             if (profileError) {
-              console.warn('Profile creation warning (not critical):', profileError);
-              // Don't fail - the trigger might create it or user can continue
+              console.error('❌ Profile creation failed:', {
+                code: profileError.code,
+                message: profileError.message,
+                details: profileError.details,
+                hint: profileError.hint,
+              });
+              // Still continue - try to fetch or create on first login
+            } else {
+              console.log('✅ Profile created successfully');
             }
           } catch (profileErr) {
-            console.warn('Profile creation attempt failed:', profileErr);
-            // Don't throw - continue with login anyway
+            console.error('❌ Exception during profile creation:', profileErr);
           }
 
           toast({
