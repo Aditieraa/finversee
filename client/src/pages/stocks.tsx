@@ -120,19 +120,22 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       purchaseDate: new Date().toISOString(),
     };
 
+    // Ensure stockHoldings is initialized
+    const holdings = gameState.stockHoldings || [];
+
     // Check if stock already held
-    const existingIndex = gameState.stockHoldings.findIndex(h => h.symbol === selectedStockData.symbol);
+    const existingIndex = holdings.findIndex(h => h.symbol === selectedStockData.symbol);
     let updatedHoldings;
 
     if (existingIndex >= 0) {
-      updatedHoldings = [...gameState.stockHoldings];
+      updatedHoldings = [...holdings];
       updatedHoldings[existingIndex] = {
         ...updatedHoldings[existingIndex],
         shares: updatedHoldings[existingIndex].shares + shares,
         investmentAmount: updatedHoldings[existingIndex].investmentAmount + amount,
       };
     } else {
-      updatedHoldings = [...gameState.stockHoldings, newHolding];
+      updatedHoldings = [...holdings, newHolding];
     }
 
     // Update cash balance and portfolio
