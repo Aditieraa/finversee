@@ -747,34 +747,34 @@ export default function FinQuest() {
 
   if (onboarding.active) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center p-4" style={{ background: '#0A0F1F' }}>
-        <Card className="w-full max-w-2xl border-neon-cyan/30 bg-black/40 backdrop-blur-xl shadow-neon-cyan">
+      <div className="min-h-screen w-full flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #1B263B 0%, #2E4057 50%, #4A90E2 100%)' }}>
+        <Card className="w-full max-w-2xl border-primary/30 glassmorphic">
           <div className="p-8">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-2" style={{ color: '#00E5FF' }}>
-                <Sparkles className="inline mr-2 h-8 w-8" />
+              <h1 className="text-4xl font-bold mb-2 text-primary">
+                <Sparkles className="inline mr-2 h-8 w-8 glow" />
                 Finverse
               </h1>
-              <p className="text-lg" style={{ color: '#E6F1FF' }}>
+              <p className="text-lg text-foreground">
                 Play. Learn. Conquer Financial Freedom.
               </p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <Label htmlFor="name" className="text-neon-purple text-lg">What's your name?</Label>
+                <Label htmlFor="name" className="text-primary text-lg">What's your name?</Label>
                 <Input
                   id="name"
                   data-testid="input-name"
                   value={onboarding.name}
                   onChange={(e) => setOnboarding(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Enter your name"
-                  className="mt-2 bg-black/60 border-neon-cyan/50 text-white placeholder:text-gray-500 focus:border-neon-cyan focus:shadow-neon-cyan"
+                  className="mt-2 interactive-hover"
                 />
               </div>
 
               <div>
-                <Label htmlFor="career" className="text-neon-purple text-lg">Choose your career path</Label>
+                <Label htmlFor="career" className="text-primary text-lg">Choose your career path</Label>
                 <Select
                   value={onboarding.career}
                   onValueChange={(value) => setOnboarding(prev => ({ ...prev, career: value as Career }))}
@@ -782,16 +782,16 @@ export default function FinQuest() {
                   <SelectTrigger 
                     id="career"
                     data-testid="select-career"
-                    className="mt-2 bg-black/60 border-neon-cyan/50 text-white focus:border-neon-cyan focus:shadow-neon-cyan"
+                    className="mt-2 interactive-hover"
                   >
                     <SelectValue placeholder="Select a career" />
                   </SelectTrigger>
-                  <SelectContent className="bg-black border-neon-cyan/50">
+                  <SelectContent className="border-primary/50">
                     {Object.entries(CAREER_DATA).map(([career, data]) => (
                       <SelectItem 
                         key={career} 
                         value={career}
-                        className="text-white focus:bg-neon-cyan/20 focus:text-neon-cyan"
+                        className="focus:bg-primary/20"
                         data-testid={`option-career-${career.toLowerCase()}`}
                       >
                         {career} - ₹{data.salary.toLocaleString('en-IN')}/month
@@ -1011,9 +1011,9 @@ export default function FinQuest() {
               </Card>
 
               {/* Achievements */}
-              <Card className="border-neon-pink/30 bg-black/40 backdrop-blur-xl shadow-neon-pink">
+              <Card className="border-primary/30 glassmorphic">
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-neon-pink mb-4 flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
                     <Trophy className="h-5 w-5" />
                     Achievements
                   </h3>
@@ -1024,20 +1024,20 @@ export default function FinQuest() {
                         <div
                           key={achievement.id}
                           data-testid={`achievement-${achievement.id}`}
-                          className={`p-3 rounded-lg border ${
+                          className={`p-3 rounded-lg border interactive-hover achievement-pop ${
                             achievement.unlocked
-                              ? 'border-neon-lime/50 bg-neon-lime/10'
-                              : 'border-gray-700 bg-black/20 opacity-50'
+                              ? 'border-primary/50 glassmorphic'
+                              : 'border-primary/20 bg-foreground/5 opacity-60'
                           }`}
                         >
                           <div className="flex items-start gap-3">
                             <span className="text-2xl">{achievement.icon}</span>
                             <div className="flex-1">
-                              <p className="font-semibold text-sm">{achievement.title}</p>
-                              <p className="text-xs text-gray-400">{achievement.description}</p>
+                              <p className="font-semibold text-sm text-foreground">{achievement.title}</p>
+                              <p className="text-xs text-foreground/60">{achievement.description}</p>
                             </div>
                             {achievement.unlocked && (
-                              <Check className="h-4 w-4 text-neon-lime" />
+                              <Check className="h-4 w-4 text-primary" />
                             )}
                           </div>
                         </div>
@@ -1049,9 +1049,9 @@ export default function FinQuest() {
 
               {/* Leaderboard */}
               {leaderboard.length > 0 && (
-                <Card className="border-neon-cyan/30 bg-black/40 backdrop-blur-xl shadow-neon-cyan">
+                <Card className="border-primary/30 glassmorphic">
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-neon-cyan mb-4 flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
                       <Award className="h-5 w-5" />
                       Top Players
                     </h3>
@@ -1061,23 +1061,23 @@ export default function FinQuest() {
                         <div
                           key={idx}
                           data-testid={`leaderboard-${idx}`}
-                          className={`p-3 rounded-lg border ${
+                          className={`p-3 rounded-lg border interactive-hover ${
                             idx === 0
-                              ? 'border-neon-lime/50 bg-neon-lime/10'
-                              : 'border-gray-700 bg-black/20'
+                              ? 'border-primary/50 glassmorphic neon-glow'
+                              : 'border-primary/20 glassmorphic'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <span className="text-lg font-bold text-gray-400">
+                              <span className="text-lg font-bold text-primary">
                                 #{idx + 1}
                               </span>
                               <div>
-                                <p className="font-semibold text-sm">{player.name}</p>
-                                <p className="text-xs text-gray-400">Level {player.level}</p>
+                                <p className="font-semibold text-sm text-foreground">{player.name}</p>
+                                <p className="text-xs text-foreground/60">Level {player.level}</p>
                               </div>
                             </div>
-                            <span className="text-sm font-bold text-neon-lime">
+                            <span className="text-sm font-bold text-primary">
                               ₹{Math.round(player.score).toLocaleString('en-IN')}
                             </span>
                           </div>
@@ -1094,10 +1094,10 @@ export default function FinQuest() {
 
       {/* Aura Twin Modal */}
       <Dialog open={showAuraTwin} onOpenChange={setShowAuraTwin}>
-        <DialogContent className="max-w-2xl h-[600px] flex flex-col border-primary/30 bg-black/50 backdrop-blur-xl">
+        <DialogContent className="max-w-2xl h-[600px] flex flex-col border-primary/30 glassmorphic modal-slide">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-primary flex items-center gap-2">
-              <Sparkles className="h-5 w-5" />
+              <Sparkles className="h-5 w-5 glow" />
               Aura Twin - Your AI Financial Mentor
             </DialogTitle>
           </DialogHeader>
@@ -1107,19 +1107,19 @@ export default function FinQuest() {
               {gameState.chatHistory.map((msg, idx) => (
                 <div
                   key={idx}
-                  className={`p-3 rounded-lg ${
+                  className={`p-3 rounded-lg border interactive-hover ${
                     msg.role === 'ai'
-                      ? 'bg-primary/10 border border-primary/30'
-                      : 'bg-primary/20 border border-primary/40 ml-4'
+                      ? 'border-primary/30 glassmorphic'
+                      : 'border-primary/40 bg-primary/15 ml-4 glassmorphic'
                   }`}
                   data-testid={`chat-message-${idx}`}
                 >
-                  <p className="text-sm whitespace-pre-line text-gray-200">{msg.content}</p>
+                  <p className="text-sm whitespace-pre-line text-foreground">{msg.content}</p>
                 </div>
               ))}
               {aiLoading && (
-                <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
-                  <p className="text-sm text-primary animate-pulse">Aura Twin is thinking...</p>
+                <div className="p-3 rounded-lg border border-primary/30 glassmorphic">
+                  <p className="text-sm text-primary animate-pulse shimmer">Aura Twin is thinking...</p>
                 </div>
               )}
               <div ref={chatEndRef} />
@@ -1133,14 +1133,14 @@ export default function FinQuest() {
               onChange={(e) => setChatInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && sendAIMessage(chatInput)}
               placeholder="Ask Aura Twin..."
-              className="bg-black/60 border-primary/50 text-white placeholder:text-gray-500 focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="interactive-hover"
             />
             <Button
               data-testid="button-send-chat"
               size="icon"
               onClick={() => sendAIMessage(chatInput)}
               disabled={aiLoading}
-              className="bg-primary text-white hover:bg-primary/90"
+              className="neon-glow interactive-hover"
             >
               <Send className="h-4 w-4" />
             </Button>
@@ -1150,16 +1150,16 @@ export default function FinQuest() {
 
       {/* Settings Modal */}
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
-        <DialogContent className="bg-black border-neon-cyan/50 text-white">
+        <DialogContent className="border-primary/30 glassmorphic modal-slide">
           <DialogHeader>
-            <DialogTitle className="text-neon-cyan">Settings</DialogTitle>
+            <DialogTitle className="text-primary">Settings</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Button
               data-testid="button-export-chat"
               onClick={exportChat}
               variant="outline"
-              className="w-full border-neon-purple/50 text-neon-purple hover:bg-neon-purple/20"
+              className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
             >
               <Download className="mr-2 h-4 w-4" />
               Export Chat History
@@ -1171,7 +1171,7 @@ export default function FinQuest() {
                 setShowGoals(true);
               }}
               variant="outline"
-              className="w-full border-neon-lime/50 text-neon-lime hover:bg-neon-lime/20"
+              className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
             >
               <Target className="mr-2 h-4 w-4" />
               Set Financial Goal
@@ -1180,7 +1180,7 @@ export default function FinQuest() {
               data-testid="button-reset-game"
               onClick={resetGame}
               variant="outline"
-              className="w-full border-neon-pink/50 text-neon-pink hover:bg-neon-pink/20"
+              className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
             >
               <RotateCcw className="mr-2 h-4 w-4" />
               Reset Game
@@ -1190,7 +1190,7 @@ export default function FinQuest() {
                 data-testid="button-save-game"
                 onClick={() => saveGameState(false)}
                 variant="outline"
-                className="w-full border-neon-cyan/50 text-neon-cyan hover:bg-neon-cyan/20"
+                className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
               >
                 <Download className="mr-2 h-4 w-4" />
                 Save Game Now
@@ -1200,7 +1200,7 @@ export default function FinQuest() {
               data-testid="button-logout"
               onClick={handleLogout}
               variant="outline"
-              className="w-full border-gray-500 text-gray-400 hover:bg-gray-800"
+              className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
             >
               Logout
             </Button>
@@ -1210,13 +1210,13 @@ export default function FinQuest() {
 
       {/* Goals Modal */}
       <Dialog open={showGoals} onOpenChange={setShowGoals}>
-        <DialogContent className="bg-black border-neon-lime/50 text-white">
+        <DialogContent className="border-primary/30 glassmorphic modal-slide">
           <DialogHeader>
-            <DialogTitle className="text-neon-lime">Set Your Financial Goal</DialogTitle>
+            <DialogTitle className="text-primary">Set Your Financial Goal</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="goalAmount">Target Net Worth (₹)</Label>
+              <Label htmlFor="goalAmount" className="text-foreground">Target Net Worth (₹)</Label>
               <Input
                 id="goalAmount"
                 data-testid="input-goal-amount"
@@ -1224,7 +1224,7 @@ export default function FinQuest() {
                 value={goalAmount}
                 onChange={(e) => setGoalAmount(e.target.value)}
                 placeholder="e.g., 5000000"
-                className="mt-2 bg-black/60 border-neon-lime/50 text-white"
+                className="mt-2 interactive-hover"
               />
             </div>
             <Button
@@ -1236,7 +1236,7 @@ export default function FinQuest() {
                 });
                 setShowGoals(false);
               }}
-              className="w-full bg-neon-lime text-black hover:bg-neon-lime/90"
+              className="w-full neon-glow interactive-hover"
             >
               Save Goal
             </Button>
@@ -1247,14 +1247,14 @@ export default function FinQuest() {
       {/* Game Over Modal */}
       {gameOver && (
         <Dialog open={!!gameOver} onOpenChange={() => setGameOver(null)}>
-          <DialogContent className={`bg-black border-${gameOver === 'win' ? 'neon-lime' : 'neon-pink'}/50 text-white`}>
+          <DialogContent className="border-primary/30 glassmorphic modal-slide">
             <DialogHeader>
-              <DialogTitle className={`text-2xl text-${gameOver === 'win' ? 'neon-lime' : 'neon-pink'}`}>
-                {gameOver === 'win' ? '🎉 Financial Freedom Achieved!' : '💀 Bankruptcy'}
+              <DialogTitle className="text-2xl text-primary">
+                {gameOver === 'win' ? 'Financial Freedom Achieved!' : 'Bankruptcy'}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <p className="text-center">
+              <p className="text-center text-foreground">
                 {gameOver === 'win'
                   ? `Congratulations! You've reached ₹${Math.round(gameState.netWorth).toLocaleString('en-IN')} net worth and achieved financial freedom!`
                   : 'Your net worth has fallen too low. Time to start fresh and learn from your mistakes.'}
@@ -1265,7 +1265,7 @@ export default function FinQuest() {
                   setGameOver(null);
                   resetGame();
                 }}
-                className={`w-full bg-${gameOver === 'win' ? 'neon-lime' : 'neon-pink'} text-black hover:opacity-90`}
+                className="w-full neon-glow interactive-hover achievement-pop"
               >
                 Play Again
               </Button>
