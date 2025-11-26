@@ -887,7 +887,7 @@ export default function FinQuest() {
     return <Auth onAuthSuccess={handleAuthSuccess} />;
   }
 
-  const avatarMap: Record<AvatarType, string> = {
+  const avatarMap: Record<string, string> = {
     female1: avatar1,
     male1: avatar2,
     female2: avatar3,
@@ -897,15 +897,15 @@ export default function FinQuest() {
   };
 
   const AVATARS = [
-    { id: 'female1' as AvatarType, name: 'Priya' },
-    { id: 'male1' as AvatarType, name: 'Arjun' },
-    { id: 'female2' as AvatarType, name: 'Ananya' },
-    { id: 'male2' as AvatarType, name: 'Rohan' },
-    { id: 'female3' as AvatarType, name: 'Sophia' },
-    { id: 'male3' as AvatarType, name: 'Vikram' },
+    { id: 'female1', name: 'Priya' },
+    { id: 'male1', name: 'Arjun' },
+    { id: 'female2', name: 'Ananya' },
+    { id: 'male2', name: 'Rohan' },
+    { id: 'female3', name: 'Sophia' },
+    { id: 'male3', name: 'Vikram' },
   ];
 
-  const getAvatarUrl = (avatarId: AvatarType) => avatarMap[avatarId];
+  const getAvatarUrl = (avatarId: string) => avatarMap[avatarId];
 
   if (onboarding.active) {
     const selectedAvatar = AVATARS.find(a => a.id === onboarding.avatar);
