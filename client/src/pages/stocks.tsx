@@ -181,16 +181,18 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
   const portfolioValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
     ? gameState.stockHoldings.reduce((total, holding) => {
         const currentStock = stocks.find(s => s.symbol === holding.symbol);
-        const currentPrice = currentStock?.price || holding.buyPrice;
-        return total + (holding.shares * currentPrice);
+        const currentPrice = (currentStock?.price && currentStock.price > 0) ? currentStock.price : holding.buyPrice;
+        const value = holding.shares * currentPrice;
+        return total + (isNaN(value) ? 0 : value);
       }, 0)
     : 0;
 
   const portfolioGainLoss = gameState.stockHoldings && gameState.stockHoldings.length > 0
     ? gameState.stockHoldings.reduce((total, holding) => {
         const currentStock = stocks.find(s => s.symbol === holding.symbol);
-        const currentPrice = currentStock?.price || holding.buyPrice;
-        return total + ((currentPrice - holding.buyPrice) * holding.shares);
+        const currentPrice = (currentStock?.price && currentStock.price > 0) ? currentStock.price : holding.buyPrice;
+        const gainLoss = (currentPrice - holding.buyPrice) * holding.shares;
+        return total + (isNaN(gainLoss) ? 0 : gainLoss);
       }, 0)
     : 0;
 
@@ -290,13 +292,13 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                   }`}
                   onClick={() => {
                     setSelectedStock(stock.symbol);
-                    setStockHistory(generateHistoryData(stock.price));
+                    if (stock.price > 0) setStockHistory(generateHistoryData(stock.price));
                   }}
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-bold text-white">{stock.symbol}</h3>
-                      <p className="text-xs text-blue-200/60 mt-1">₹{stock.price.toFixed(2)}</p>
+                      <p className="text-xs text-blue-200/60 mt-1">₹{stock.price > 0 ? stock.price.toFixed(2) : 'Loading...'}</p>
                     </div>
                     <div className="text-right">
                       <div className={`text-sm font-bold flex items-center gap-1 ${
@@ -334,7 +336,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-3 rounded-lg border border-cyan-400/20 bg-cyan-950/30">
                       <p className="text-cyan-200/60 text-xs mb-1">Current Price</p>
-                      <p className="text-2xl font-bold text-cyan-100">₹{selectedStockData.price.toFixed(2)}</p>
+                      <p className="text-2xl font-bold text-cyan-100">₹{selectedStockData.price > 0 ? selectedStockData.price.toFixed(2) : 'Loading...'}</p>
                     </div>
                     <div className={`p-3 rounded-lg border ${
                       selectedStockData.changePercent >= 0
