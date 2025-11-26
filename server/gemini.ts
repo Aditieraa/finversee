@@ -14,7 +14,11 @@ function cleanMarkdown(text: string): string {
     .replace(/\*\*(.*?)\*\*/g, '$1')  // Remove **bold**
     .replace(/\*(.*?)\*/g, '$1')      // Remove *italic*
     .replace(/_(.*?)_/g, '$1')        // Remove _underscore_
-    .replace(/\n\n+/g, '\n');         // Normalize multiple newlines
+    .replace(/\*+/g, '')              // Remove any remaining asterisks
+    .replace(/#+\s*/g, '')            // Remove # headers
+    .replace(/\n-\s*/g, '\n')         // Clean bullet points
+    .replace(/\n\n+/g, '\n')          // Normalize multiple newlines
+    .trim();                          // Trim whitespace
 }
 
 export async function getFinancialAdvice(
