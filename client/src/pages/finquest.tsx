@@ -7,6 +7,18 @@ import Analytics from './analytics';
 import Budget from './budget';
 import Stocks from './stocks';
 import Leaderboard from './leaderboard';
+// @ts-ignore
+import avatar1 from '@assets/generated_images/female_professional_avatar.png';
+// @ts-ignore
+import avatar2 from '@assets/generated_images/male_professional_avatar.png';
+// @ts-ignore
+import avatar3 from '@assets/generated_images/woman_curly_hair_avatar.png';
+// @ts-ignore
+import avatar4 from '@assets/generated_images/man_blonde_hair_avatar.png';
+// @ts-ignore
+import avatar5 from '@assets/generated_images/woman_red_hair_avatar.png';
+// @ts-ignore
+import avatar6 from '@assets/generated_images/man_brown_hair_avatar.png';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,12 +61,14 @@ import {
 } from 'lucide-react';
 
 type Career = 'Engineer' | 'Designer' | 'CA' | 'Doctor' | 'Sales';
+type AvatarType = 'female1' | 'male1' | 'female2' | 'male2' | 'female3' | 'male3';
 
 interface UserProfile {
   name: string;
   career: Career;
   salary: number;
   expenses: number;
+  avatar?: AvatarType;
 }
 
 interface Portfolio {
@@ -162,6 +176,7 @@ export default function FinQuest() {
     career: '' as string,
     salary: '',
     expenses: '',
+    avatar: 'female1' as AvatarType,
   });
 
   const [monthlyDecisions, setMonthlyDecisions] = useState({
@@ -871,7 +886,29 @@ export default function FinQuest() {
     return <Auth onAuthSuccess={handleAuthSuccess} />;
   }
 
+  const avatarMap: Record<AvatarType, string> = {
+    female1: avatar1,
+    male1: avatar2,
+    female2: avatar3,
+    male2: avatar4,
+    female3: avatar5,
+    male3: avatar6,
+  };
+
+  const AVATARS = [
+    { id: 'female1' as AvatarType, name: 'Priya' },
+    { id: 'male1' as AvatarType, name: 'Arjun' },
+    { id: 'female2' as AvatarType, name: 'Ananya' },
+    { id: 'male2' as AvatarType, name: 'Rohan' },
+    { id: 'female3' as AvatarType, name: 'Sophia' },
+    { id: 'male3' as AvatarType, name: 'Vikram' },
+  ];
+
+  const getAvatarUrl = (avatarId: AvatarType) => avatarMap[avatarId];
+
   if (onboarding.active) {
+    const selectedAvatar = AVATARS.find(a => a.id === onboarding.avatar);
+    
     return (
       <div className="min-h-screen w-full flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #1B263B 0%, #2E4057 50%, #4A90E2 100%)' }}>
         <Card className="w-full max-w-2xl border-primary/30 glassmorphic">
@@ -887,14 +924,39 @@ export default function FinQuest() {
             </div>
 
             <div className="space-y-6">
+              {/* Avatar Selection */}
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-primary mb-4">Create Your Avatar</h2>
+                <p className="text-foreground/70 mb-6">Personalize your in-game character and choose your path to financial freedom.</p>
+                
+                {selectedAvatar && (
+                  <div className="mb-6 flex justify-center">
+                    <div className="w-32 h-40 rounded-lg overflow-hidden border-2 border-primary/50 shadow-lg">
+                      <img src={getAvatarUrl(onboarding.avatar)} alt={selectedAvatar.name} className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                  {AVATARS.map((avatar) => (
+                    <button key={avatar.id} onClick={() => setOnboarding(prev => ({ ...prev, avatar: avatar.id }))} className={`p-2 rounded-lg border-2 transition ${onboarding.avatar === avatar.id ? 'border-primary bg-primary/20' : 'border-primary/30 hover:border-primary/60'}`}>
+                      <div className="w-20 h-24 mx-auto rounded overflow-hidden">
+                        <img src={getAvatarUrl(avatar.id)} alt={avatar.name} className="w-full h-full object-cover" />
+                      </div>
+                      <p className="text-xs text-primary mt-1">{avatar.name}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div>
-                <Label htmlFor="name" className="text-primary text-lg">What's your name?</Label>
+                <Label htmlFor="name" className="text-primary text-lg">Avatar Name</Label>
                 <Input
                   id="name"
                   data-testid="input-name"
                   value={onboarding.name}
                   onChange={(e) => setOnboarding(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Enter your name"
+                  placeholder="Enter your avatar name"
                   className="mt-2 interactive-hover"
                 />
               </div>
