@@ -130,15 +130,29 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       return;
     }
 
-    const amount = parseInt(investmentAmount);
+    // IMPORTANT: Always use getDisplayPrice to get actual investable price
     const buyPrice = getDisplayPrice(selectedStockData.price, selectedStockData.symbol);
+    
+    // Validate buyPrice
+    if (isNaN(buyPrice) || !isFinite(buyPrice) || buyPrice <= 0) {
+      alert('Stock price unavailable. Please try again.');
+      return;
+    }
+
+    const amount = parseInt(investmentAmount);
     const shares = amount / buyPrice;
 
-    // Update gameState
+    // Validate shares
+    if (isNaN(shares) || !isFinite(shares) || shares <= 0) {
+      alert('Invalid investment calculation. Please try again.');
+      return;
+    }
+
+    // Create holding with correct buyPrice (NEVER store 0)
     const newHolding: StockHolding = {
       symbol: selectedStockData.symbol,
-      shares,
-      buyPrice: buyPrice,
+      shares: shares,
+      buyPrice: buyPrice,  // Store actual dummy/real price, never 0
       investmentAmount: amount,
       purchaseDate: new Date().toISOString(),
     };
@@ -151,11 +165,18 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     let updatedHoldings;
 
     if (existingIndex >= 0) {
+      // Update existing holding - calculate new average buy price
+      const existingHolding = holdings[existingIndex];
+      const totalInvested = existingHolding.investmentAmount + amount;
+      const totalShares = existingHolding.shares + shares;
+      const avgBuyPrice = totalInvested / totalShares;
+
       updatedHoldings = [...holdings];
       updatedHoldings[existingIndex] = {
-        ...updatedHoldings[existingIndex],
-        shares: updatedHoldings[existingIndex].shares + shares,
-        investmentAmount: updatedHoldings[existingIndex].investmentAmount + amount,
+        ...existingHolding,
+        shares: totalShares,
+        buyPrice: avgBuyPrice,  // Average price
+        investmentAmount: totalInvested,
       };
     } else {
       updatedHoldings = [...holdings, newHolding];
@@ -171,12 +192,6 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       portfolio: { ...gameState.portfolio, stocks: newPortfolioStocks },
       stockHoldings: updatedHoldings,
     });
-
-    // Validate shares before saving
-    if (isNaN(shares) || !isFinite(shares) || shares <= 0) {
-      alert('Invalid investment calculation. Please try again.');
-      return;
-    }
 
     setSuccessMessage(`✓ Invested ₹${amount} in ${selectedStockData.symbol}! You now own ${shares.toFixed(2)} shares @ ₹${buyPrice.toFixed(2)}`);
     setInvestmentAmount('');
@@ -206,22 +221,34 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
-  // Calculate portfolio values with dummy prices
+  // Calculate portfolio values with PROPER validation
   const portfolioValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
     ? gameState.stockHoldings.reduce((total, holding) => {
+        // Ensure buyPrice is valid
+        const buyPrice = isNaN(holding.buyPrice) || holding.buyPrice <= 0 ? getDummyPrice(holding.symbol) : holding.buyPrice;
+        
+        // Get current price
         const currentStock = stocks.find(s => s.symbol === holding.symbol);
         const currentPrice = currentStock ? getDisplayPrice(currentStock.price, holding.symbol) : getDummyPrice(holding.symbol);
+        
+        // Calculate value
         const value = holding.shares * currentPrice;
-        return total + (isNaN(value) ? 0 : value);
+        return total + (isNaN(value) || !isFinite(value) ? 0 : value);
       }, 0)
     : 0;
 
   const portfolioGainLoss = gameState.stockHoldings && gameState.stockHoldings.length > 0
     ? gameState.stockHoldings.reduce((total, holding) => {
+        // Ensure buyPrice is valid (never 0)
+        const buyPrice = isNaN(holding.buyPrice) || holding.buyPrice <= 0 ? getDummyPrice(holding.symbol) : holding.buyPrice;
+        
+        // Get current price
         const currentStock = stocks.find(s => s.symbol === holding.symbol);
         const currentPrice = currentStock ? getDisplayPrice(currentStock.price, holding.symbol) : getDummyPrice(holding.symbol);
-        const gainLoss = (currentPrice - holding.buyPrice) * holding.shares;
-        return total + (isNaN(gainLoss) ? 0 : gainLoss);
+        
+        // Calculate gain/loss: (current - buy) * shares
+        const gainLoss = (currentPrice - buyPrice) * holding.shares;
+        return total + (isNaN(gainLoss) || !isFinite(gainLoss) ? 0 : gainLoss);
       }, 0)
     : 0;
 
