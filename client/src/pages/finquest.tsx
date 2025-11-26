@@ -927,7 +927,7 @@ export default function FinQuest() {
             <div className="space-y-6">
               {/* Avatar Selection */}
               <div className="text-center">
-                <h2 className="text-2xl font-bold text-primary mb-4">Create Your Avatar</h2>
+                <h2 className="text-2xl font-bold text-primary mb-4">Choose Your Avatar</h2>
                 <p className="text-foreground/70 mb-6">Personalize your in-game character and choose your path to financial freedom.</p>
                 
                 {selectedAvatar && (
