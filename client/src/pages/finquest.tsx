@@ -956,7 +956,7 @@ export default function FinQuest() {
                   data-testid="input-name"
                   value={onboarding.name}
                   onChange={(e) => setOnboarding(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Enter your avatar name"
+                  placeholder="Enter your name"
                   className="mt-2 interactive-hover"
                 />
               </div>
