@@ -139,7 +139,9 @@ export default function FinQuest() {
     active: true,
     step: 1,
     name: '',
-    career: '' as Career | '',
+    career: '' as string,
+    salary: '',
+    expenses: '',
   });
 
   const [monthlyDecisions, setMonthlyDecisions] = useState({
@@ -337,24 +339,35 @@ export default function FinQuest() {
   };
 
   const completeOnboarding = async () => {
-    if (!onboarding.name || !onboarding.career) {
+    if (!onboarding.name || !onboarding.career || !onboarding.salary || !onboarding.expenses) {
       toast({
         title: 'Missing Information',
-        description: 'Please enter your name and select a career',
+        description: 'Please enter your name, profession, salary, and expenses',
         variant: 'destructive',
       });
       return;
     }
 
-    const careerData = CAREER_DATA[onboarding.career];
+    const salary = parseInt(onboarding.salary) || 0;
+    const expenses = parseInt(onboarding.expenses) || 0;
+
+    if (salary <= 0 || expenses < 0 || expenses > salary) {
+      toast({
+        title: 'Invalid Values',
+        description: 'Please enter valid salary and expenses (expenses cannot exceed salary)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const profile: UserProfile = {
       name: onboarding.name,
-      career: onboarding.career,
-      salary: careerData.salary,
-      expenses: careerData.expenses,
+      career: onboarding.career as Career,
+      salary: salary,
+      expenses: expenses,
     };
 
-    const initialCash = careerData.salary - careerData.expenses;
+    const initialCash = salary - expenses;
 
     if (userId && userId !== 'guest') {
       try {
@@ -365,6 +378,7 @@ export default function FinQuest() {
             id: userId,
             name: onboarding.name,
             career: onboarding.career,
+            email: undefined,
             updated_at: new Date().toISOString(),
           });
         
@@ -386,7 +400,7 @@ export default function FinQuest() {
       chatHistory: [
         {
           role: 'ai' as const,
-          content: `Namaste ${onboarding.name}! Welcome to your financial freedom journey. I'm Aura Twin, your AI financial mentor. As a ${onboarding.career}, you're starting with ₹${careerData.salary.toLocaleString('en-IN')} monthly salary. After expenses of ₹${careerData.expenses.toLocaleString('en-IN')}, you have ₹${initialCash.toLocaleString('en-IN')} to invest. Let's build your wealth together! 🌟`,
+          content: `Namaste ${onboarding.name}! Welcome to your financial freedom journey. I'm Aura Twin, your AI financial mentor. As a ${onboarding.career}, you're starting with ₹${salary.toLocaleString('en-IN')} monthly salary. After expenses of ₹${expenses.toLocaleString('en-IN')}, you have ₹${initialCash.toLocaleString('en-IN')} to invest. Let's build your wealth together! 🌟`,
           timestamp: Date.now(),
         },
       ],
@@ -399,7 +413,7 @@ export default function FinQuest() {
     };
 
     setGameState(newGameState);
-    setOnboarding({ active: false, step: 1, name: '', career: '' });
+    setOnboarding({ active: false, step: 1, name: '', career: '', salary: '', expenses: '' });
 
     // Save game state immediately after onboarding to prevent data loss
     if (userId && userId !== 'guest') {
@@ -865,41 +879,51 @@ export default function FinQuest() {
               </div>
 
               <div>
-                <Label htmlFor="career" className="text-primary text-lg">Choose your career path</Label>
-                <Select
+                <Label htmlFor="career" className="text-primary text-lg">Your Profession</Label>
+                <Input
+                  id="career"
+                  data-testid="input-profession"
                   value={onboarding.career}
-                  onValueChange={(value) => setOnboarding(prev => ({ ...prev, career: value as Career }))}
-                >
-                  <SelectTrigger 
-                    id="career"
-                    data-testid="select-career"
-                    className="mt-2 interactive-hover"
-                  >
-                    <SelectValue placeholder="Select a career" />
-                  </SelectTrigger>
-                  <SelectContent className="border-primary/50">
-                    {Object.entries(CAREER_DATA).map(([career, data]) => (
-                      <SelectItem 
-                        key={career} 
-                        value={career}
-                        className="focus:bg-primary/20"
-                        data-testid={`option-career-${career.toLowerCase()}`}
-                      >
-                        {career} - ₹{data.salary.toLocaleString('en-IN')}/month
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onChange={(e) => setOnboarding(prev => ({ ...prev, career: e.target.value }))}
+                  placeholder="e.g., Software Engineer, Doctor, Teacher"
+                  className="mt-2 interactive-hover"
+                />
               </div>
 
-              {onboarding.career && (
+              <div>
+                <Label htmlFor="salary" className="text-primary text-lg">Monthly Salary (₹)</Label>
+                <Input
+                  id="salary"
+                  data-testid="input-salary"
+                  type="number"
+                  value={onboarding.salary}
+                  onChange={(e) => setOnboarding(prev => ({ ...prev, salary: e.target.value }))}
+                  placeholder="Enter your monthly salary"
+                  className="mt-2 interactive-hover"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="expenses" className="text-primary text-lg">Monthly Expenses (₹)</Label>
+                <Input
+                  id="expenses"
+                  data-testid="input-expenses"
+                  type="number"
+                  value={onboarding.expenses}
+                  onChange={(e) => setOnboarding(prev => ({ ...prev, expenses: e.target.value }))}
+                  placeholder="Enter your monthly expenses"
+                  className="mt-2 interactive-hover"
+                />
+              </div>
+
+              {onboarding.salary && onboarding.expenses && (
                 <div className="p-4 rounded-lg border border-neon-purple/30 bg-neon-purple/10 animate-slide-in">
                   <p className="text-sm" style={{ color: '#E6F1FF' }}>
-                    <span className="text-neon-lime font-semibold">Monthly Salary:</span> ₹{CAREER_DATA[onboarding.career].salary.toLocaleString('en-IN')}
+                    <span className="text-neon-lime font-semibold">Monthly Salary:</span> ₹{parseInt(onboarding.salary || '0').toLocaleString('en-IN')}
                     <br />
-                    <span className="text-neon-pink font-semibold">Monthly Expenses:</span> ₹{CAREER_DATA[onboarding.career].expenses.toLocaleString('en-IN')}
+                    <span className="text-neon-pink font-semibold">Monthly Expenses:</span> ₹{parseInt(onboarding.expenses || '0').toLocaleString('en-IN')}
                     <br />
-                    <span className="text-neon-cyan font-semibold">Available to Invest:</span> ₹{(CAREER_DATA[onboarding.career].salary - CAREER_DATA[onboarding.career].expenses).toLocaleString('en-IN')}
+                    <span className="text-neon-cyan font-semibold">Available to Invest:</span> ₹{(parseInt(onboarding.salary || '0') - parseInt(onboarding.expenses || '0')).toLocaleString('en-IN')}
                   </p>
                 </div>
               )}
