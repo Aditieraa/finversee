@@ -8,6 +8,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Sparkles, LogIn, UserPlus, Mail, Lock, ArrowRight } from 'lucide-react';
 // @ts-ignore
 import logoPath from '@assets/WhatsApp Image 2025-11-22 at 20.10.06_10cdf760_1764008354697.jpg';
+// @ts-ignore
+import chartIcon from '@assets/generated_images/financial_market_simulation_chart_icon.png';
+// @ts-ignore
+import aiIcon from '@assets/generated_images/ai_mentor_assistant_icon.png';
+// @ts-ignore
+import trophyIcon from '@assets/generated_images/trophy_leaderboard_competition_icon.png';
 
 interface AuthProps {
   onAuthSuccess: (userId: string) => void;
@@ -134,8 +140,8 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
 
             <div className="space-y-4">
               <div className="flex items-start gap-4 group">
-                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-green-400/20 to-blue-400/20 flex items-center justify-center border border-green-400/30 group-hover:border-green-400/60 transition-colors">
-                  <span className="text-2xl">📊</span>
+                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-green-400/20 to-blue-400/20 flex items-center justify-center border border-green-400/30 group-hover:border-green-400/60 transition-colors p-2">
+                  <img src={chartIcon} alt="Market Simulation" className="w-8 h-8 object-contain" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-blue-100 mb-1">Real Market Simulation</h3>
@@ -144,8 +150,8 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
               </div>
 
               <div className="flex items-start gap-4 group">
-                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-purple-400/20 to-pink-400/20 flex items-center justify-center border border-purple-400/30 group-hover:border-purple-400/60 transition-colors">
-                  <span className="text-2xl">🤖</span>
+                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-purple-400/20 to-pink-400/20 flex items-center justify-center border border-purple-400/30 group-hover:border-purple-400/60 transition-colors p-2">
+                  <img src={aiIcon} alt="AI Mentor" className="w-8 h-8 object-contain" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-blue-100 mb-1">AI Mentor - Aura Twin</h3>
@@ -154,8 +160,8 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
               </div>
 
               <div className="flex items-start gap-4 group">
-                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-400/20 to-blue-400/20 flex items-center justify-center border border-cyan-400/30 group-hover:border-cyan-400/60 transition-colors">
-                  <span className="text-2xl">🏆</span>
+                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-400/20 to-blue-400/20 flex items-center justify-center border border-cyan-400/30 group-hover:border-cyan-400/60 transition-colors p-2">
+                  <img src={trophyIcon} alt="Leaderboard" className="w-8 h-8 object-contain" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-blue-100 mb-1">Compete & Learn</h3>
@@ -317,15 +323,21 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
             {/* Additional Info Cards - Mobile */}
             <div className="lg:hidden grid grid-cols-3 gap-3 mt-6">
               <div className="bg-blue-950/40 backdrop-blur border border-blue-400/20 rounded-lg p-3 text-center hover:border-blue-400/40 transition-colors">
-                <div className="text-xl mb-1">📊</div>
+                <div className="flex justify-center mb-2">
+                  <img src={chartIcon} alt="Simulate" className="w-6 h-6 object-contain" />
+                </div>
                 <p className="text-xs text-blue-200/60">Simulate</p>
               </div>
               <div className="bg-purple-950/40 backdrop-blur border border-purple-400/20 rounded-lg p-3 text-center hover:border-purple-400/40 transition-colors">
-                <div className="text-xl mb-1">🤖</div>
+                <div className="flex justify-center mb-2">
+                  <img src={aiIcon} alt="Learn" className="w-6 h-6 object-contain" />
+                </div>
                 <p className="text-xs text-purple-200/60">Learn</p>
               </div>
               <div className="bg-cyan-950/40 backdrop-blur border border-cyan-400/20 rounded-lg p-3 text-center hover:border-cyan-400/40 transition-colors">
-                <div className="text-xl mb-1">🏆</div>
+                <div className="flex justify-center mb-2">
+                  <img src={trophyIcon} alt="Compete" className="w-6 h-6 object-contain" />
+                </div>
                 <p className="text-xs text-cyan-200/60">Compete</p>
               </div>
             </div>
