@@ -1393,24 +1393,33 @@ export default function FinQuest() {
             </DialogTitle>
           </DialogHeader>
 
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-4">
+          <ScrollArea className="flex-1 pr-4 bg-gradient-to-b from-slate-900/30 to-slate-800/20">
+            <div className="space-y-3 p-4">
               {gameState.chatHistory.map((msg, idx) => (
                 <div
                   key={idx}
-                  className={`p-3 rounded-lg border interactive-hover ${
-                    msg.role === 'ai'
-                      ? 'border-primary/30 glassmorphic'
-                      : 'border-primary/40 bg-primary/15 ml-4 glassmorphic'
-                  }`}
+                  className={`flex ${msg.role === 'ai' ? 'justify-start' : 'justify-end'}`}
                   data-testid={`chat-message-${idx}`}
                 >
-                  <p className="text-sm whitespace-pre-line text-foreground">{msg.content}</p>
+                  <div
+                    className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
+                      msg.role === 'ai'
+                        ? 'bg-gradient-to-br from-blue-600/40 to-blue-700/30 border border-blue-400/40 text-blue-50'
+                        : 'bg-gradient-to-br from-purple-600/50 to-purple-700/40 border border-purple-400/40 text-purple-50'
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-line break-words">{msg.content}</p>
+                    <p className={`text-xs mt-2 ${msg.role === 'ai' ? 'text-blue-200/60' : 'text-purple-200/60'}`}>
+                      {new Date(msg.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
                 </div>
               ))}
               {aiLoading && (
-                <div className="p-3 rounded-lg border border-primary/30 glassmorphic">
-                  <p className="text-sm text-primary animate-pulse shimmer">Aura Twin is thinking...</p>
+                <div className="flex justify-start">
+                  <div className="bg-gradient-to-br from-blue-600/40 to-blue-700/30 border border-blue-400/40 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-blue-50 animate-pulse">Aura Twin is thinking...</p>
+                  </div>
                 </div>
               )}
               <div ref={chatEndRef} />
