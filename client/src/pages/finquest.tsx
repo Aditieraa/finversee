@@ -716,7 +716,7 @@ export default function FinQuest() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userMessage,
-          gameState: {
+          context: {
             netWorth: gameState.netWorth,
             portfolio: gameState.portfolio,
             level: gameState.level,
