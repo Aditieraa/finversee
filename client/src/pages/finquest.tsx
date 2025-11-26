@@ -224,7 +224,18 @@ export default function FinQuest() {
           leaderboard_score: gameState.netWorth,
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Save error details:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          userId,
+        });
+        throw error;
+      }
+
+      console.log('✅ Game state saved successfully');
 
       if (!silent) {
         toast({
@@ -238,8 +249,8 @@ export default function FinQuest() {
       console.error('Save error:', error);
       if (!silent) {
         toast({
-          title: 'Save Failed',
-          description: 'Could not save game progress',
+          title: 'Save Warning',
+          description: 'Could not save game state. Your progress may be lost if you close the app.',
           variant: 'destructive',
         });
       }
