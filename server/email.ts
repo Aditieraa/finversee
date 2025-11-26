@@ -16,21 +16,22 @@ interface EmailPayload {
 export async function sendEmail(payload: EmailPayload): Promise<boolean> {
   try {
     if (!MAILCHIMP_API_KEY) {
-      console.log('Mailchimp API key not configured. Skipping email.');
+      console.error('❌ Mailchimp API key not configured.');
       return false;
     }
 
-    const endpoint = `https://${MAILCHIMP_SERVER}.api.mailchimp.com/3.0/messages/send`;
+    console.log(`📧 Attempting to send email to: ${payload.email}`);
 
+    const endpoint = `https://${MAILCHIMP_SERVER}.api.mailchimp.com/3.0/messages/send`;
     const emailContent = generateEmailHTML(payload);
 
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${MAILCHIMP_API_KEY}`,
       },
       body: JSON.stringify({
+        key: MAILCHIMP_API_KEY,
         message: {
           subject: payload.subject,
           from_email: 'noreply@finverse.app',
@@ -47,16 +48,19 @@ export async function sendEmail(payload: EmailPayload): Promise<boolean> {
       }),
     });
 
+    const responseText = await response.text();
+    console.log(`Mailchimp response status: ${response.status}`);
+    console.log(`Mailchimp response body:`, responseText);
+
     if (!response.ok) {
-      const error = await response.text();
-      console.error('Mailchimp email error:', error);
+      console.error(`❌ Mailchimp email error (${response.status}):`, responseText);
       return false;
     }
 
     console.log(`✅ Email sent to ${payload.email}: ${payload.subject}`);
     return true;
   } catch (error) {
-    console.error('Email sending failed:', error);
+    console.error('❌ Email sending failed:', error);
     return false;
   }
 }
