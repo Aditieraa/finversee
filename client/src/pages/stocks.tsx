@@ -3,8 +3,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { TrendingUp, TrendingDown, Search, Plus, Zap } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { TrendingUp, TrendingDown, Search, Plus, Zap, Trash2, AlertCircle } from 'lucide-react';
 import { INDIAN_STOCKS, GLOBAL_STOCKS } from '@/lib/stocks-client';
 
 interface StockData {
@@ -21,7 +21,26 @@ interface StockHistory {
   price: number;
 }
 
-export default function Stocks() {
+interface StockHolding {
+  symbol: string;
+  shares: number;
+  buyPrice: number;
+  investmentAmount: number;
+  purchaseDate: string;
+}
+
+interface GameState {
+  cashBalance: number;
+  portfolio: { stocks: number };
+  stockHoldings: StockHolding[];
+}
+
+interface StocksProps {
+  gameState: GameState;
+  setGameState: (state: any) => void;
+}
+
+export default function Stocks({ gameState, setGameState }: StocksProps) {
   const [selectedStock, setSelectedStock] = useState<string>('RELIANCE');
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [stockHistory, setStockHistory] = useState<StockHistory[]>([]);
@@ -29,6 +48,7 @@ export default function Stocks() {
   const [searchQuery, setSearchQuery] = useState('');
   const [investmentAmount, setInvestmentAmount] = useState('');
   const [activeTab, setActiveTab] = useState<'indian' | 'global'>('indian');
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Fetch real-time stock data
   useEffect(() => {
@@ -46,7 +66,6 @@ export default function Stocks() {
           const data = await response.json();
           setStocks(data);
           
-          // Set selected stock history for chart
           if (data.length > 0) {
             const history = generateHistoryData(data[0].price);
             setStockHistory(history);
@@ -60,11 +79,10 @@ export default function Stocks() {
     };
 
     fetchStocks();
-    const interval = setInterval(fetchStocks, 30000); // Refresh every 30 seconds
+    const interval = setInterval(fetchStocks, 30000);
     return () => clearInterval(interval);
   }, [activeTab]);
 
-  // Generate mock history data for chart visualization
   const generateHistoryData = (currentPrice: number): StockHistory[] => {
     const history = [];
     for (let i = 24; i >= 0; i--) {
@@ -83,6 +101,92 @@ export default function Stocks() {
     s.symbol.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Handle investment
+  const handleInvest = () => {
+    if (!investmentAmount || parseInt(investmentAmount) <= 0 || !selectedStockData) {
+      alert('Please enter a valid investment amount');
+      return;
+    }
+
+    const amount = parseInt(investmentAmount);
+    const shares = amount / selectedStockData.price;
+
+    // Update gameState
+    const newHolding: StockHolding = {
+      symbol: selectedStockData.symbol,
+      shares,
+      buyPrice: selectedStockData.price,
+      investmentAmount: amount,
+      purchaseDate: new Date().toISOString(),
+    };
+
+    // Check if stock already held
+    const existingIndex = gameState.stockHoldings.findIndex(h => h.symbol === selectedStockData.symbol);
+    let updatedHoldings;
+
+    if (existingIndex >= 0) {
+      updatedHoldings = [...gameState.stockHoldings];
+      updatedHoldings[existingIndex] = {
+        ...updatedHoldings[existingIndex],
+        shares: updatedHoldings[existingIndex].shares + shares,
+        investmentAmount: updatedHoldings[existingIndex].investmentAmount + amount,
+      };
+    } else {
+      updatedHoldings = [...gameState.stockHoldings, newHolding];
+    }
+
+    // Update cash balance and portfolio
+    const newCashBalance = Math.max(0, gameState.cashBalance - amount);
+    const newPortfolioStocks = gameState.portfolio.stocks + amount;
+
+    setGameState({
+      ...gameState,
+      cashBalance: newCashBalance,
+      portfolio: { ...gameState.portfolio, stocks: newPortfolioStocks },
+      stockHoldings: updatedHoldings,
+    });
+
+    setSuccessMessage(`✓ Invested ₹${amount} in ${selectedStockData.symbol}! You now own ${shares.toFixed(2)} shares.`);
+    setInvestmentAmount('');
+    
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  // Handle selling stock
+  const handleSell = (holding: StockHolding, currentPrice: number) => {
+    const currentValue = holding.shares * currentPrice;
+    const profitLoss = currentValue - holding.investmentAmount;
+
+    const updatedHoldings = gameState.stockHoldings.filter(h => h.symbol !== holding.symbol);
+    
+    setGameState({
+      ...gameState,
+      cashBalance: gameState.cashBalance + currentValue,
+      portfolio: { ...gameState.portfolio, stocks: gameState.portfolio.stocks - holding.investmentAmount },
+      stockHoldings: updatedHoldings,
+    });
+
+    const profitOrLoss = profitLoss >= 0 ? `Profit: ₹${profitLoss.toFixed(0)}` : `Loss: ₹${Math.abs(profitLoss).toFixed(0)}`;
+    setSuccessMessage(`✓ Sold ${holding.shares.toFixed(2)} shares of ${holding.symbol}. ${profitOrLoss}`);
+    
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  // Calculate portfolio values
+  const portfolioValue = gameState.stockHoldings.reduce((total, holding) => {
+    const currentStock = stocks.find(s => s.symbol === holding.symbol);
+    const currentPrice = currentStock?.price || holding.buyPrice;
+    return total + (holding.shares * currentPrice);
+  }, 0);
+
+  const portfolioGainLoss = gameState.stockHoldings.reduce((total, holding) => {
+    const currentStock = stocks.find(s => s.symbol === holding.symbol);
+    const currentPrice = currentStock?.price || holding.buyPrice;
+    return total + ((currentPrice - holding.buyPrice) * holding.shares);
+  }, 0);
+
+  const chartColors = ['#10B981', '#3B82F6', '#F59E0B', '#8B5CF6', '#6366F1', '#EC4899', '#14B8A6', '#F97316'];
+
   return (
     <div className="space-y-6 pb-6">
       {/* Header */}
@@ -95,6 +199,39 @@ export default function Stocks() {
           <Badge className="bg-green-500/20 text-green-300 border-green-400/30">Live Data</Badge>
         </div>
       </div>
+
+      {/* Portfolio Summary */}
+      {gameState.stockHoldings.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-4">
+            <p className="text-cyan-200/60 text-xs mb-1">Portfolio Value</p>
+            <p className="text-2xl font-bold text-cyan-100">₹{portfolioValue.toFixed(0)}</p>
+          </Card>
+          <Card className={`border-green-400/20 bg-green-950/40 backdrop-blur-sm p-4`}>
+            <p className={`text-xs mb-1 ${portfolioGainLoss >= 0 ? 'text-green-200/60' : 'text-red-200/60'}`}>
+              Gain/Loss
+            </p>
+            <p className={`text-2xl font-bold flex items-center gap-1 ${
+              portfolioGainLoss >= 0 ? 'text-green-300' : 'text-red-300'
+            }`}>
+              {portfolioGainLoss >= 0 ? '+' : ''}₹{portfolioGainLoss.toFixed(0)}
+            </p>
+          </Card>
+          <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-4">
+            <p className="text-purple-200/60 text-xs mb-1">Holdings</p>
+            <p className="text-2xl font-bold text-purple-100">{gameState.stockHoldings.length}</p>
+          </Card>
+        </div>
+      )}
+
+      {successMessage && (
+        <Card className="border-green-400/30 bg-green-950/40 backdrop-blur-sm p-4">
+          <p className="text-green-300 text-sm flex items-center gap-2">
+            <AlertCircle className="h-4 w-4" />
+            {successMessage}
+          </p>
+        </Card>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-2">
@@ -118,7 +255,6 @@ export default function Stocks() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Panel - Stock List */}
         <div className="space-y-4">
-          {/* Search */}
           <Card className="border-blue-400/20 bg-blue-950/40 backdrop-blur-sm p-4">
             <div className="flex items-center gap-2">
               <Search className="h-4 w-4 text-blue-400" />
@@ -131,7 +267,6 @@ export default function Stocks() {
             </div>
           </Card>
 
-          {/* Stock List */}
           <div className="space-y-2">
             {loading ? (
               <Card className="border-blue-400/20 bg-blue-950/40 p-4">
@@ -165,11 +300,6 @@ export default function Stocks() {
                         )}
                         {stock.changePercent.toFixed(2)}%
                       </div>
-                      <p className={`text-xs ${
-                        stock.changePercent >= 0 ? 'text-green-300/70' : 'text-red-300/70'
-                      }`}>
-                        {stock.changePercent >= 0 ? '+' : ''}₹{stock.change.toFixed(2)}
-                      </p>
                     </div>
                   </div>
                 </Card>
@@ -271,12 +401,7 @@ export default function Stocks() {
                   )}
 
                   <Button
-                    onClick={() => {
-                      if (investmentAmount) {
-                        alert(`Investment of ₹${investmentAmount} in ${selectedStockData.symbol} added to portfolio!`);
-                        setInvestmentAmount('');
-                      }
-                    }}
+                    onClick={handleInvest}
                     disabled={!investmentAmount || parseInt(investmentAmount) <= 0}
                     className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 flex items-center justify-center gap-2"
                   >
@@ -285,7 +410,7 @@ export default function Stocks() {
                   </Button>
 
                   <p className="text-xs text-green-200/50 text-center">
-                    Note: This adds real market data to your portfolio simulation
+                    Cash available: ₹{gameState.cashBalance.toFixed(0)}
                   </p>
                 </div>
               </Card>
@@ -294,7 +419,48 @@ export default function Stocks() {
         </div>
       </div>
 
-      {/* All Stocks Comparison */}
+      {/* Your Stock Holdings */}
+      {gameState.stockHoldings.length > 0 && (
+        <Card className="border-indigo-400/30 bg-indigo-950/40 backdrop-blur-sm p-6">
+          <h3 className="text-lg font-bold text-white mb-4">Your Stock Holdings</h3>
+          <div className="space-y-3">
+            {gameState.stockHoldings.map((holding) => {
+              const currentStock = stocks.find(s => s.symbol === holding.symbol);
+              const currentPrice = currentStock?.price || holding.buyPrice;
+              const currentValue = holding.shares * currentPrice;
+              const gainLoss = currentValue - holding.investmentAmount;
+              const gainLossPercent = (gainLoss / holding.investmentAmount) * 100;
+
+              return (
+                <div key={holding.symbol} className="p-4 border border-indigo-400/20 bg-indigo-900/20 rounded-lg flex items-center justify-between">
+                  <div className="flex-1">
+                    <h4 className="font-bold text-white">{holding.symbol}</h4>
+                    <p className="text-xs text-indigo-200/60 mt-1">
+                      {holding.shares.toFixed(2)} shares @ ₹{holding.buyPrice.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="text-right flex-1">
+                    <p className="text-white font-bold">₹{currentValue.toFixed(0)}</p>
+                    <p className={`text-sm ${gainLoss >= 0 ? 'text-green-300' : 'text-red-300'}`}>
+                      {gainLoss >= 0 ? '+' : ''}₹{gainLoss.toFixed(0)} ({gainLossPercent.toFixed(1)}%)
+                    </p>
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => handleSell(holding, currentPrice)}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
+      {/* Top Performers */}
       <Card className="border-yellow-400/30 bg-yellow-950/40 backdrop-blur-sm p-6">
         <h3 className="text-lg font-bold text-white mb-4">Top Performers - {activeTab === 'indian' ? 'Indian' : 'Global'} Stocks</h3>
         <ResponsiveContainer width="100%" height={300}>

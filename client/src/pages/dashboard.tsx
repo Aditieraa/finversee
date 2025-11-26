@@ -46,6 +46,12 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
     }));
   };
 
+  const calculateStockPortfolioValue = () => {
+    return gameState.stockHoldings?.reduce((total, holding) => {
+      return total + (holding.shares * holding.buyPrice);
+    }, 0) || 0;
+  };
+
   const generateTrendData = () => {
     const trends = [];
     const currentIncome = gameState.userProfile?.salary || 0;
@@ -72,6 +78,7 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
   const categoryData = generateCategoryData();
   const trendData = generateTrendData();
   const spendingData = generateSpendingPattern();
+  const stockPortfolioValue = calculateStockPortfolioValue();
 
   const totalPortfolio = Object.values(gameState.portfolio).reduce((a: number, b: number) => a + b, 0);
   const growthRate = gameState.netWorth > 0 ? ((gameState.netWorth - (gameState.userProfile?.salary - gameState.userProfile?.expenses || 0)) / (gameState.userProfile?.salary - gameState.userProfile?.expenses || 1) * 100) : 0;
@@ -107,8 +114,8 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-cyan-200/60 mb-1">Portfolio Value</p>
-              <p className="text-2xl font-bold text-cyan-100">₹{Math.round(totalPortfolio).toLocaleString('en-IN')}</p>
-              <p className="text-xs text-cyan-200/40 mt-2">Investments total</p>
+              <p className="text-2xl font-bold text-cyan-100">₹{Math.round(totalPortfolio + calculateStockPortfolioValue()).toLocaleString('en-IN')}</p>
+              <p className="text-xs text-cyan-200/40 mt-2">Investments total (incl. stocks)</p>
             </div>
             <Target className="h-8 w-8 text-cyan-400/50" />
           </div>

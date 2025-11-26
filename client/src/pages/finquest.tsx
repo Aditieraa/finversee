@@ -77,6 +77,14 @@ interface Achievement {
   icon: string;
 }
 
+interface StockHolding {
+  symbol: string;
+  shares: number;
+  buyPrice: number;
+  investmentAmount: number;
+  purchaseDate: string;
+}
+
 interface GameState {
   currentMonth: number;
   currentYear: number;
@@ -84,6 +92,7 @@ interface GameState {
   netWorth: number;
   userProfile: UserProfile | null;
   portfolio: Portfolio;
+  stockHoldings: StockHolding[];
   chatHistory: ChatMessage[];
   xp: number;
   level: number;
@@ -134,6 +143,7 @@ export default function FinQuest() {
     netWorth: 0,
     userProfile: null,
     portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
+    stockHoldings: [],
     chatHistory: [],
     xp: 0,
     level: 1,
@@ -1286,7 +1296,7 @@ export default function FinQuest() {
 
         {/* Stocks View */}
         {currentView === 'stocks' && (
-          <Stocks />
+          <Stocks gameState={gameState} setGameState={setGameState} />
         )}
       </div>
 
