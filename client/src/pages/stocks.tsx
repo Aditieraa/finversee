@@ -252,7 +252,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       }, 0)
     : 0;
 
-  const chartColors = ['#A5D6A7', '#FFD54F', '#FFAB91', '#CE93D8', '#80DEEA', '#FF6B9D', '#81C784', '#FFB74D'];
+  const chartColors = ['#A5D6A7', '#FFD54F', '#FFAB91', '#CE93D8', '#80DEEA', '#BA68C8', '#81C784', '#FFB74D'];
 
   return (
     <div className="space-y-6 pb-6">
@@ -424,13 +424,13 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                     <XAxis stroke="rgba(149, 165, 166, 0.6)" />
                     <YAxis stroke="rgba(149, 165, 166, 0.6)" />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(255, 107, 157, 0.3)' }}
+                      contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(186, 104, 200, 0.3)' }}
                       formatter={(value: any) => `₹${value.toFixed(2)}`}
                     />
                     <Line
                       type="monotone"
                       dataKey="price"
-                      stroke="#FF6B9D"
+                      stroke="#BA68C8"
                       strokeWidth={2.5}
                       dot={false}
                     />

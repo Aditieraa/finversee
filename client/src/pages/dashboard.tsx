@@ -15,7 +15,7 @@ const CHART_COLORS = {
   gold: '#FFAB91',
   realEstate: '#CE93D8',
   savings: '#80DEEA',
-  income: '#FF6B9D',
+  income: '#BA68C8',
   expenses: '#FF8C42',
   net: '#64B5F6',
 };
@@ -146,7 +146,7 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
               <YAxis stroke="rgba(149, 165, 166, 0.6)" />
               <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
               <Legend />
-              <Line type="monotone" dataKey="income" stroke="#FF6B9D" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="income" stroke="#BA68C8" strokeWidth={2.5} />
               <Line type="monotone" dataKey="expenses" stroke="#FF8C42" strokeWidth={2.5} />
               <Line type="monotone" dataKey="net" stroke="#64B5F6" strokeWidth={2.5} />
             </LineChart>
@@ -214,7 +214,7 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
               <XAxis stroke="rgba(149, 165, 166, 0.6)" />
               <YAxis stroke="rgba(149, 165, 166, 0.6)" />
               <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(46, 204, 113, 0.3)' }} />
-              <Area type="monotone" dataKey="spending" stroke="#FF6B9D" fill="rgba(255, 107, 157, 0.15)" />
+              <Area type="monotone" dataKey="spending" stroke="#BA68C8" fill="rgba(186, 104, 200, 0.15)" />
             </AreaChart>
           </ResponsiveContainer>
         </Card>
@@ -270,7 +270,7 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
             <YAxis stroke="rgba(149, 165, 166, 0.6)" />
             <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
             <Legend />
-            <Bar dataKey="income" fill="#FF6B9D" />
+            <Bar dataKey="income" fill="#BA68C8" />
             <Bar dataKey="expenses" fill="#FF8C42" />
             <Bar dataKey="savings" fill="#64B5F6" />
           </BarChart>

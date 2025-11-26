@@ -8,7 +8,7 @@ interface AnalyticsProps {
   gameState: any;
 }
 
-const COLORS = ['#A5D6A7', '#FFD54F', '#FFAB91', '#CE93D8', '#80DEEA', '#FF6B9D'];
+const COLORS = ['#A5D6A7', '#FFD54F', '#FFAB91', '#CE93D8', '#80DEEA', '#BA68C8'];
 
 export default function Analytics({ gameState }: AnalyticsProps) {
   // Generate trend data
@@ -182,7 +182,7 @@ export default function Analytics({ gameState }: AnalyticsProps) {
               <YAxis stroke="rgba(149, 165, 166, 0.6)" />
               <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
               <Legend />
-              <Line type="monotone" dataKey="income" stroke="#FF6B9D" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="income" stroke="#BA68C8" strokeWidth={2.5} />
               <Line type="monotone" dataKey="expenses" stroke="#FF8C42" strokeWidth={2.5} />
               <Line type="monotone" dataKey="savings" stroke="#64B5F6" strokeWidth={2.5} />
             </LineChart>
@@ -228,7 +228,7 @@ export default function Analytics({ gameState }: AnalyticsProps) {
             <YAxis stroke="rgba(149, 165, 166, 0.6)" />
             <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
             <Legend />
-            <Bar dataKey="income" fill="#FF6B9D" />
+            <Bar dataKey="income" fill="#BA68C8" />
             <Bar dataKey="expenses" fill="#FF8C42" />
             <Bar dataKey="savings" fill="#64B5F6" />
           </BarChart>
