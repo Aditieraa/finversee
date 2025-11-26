@@ -347,14 +347,19 @@ export default function FinQuest() {
 
     if (userId && userId !== 'guest') {
       try {
-        await supabase
+        // First try to upsert (insert or update) the profile
+        const { error: upsertError } = await supabase
           .from('profiles')
-          .update({
+          .upsert({
+            id: userId,
             name: onboarding.name,
             career: onboarding.career,
             updated_at: new Date().toISOString(),
-          })
-          .eq('id', userId);
+          });
+        
+        if (upsertError) {
+          console.error('Error upserting profile:', upsertError);
+        }
       } catch (error) {
         console.error('Error updating profile:', error);
       }
