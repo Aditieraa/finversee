@@ -40,6 +40,28 @@ interface StocksProps {
   setGameState: (state: any) => void;
 }
 
+// Dummy prices for when API hasn't loaded yet
+const getDummyPrice = (symbol: string): number => {
+  const dummyPrices: Record<string, number> = {
+    RELIANCE: 2800,
+    INFY: 3000,
+    TCS: 3500,
+    HDFC: 1600,
+    ICICI: 900,
+    AAPL: 180,
+    GOOGL: 140,
+    MSFT: 420,
+    AMZN: 190,
+    TSLA: 250,
+  };
+  return dummyPrices[symbol] || 100;
+};
+
+// Get display price (real or dummy)
+const getDisplayPrice = (price: number, symbol: string): number => {
+  return price > 0 ? price : getDummyPrice(symbol);
+};
+
 export default function Stocks({ gameState, setGameState }: StocksProps) {
   const [selectedStock, setSelectedStock] = useState<string>('RELIANCE');
   const [stocks, setStocks] = useState<StockData[]>([]);
@@ -177,11 +199,11 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
-  // Calculate portfolio values
+  // Calculate portfolio values with dummy prices
   const portfolioValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
     ? gameState.stockHoldings.reduce((total, holding) => {
         const currentStock = stocks.find(s => s.symbol === holding.symbol);
-        const currentPrice = (currentStock?.price && currentStock.price > 0) ? currentStock.price : holding.buyPrice;
+        const currentPrice = currentStock ? getDisplayPrice(currentStock.price, holding.symbol) : getDummyPrice(holding.symbol);
         const value = holding.shares * currentPrice;
         return total + (isNaN(value) ? 0 : value);
       }, 0)
@@ -190,7 +212,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
   const portfolioGainLoss = gameState.stockHoldings && gameState.stockHoldings.length > 0
     ? gameState.stockHoldings.reduce((total, holding) => {
         const currentStock = stocks.find(s => s.symbol === holding.symbol);
-        const currentPrice = (currentStock?.price && currentStock.price > 0) ? currentStock.price : holding.buyPrice;
+        const currentPrice = currentStock ? getDisplayPrice(currentStock.price, holding.symbol) : getDummyPrice(holding.symbol);
         const gainLoss = (currentPrice - holding.buyPrice) * holding.shares;
         return total + (isNaN(gainLoss) ? 0 : gainLoss);
       }, 0)
@@ -292,13 +314,14 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                   }`}
                   onClick={() => {
                     setSelectedStock(stock.symbol);
-                    if (stock.price > 0) setStockHistory(generateHistoryData(stock.price));
+                    const displayPrice = getDisplayPrice(stock.price, stock.symbol);
+                    setStockHistory(generateHistoryData(displayPrice));
                   }}
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-bold text-white">{stock.symbol}</h3>
-                      <p className="text-xs text-blue-200/60 mt-1">₹{stock.price > 0 ? stock.price.toFixed(2) : 'Loading...'}</p>
+                      <p className="text-xs text-blue-200/60 mt-1">₹{getDisplayPrice(stock.price, stock.symbol).toFixed(2)}</p>
                     </div>
                     <div className="text-right">
                       <div className={`text-sm font-bold flex items-center gap-1 ${
@@ -336,7 +359,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-3 rounded-lg border border-cyan-400/20 bg-cyan-950/30">
                       <p className="text-cyan-200/60 text-xs mb-1">Current Price</p>
-                      <p className="text-2xl font-bold text-cyan-100">₹{selectedStockData.price > 0 ? selectedStockData.price.toFixed(2) : 'Loading...'}</p>
+                      <p className="text-2xl font-bold text-cyan-100">₹{getDisplayPrice(selectedStockData.price, selectedStockData.symbol).toFixed(2)}</p>
                     </div>
                     <div className={`p-3 rounded-lg border ${
                       selectedStockData.changePercent >= 0
@@ -400,20 +423,13 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                     />
                   </div>
 
-                  {investmentAmount && selectedStockData.price > 0 && (
+                  {investmentAmount && (
                     <div className="p-3 rounded-lg border border-green-400/20 bg-green-400/5">
                       <p className="text-green-200/70 text-sm">
                         You will get{' '}
                         <span className="font-bold text-green-300">
-                          {(parseInt(investmentAmount || '0') / selectedStockData.price).toFixed(2)} shares
+                          {(parseInt(investmentAmount || '0') / getDisplayPrice(selectedStockData.price, selectedStockData.symbol)).toFixed(2)} shares
                         </span>
-                      </p>
-                    </div>
-                  )}
-                  {investmentAmount && selectedStockData.price === 0 && (
-                    <div className="p-3 rounded-lg border border-yellow-400/20 bg-yellow-400/5">
-                      <p className="text-yellow-200/70 text-sm">
-                        Waiting for real-time prices to load...
                       </p>
                     </div>
                   )}
@@ -444,7 +460,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
           <div className="space-y-3">
             {gameState.stockHoldings.map((holding) => {
               const currentStock = stocks.find(s => s.symbol === holding.symbol);
-              const currentPrice = currentStock?.price || holding.buyPrice;
+              const currentPrice = currentStock ? getDisplayPrice(currentStock.price, holding.symbol) : getDummyPrice(holding.symbol);
               const currentValue = holding.shares * currentPrice;
               const gainLoss = currentValue - holding.investmentAmount;
               const gainLossPercent = (gainLoss / holding.investmentAmount) * 100;
