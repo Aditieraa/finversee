@@ -131,13 +131,14 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     }
 
     const amount = parseInt(investmentAmount);
-    const shares = amount / selectedStockData.price;
+    const buyPrice = getDisplayPrice(selectedStockData.price, selectedStockData.symbol);
+    const shares = amount / buyPrice;
 
     // Update gameState
     const newHolding: StockHolding = {
       symbol: selectedStockData.symbol,
       shares,
-      buyPrice: selectedStockData.price,
+      buyPrice: buyPrice,
       investmentAmount: amount,
       purchaseDate: new Date().toISOString(),
     };
@@ -171,7 +172,13 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       stockHoldings: updatedHoldings,
     });
 
-    setSuccessMessage(`✓ Invested ₹${amount} in ${selectedStockData.symbol}! You now own ${shares.toFixed(2)} shares.`);
+    // Validate shares before saving
+    if (isNaN(shares) || !isFinite(shares) || shares <= 0) {
+      alert('Invalid investment calculation. Please try again.');
+      return;
+    }
+
+    setSuccessMessage(`✓ Invested ₹${amount} in ${selectedStockData.symbol}! You now own ${shares.toFixed(2)} shares @ ₹${buyPrice.toFixed(2)}`);
     setInvestmentAmount('');
     
     setTimeout(() => setSuccessMessage(''), 3000);
