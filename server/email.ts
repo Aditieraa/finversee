@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY || '';
+const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_CLIENT_KEY || '';
 const MAILCHIMP_SERVER = MAILCHIMP_API_KEY.split('-')[1]; // Extract server from key (e.g., us1)
 const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID || 'default'; // You can set this in env
 
