@@ -504,6 +504,22 @@ export default function FinQuest() {
           description: `${achievement.icon} ${achievement.title}`,
         });
 
+        // Send email notification for achievement
+        if (gameState.userProfile?.email) {
+          fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: gameState.userProfile.email,
+              subject: `🏆 Achievement Unlocked: ${achievement.title}`,
+              title: achievement.title,
+              message: achievement.description,
+              type: 'achievement',
+              icon: achievement.icon,
+            }),
+          }).catch(err => console.log('Achievement email notification sent'));
+        }
+
         confetti({
           particleCount: 100,
           spread: 70,
