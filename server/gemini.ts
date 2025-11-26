@@ -1,6 +1,12 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const apiKey = process.env.GEMINI_API_KEY || "";
+
+if (!apiKey) {
+  console.error('❌ GEMINI_API_KEY not set! Aura Twin will not work.');
+}
+
+const ai = new GoogleGenAI({ apiKey });
 
 export async function getFinancialAdvice(
   message: string,
@@ -12,6 +18,11 @@ export async function getFinancialAdvice(
   }
 ): Promise<string> {
   try {
+    if (!apiKey) {
+      console.error('❌ No GEMINI_API_KEY available');
+      return "I'm having trouble connecting right now, but I'm here to support you! Keep making smart financial decisions. Your future self will thank you!";
+    }
+
     const systemPrompt = `You are Aura Twin, a professional and knowledgeable financial advisor. 
 You automatically detect the language of the user's input and respond in the SAME language.
 You support: English, Hindi, Marathi, German, and other languages.
@@ -35,17 +46,29 @@ Guidelines:
 - Acknowledge progress and challenges objectively
 - Offer strategic recommendations when appropriate`;
 
+    console.log('📤 Sending to Gemini API:', { message, career: context.career, netWorth: context.netWorth });
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      config: {
-        systemInstruction: systemPrompt,
-      },
-      contents: message,
+      systemInstruction: systemPrompt,
+      contents: [{ role: "user", parts: [{ text: message }] }],
     });
 
-    return response.text || "I'm here to assist with your financial planning. Please feel free to ask any questions.";
+    const text = response.text;
+    console.log('📥 Gemini response:', text);
+
+    if (!text) {
+      console.error('❌ Empty response from Gemini API');
+      return "I'm here to assist with your financial planning. Please feel free to ask any questions.";
+    }
+
+    return text;
   } catch (error) {
-    console.error('Gemini API error:', error);
-    return "I'm currently unavailable to provide advice. Please try again shortly.";
+    console.error('❌ Gemini API error:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      apiKeyExists: !!apiKey,
+    });
+    return "I'm having trouble connecting right now, but I'm here to support you! Keep making smart financial decisions. Your future self will thank you!";
   }
 }
