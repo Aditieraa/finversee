@@ -1468,15 +1468,15 @@ export default function FinQuest() {
 
       {/* Profile Modal */}
       <Dialog open={showProfile} onOpenChange={setShowProfile}>
-        <DialogContent className="border-primary/30 glassmorphic modal-slide max-h-[80vh] flex flex-col">
-          <DialogHeader>
+        <DialogContent className="border-primary/30 glassmorphic modal-slide max-h-[90vh] flex flex-col p-0">
+          <DialogHeader className="px-6 pt-6 pb-0 flex-shrink-0">
             <DialogTitle className="text-primary">Your Profile</DialogTitle>
           </DialogHeader>
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-6">
-              <div className="text-center">
+          <ScrollArea className="flex-1 px-6">
+            <div className="space-y-4 pr-4">
+              <div className="text-center pt-4">
                 {gameState.userProfile?.avatar && (
-                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/50 mx-auto mb-4">
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/50 mx-auto mb-3">
                     <img src={getAvatarUrl(gameState.userProfile.avatar)} alt={gameState.userProfile.name} className="w-full h-full object-cover" />
                   </div>
                 )}
@@ -1484,34 +1484,35 @@ export default function FinQuest() {
                 <p className="text-sm text-foreground/60 mt-1">{gameState.userProfile?.email}</p>
               </div>
               <Separator className="bg-primary/20" />
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex justify-between items-center p-3 rounded-lg border border-primary/30 glassmorphic">
-                  <span className="text-foreground/70">Level</span>
-                  <span className="font-bold text-primary">{gameState.level}</span>
+                  <span className="text-foreground/70 text-sm">Level</span>
+                  <span className="font-bold text-primary text-sm">{gameState.level}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 rounded-lg border border-primary/30 glassmorphic">
-                  <span className="text-foreground/70">Experience Points</span>
-                  <span className="font-bold text-primary">{gameState.xp}</span>
+                  <span className="text-foreground/70 text-sm">Experience Points</span>
+                  <span className="font-bold text-primary text-sm">{gameState.xp}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 rounded-lg border border-primary/30 glassmorphic">
-                  <span className="text-foreground/70">Total Net Worth</span>
-                  <span className="font-bold text-primary">₹{Math.round(gameState.cashBalance + Object.values(gameState.portfolio).reduce((a, b) => a + b, 0)).toLocaleString('en-IN')}</span>
+                  <span className="text-foreground/70 text-sm">Total Net Worth</span>
+                  <span className="font-bold text-primary text-sm">₹{Math.round(gameState.cashBalance + Object.values(gameState.portfolio).reduce((a, b) => a + b, 0)).toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 rounded-lg border border-primary/30 glassmorphic">
-                  <span className="text-foreground/70">Current Month</span>
-                  <span className="font-bold text-primary">{gameState.currentMonth}</span>
+                  <span className="text-foreground/70 text-sm">Current Month</span>
+                  <span className="font-bold text-primary text-sm">{gameState.currentMonth}</span>
                 </div>
               </div>
               <Separator className="bg-primary/20" />
-              <div className="space-y-2">
+              <div className="space-y-2 pb-4">
                 <Button
                   data-testid="button-export-chat"
                   onClick={exportChat}
                   variant="outline"
-                  className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
+                  size="sm"
+                  className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover text-xs"
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Export Chat History
+                  <Download className="mr-2 h-3 w-3" />
+                  Export Chat
                 </Button>
                 <Button
                   data-testid="button-set-goal"
@@ -1520,18 +1521,20 @@ export default function FinQuest() {
                     setShowGoals(true);
                   }}
                   variant="outline"
-                  className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
+                  size="sm"
+                  className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover text-xs"
                 >
-                  <Target className="mr-2 h-4 w-4" />
-                  Set Financial Goal
+                  <Target className="mr-2 h-3 w-3" />
+                  Set Goal
                 </Button>
                 <Button
                   data-testid="button-reset-game"
                   onClick={resetGame}
                   variant="outline"
-                  className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
+                  size="sm"
+                  className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover text-xs"
                 >
-                  <RotateCcw className="mr-2 h-4 w-4" />
+                  <RotateCcw className="mr-2 h-3 w-3" />
                   Reset Game
                 </Button>
                 {userId && userId !== 'guest' && (
@@ -1539,19 +1542,21 @@ export default function FinQuest() {
                     data-testid="button-save-game"
                     onClick={() => saveGameState(false)}
                     variant="outline"
-                    className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
+                    size="sm"
+                    className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover text-xs"
                   >
-                    <Download className="mr-2 h-4 w-4" />
-                    Save Game Now
+                    <Download className="mr-2 h-3 w-3" />
+                    Save Now
                   </Button>
                 )}
                 <Button
                   data-testid="button-logout"
                   onClick={handleLogout}
                   variant="outline"
-                  className="w-full border-red-500/50 text-red-400 hover:bg-red-500/20 interactive-hover"
+                  size="sm"
+                  className="w-full border-red-500/50 text-red-400 hover:bg-red-500/20 interactive-hover text-xs"
                 >
-                  <X className="mr-2 h-4 w-4" />
+                  <X className="mr-2 h-3 w-3" />
                   Logout
                 </Button>
               </div>
