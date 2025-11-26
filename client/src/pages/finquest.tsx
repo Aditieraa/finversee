@@ -193,6 +193,7 @@ export default function FinQuest() {
   const [aiLoading, setAiLoading] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [showSettings, setShowSettings] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [showGoals, setShowGoals] = useState(false);
   const [goalAmount, setGoalAmount] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -1070,13 +1071,13 @@ export default function FinQuest() {
                 Aura Twin
               </Button>
               <Button
-                data-testid="button-settings"
-                size="icon"
+                data-testid="button-profile"
                 variant="ghost"
-                onClick={() => setShowSettings(true)}
-                className="text-primary hover:bg-primary/20 interactive-hover"
+                onClick={() => setShowProfile(true)}
+                className="text-primary hover:bg-primary/20 interactive-hover flex items-center gap-2"
               >
                 <Settings className="h-5 w-5" />
+                <span className="hidden sm:inline text-sm">{gameState.userProfile?.name || 'Profile'}</span>
               </Button>
             </div>
           </div>
@@ -1465,62 +1466,94 @@ export default function FinQuest() {
         </DialogContent>
       </Dialog>
 
-      {/* Settings Modal */}
-      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+      {/* Profile Modal */}
+      <Dialog open={showProfile} onOpenChange={setShowProfile}>
         <DialogContent className="border-primary/30 glassmorphic modal-slide">
           <DialogHeader>
-            <DialogTitle className="text-primary">Settings</DialogTitle>
+            <DialogTitle className="text-primary">Your Profile</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <Button
-              data-testid="button-export-chat"
-              onClick={exportChat}
-              variant="outline"
-              className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Export Chat History
-            </Button>
-            <Button
-              data-testid="button-set-goal"
-              onClick={() => {
-                setShowSettings(false);
-                setShowGoals(true);
-              }}
-              variant="outline"
-              className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
-            >
-              <Target className="mr-2 h-4 w-4" />
-              Set Financial Goal
-            </Button>
-            <Button
-              data-testid="button-reset-game"
-              onClick={resetGame}
-              variant="outline"
-              className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
-            >
-              <RotateCcw className="mr-2 h-4 w-4" />
-              Reset Game
-            </Button>
-            {userId && userId !== 'guest' && (
+          <div className="space-y-6">
+            <div className="text-center">
+              {gameState.userProfile?.avatar && (
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/50 mx-auto mb-4">
+                  <img src={getAvatarUrl(gameState.userProfile.avatar)} alt={gameState.userProfile.name} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <p className="text-2xl font-bold text-primary">{gameState.userProfile?.name}</p>
+              <p className="text-sm text-foreground/60 mt-1">{gameState.userProfile?.email}</p>
+            </div>
+            <Separator className="bg-primary/20" />
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 rounded-lg border border-primary/30 glassmorphic">
+                <span className="text-foreground/70">Level</span>
+                <span className="font-bold text-primary">{gameState.level}</span>
+              </div>
+              <div className="flex justify-between items-center p-3 rounded-lg border border-primary/30 glassmorphic">
+                <span className="text-foreground/70">Experience Points</span>
+                <span className="font-bold text-primary">{gameState.xp}</span>
+              </div>
+              <div className="flex justify-between items-center p-3 rounded-lg border border-primary/30 glassmorphic">
+                <span className="text-foreground/70">Total Net Worth</span>
+                <span className="font-bold text-primary">₹{Math.round(gameState.cashBalance + Object.values(gameState.portfolio).reduce((a, b) => a + b, 0)).toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between items-center p-3 rounded-lg border border-primary/30 glassmorphic">
+                <span className="text-foreground/70">Current Month</span>
+                <span className="font-bold text-primary">{gameState.currentMonth}</span>
+              </div>
+            </div>
+            <Separator className="bg-primary/20" />
+            <div className="space-y-2">
               <Button
-                data-testid="button-save-game"
-                onClick={() => saveGameState(false)}
+                data-testid="button-export-chat"
+                onClick={exportChat}
                 variant="outline"
                 className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
               >
                 <Download className="mr-2 h-4 w-4" />
-                Save Game Now
+                Export Chat History
               </Button>
-            )}
-            <Button
-              data-testid="button-logout"
-              onClick={handleLogout}
-              variant="outline"
-              className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
-            >
-              Logout
-            </Button>
+              <Button
+                data-testid="button-set-goal"
+                onClick={() => {
+                  setShowProfile(false);
+                  setShowGoals(true);
+                }}
+                variant="outline"
+                className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
+              >
+                <Target className="mr-2 h-4 w-4" />
+                Set Financial Goal
+              </Button>
+              <Button
+                data-testid="button-reset-game"
+                onClick={resetGame}
+                variant="outline"
+                className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
+              >
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reset Game
+              </Button>
+              {userId && userId !== 'guest' && (
+                <Button
+                  data-testid="button-save-game"
+                  onClick={() => saveGameState(false)}
+                  variant="outline"
+                  className="w-full border-primary/50 text-primary hover:bg-primary/20 interactive-hover"
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Save Game Now
+                </Button>
+              )}
+              <Button
+                data-testid="button-logout"
+                onClick={handleLogout}
+                variant="outline"
+                className="w-full border-red-500/50 text-red-400 hover:bg-red-500/20 interactive-hover"
+              >
+                <X className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
