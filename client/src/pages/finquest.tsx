@@ -160,6 +160,7 @@ export default function FinQuest() {
   const [gameOver, setGameOver] = useState<'win' | 'loss' | null>(null);
   const [processingMonth, setProcessingMonth] = useState(false);
   const [leaderboard, setLeaderboard] = useState<Array<{ name: string; score: number; level: number }>>([]);
+  const [showAuraTwin, setShowAuraTwin] = useState(false);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -847,18 +848,27 @@ export default function FinQuest() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Badge className="bg-neon-purple/20 text-neon-purple border-neon-purple/50">
+            <Badge className="bg-primary/20 text-primary border-primary/50">
               Level {gameState.level}
             </Badge>
-            <Badge className="bg-neon-lime/20 text-neon-lime border-neon-lime/50">
+            <Badge className="bg-primary/30 text-white border-primary/50">
               {gameState.xp} XP
             </Badge>
+            <Button
+              data-testid="button-aura-twin"
+              variant="outline"
+              className="border-primary/50 text-primary hover:bg-primary/20"
+              onClick={() => setShowAuraTwin(true)}
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              Aura Twin
+            </Button>
             <Button
               data-testid="button-theme-toggle"
               size="icon"
               variant="ghost"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="text-neon-cyan hover:bg-neon-cyan/20"
+              className="text-primary hover:bg-primary/20"
             >
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
@@ -867,7 +877,7 @@ export default function FinQuest() {
               size="icon"
               variant="ghost"
               onClick={() => setShowSettings(true)}
-              className="text-neon-cyan hover:bg-neon-cyan/20"
+              className="text-primary hover:bg-primary/20"
             >
               <Settings className="h-5 w-5" />
             </Button>
@@ -878,67 +888,8 @@ export default function FinQuest() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Panel - AI Chat */}
-          <div className={`lg:col-span-3 ${mobileMenuOpen ? 'block' : 'hidden lg:block'}`}>
-            <Card className="h-[calc(100vh-12rem)] flex flex-col border-neon-purple/30 bg-black/40 backdrop-blur-xl shadow-neon-purple">
-              <div className="p-4 border-b border-neon-purple/30">
-                <h2 className="text-xl font-bold text-neon-purple flex items-center gap-2">
-                  <Sparkles className="h-5 w-5" />
-                  Aura Twin
-                </h2>
-                <p className="text-xs text-gray-400 mt-1">Your AI Financial Mentor</p>
-              </div>
-
-              <ScrollArea className="flex-1 p-4">
-                <div className="space-y-4">
-                  {gameState.chatHistory.map((msg, idx) => (
-                    <div
-                      key={idx}
-                      className={`p-3 rounded-lg ${
-                        msg.role === 'ai'
-                          ? 'bg-neon-purple/10 border border-neon-purple/30'
-                          : 'bg-neon-cyan/10 border border-neon-cyan/30 ml-4'
-                      }`}
-                      data-testid={`chat-message-${idx}`}
-                    >
-                      <p className="text-sm whitespace-pre-line">{msg.content}</p>
-                    </div>
-                  ))}
-                  {aiLoading && (
-                    <div className="p-3 rounded-lg bg-neon-purple/10 border border-neon-purple/30">
-                      <p className="text-sm text-neon-purple animate-pulse">Aura Twin is thinking...</p>
-                    </div>
-                  )}
-                  <div ref={chatEndRef} />
-                </div>
-              </ScrollArea>
-
-              <div className="p-4 border-t border-neon-purple/30">
-                <div className="flex gap-2">
-                  <Input
-                    data-testid="input-chat"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && sendAIMessage(chatInput)}
-                    placeholder="Ask Aura Twin..."
-                    className="bg-black/60 border-neon-purple/50 text-white placeholder:text-gray-500 focus:border-neon-purple focus:shadow-neon-purple"
-                  />
-                  <Button
-                    data-testid="button-send-chat"
-                    size="icon"
-                    onClick={() => sendAIMessage(chatInput)}
-                    disabled={aiLoading}
-                    className="bg-neon-purple text-white hover:bg-neon-purple/90 shadow-neon-purple"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Center Panel - Dashboard & Decisions */}
-          <div className="lg:col-span-6">
+          {/* Full Width - Dashboard & Decisions */}
+          <div className="lg:col-span-8">
             <div className="space-y-6">
               {/* Current Status */}
               <Card className="border-neon-cyan/30 bg-black/40 backdrop-blur-xl shadow-neon-cyan">
@@ -1033,8 +984,8 @@ export default function FinQuest() {
             </div>
           </div>
 
-          {/* Right Panel - Portfolio & Progress */}
-          <div className="lg:col-span-3">
+          {/* Right Panel - Sidebar */}
+          <div className="lg:col-span-4">
             <div className="space-y-6">
               {/* Portfolio Breakdown */}
               <Card className="border-neon-lime/30 bg-black/40 backdrop-blur-xl shadow-neon-lime">
