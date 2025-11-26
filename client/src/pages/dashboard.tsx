@@ -153,19 +153,28 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
           </ResponsiveContainer>
         </Card>
 
-        {/* Portfolio Breakdown Pie */}
+        {/* Portfolio Breakdown Bar */}
         <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6">
           <h3 className="text-lg font-bold text-white mb-4">Portfolio Breakdown</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie data={categoryData} cx="50%" cy="50%" labelLine={false} label={({ name, percentage }) => `${name} ${percentage}%`} outerRadius={80} fill="#8884d8" dataKey="value">
-                {categoryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          {categoryData.every(item => item.value === 0) ? (
+            <div className="h-64 flex items-center justify-center">
+              <p className="text-purple-300/60 text-center">No investments yet. Start investing to see your portfolio breakdown!</p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={categoryData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
+                <XAxis type="number" stroke="rgba(149, 165, 166, 0.6)" />
+                <YAxis dataKey="name" type="category" stroke="rgba(149, 165, 166, 0.6)" width={80} />
+                <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(155, 89, 182, 0.3)' }} formatter={(value) => `₹${value.toLocaleString('en-IN')}`} />
+                <Bar dataKey="value" fill="#3498DB" radius={[0, 8, 8, 0]}>
+                  {categoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </Card>
 
         {/* Trend Analysis */}
