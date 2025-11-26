@@ -3,6 +3,8 @@ import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import Auth from './auth';
 import Dashboard from './dashboard';
+import Analytics from './analytics';
+import Budget from './budget';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -1264,18 +1266,12 @@ export default function FinQuest() {
 
         {/* Analytics View */}
         {currentView === 'analytics' && (
-          <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-8">
-            <h2 className="text-2xl font-bold text-white mb-4">Analytics Coming Soon</h2>
-            <p className="text-purple-200">Detailed financial analytics and performance metrics will be available here.</p>
-          </Card>
+          <Analytics gameState={gameState} />
         )}
 
         {/* Budget View */}
         {currentView === 'budget' && (
-          <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-8">
-            <h2 className="text-2xl font-bold text-white mb-4">Budget & Goals</h2>
-            <p className="text-cyan-200">Track your spending, set budgets, and achieve your financial goals.</p>
-          </Card>
+          <Budget gameState={gameState} />
         )}
       </div>
 
