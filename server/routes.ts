@@ -1,11 +1,7 @@
 import { type Express, type Request, Response } from "express";
 import { createServer } from "node:http";
-import { v4 as uuidv4 } from "uuid";
 
-import { getStorage } from "./storage";
 import { getStockPrice, getStockPrices, getCacheStats } from "./stocks-api";
-
-const storage = getStorage();
 
 export async function registerRoutes(app: Express) {
   const server = createServer(app);
