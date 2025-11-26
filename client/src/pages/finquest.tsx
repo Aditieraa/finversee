@@ -401,6 +401,7 @@ export default function FinQuest() {
       career: onboarding.career as Career,
       salary: salary,
       expenses: expenses,
+      avatar: onboarding.avatar,
     };
 
     const initialCash = salary - expenses;
@@ -449,7 +450,7 @@ export default function FinQuest() {
     };
 
     setGameState(newGameState);
-    setOnboarding({ active: false, step: 1, name: '', career: '', salary: '', expenses: '' });
+    setOnboarding({ active: false, step: 1, name: '', career: '', salary: '', expenses: '', avatar: 'female1' });
 
     // Save game state immediately after onboarding to prevent data loss
     if (userId && userId !== 'guest') {
@@ -1047,6 +1048,11 @@ export default function FinQuest() {
             </div>
 
             <div className="flex items-center gap-3">
+              {gameState.userProfile?.avatar && (
+                <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-primary/50">
+                  <img src={getAvatarUrl(gameState.userProfile.avatar)} alt={gameState.userProfile.name} className="w-full h-full object-cover" />
+                </div>
+              )}
               <Badge className="bg-primary/20 text-primary border-primary/50 neon-glow">
                 Level {gameState.level}
               </Badge>

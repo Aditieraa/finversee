@@ -3,13 +3,37 @@ import { supabase } from '@/lib/supabase';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Users } from 'lucide-react';
+// @ts-ignore
+import avatar1 from '@assets/generated_images/female_professional_avatar.png';
+// @ts-ignore
+import avatar2 from '@assets/generated_images/male_professional_avatar.png';
+// @ts-ignore
+import avatar3 from '@assets/generated_images/woman_curly_hair_avatar.png';
+// @ts-ignore
+import avatar4 from '@assets/generated_images/man_blonde_hair_avatar.png';
+// @ts-ignore
+import avatar5 from '@assets/generated_images/woman_red_hair_avatar.png';
+// @ts-ignore
+import avatar6 from '@assets/generated_images/man_brown_hair_avatar.png';
 
 interface LeaderboardEntry {
   name: string;
   level: number;
   netWorth: number;
   rank: number;
+  avatar?: string;
 }
+
+const avatarMap: Record<string, string> = {
+  female1: avatar1,
+  male1: avatar2,
+  female2: avatar3,
+  male2: avatar4,
+  female3: avatar5,
+  male3: avatar6,
+};
+
+const getAvatarUrl = (avatarId?: string) => avatarId ? avatarMap[avatarId] : avatar1;
 
 export default function Leaderboard() {
   const [players, setPlayers] = useState<LeaderboardEntry[]>([]);
@@ -39,6 +63,7 @@ export default function Leaderboard() {
                 level: gameState?.level || 1,
                 netWorth: gameState?.netWorth || 0,
                 rank: idx + 1,
+                avatar: gameState?.userProfile?.avatar,
               };
             })
             .filter(entry => entry.netWorth > 0);
@@ -118,7 +143,12 @@ export default function Leaderboard() {
               <Card key={player.rank} className={`border-2 ${borderClass} ${bgClass} backdrop-blur-sm p-4 hover-elevate`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className={`text-2xl font-bold ${textClass} w-12 text-center`}>
+                    {player.avatar && (
+                      <div className="w-12 h-14 rounded overflow-hidden border border-primary/50 flex-shrink-0">
+                        <img src={getAvatarUrl(player.avatar)} alt={player.name} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className={`text-2xl font-bold ${textClass} w-8 text-center`}>
                       #{player.rank}
                     </div>
                     <div className="flex-1">
