@@ -400,7 +400,7 @@ export default function FinQuest() {
       chatHistory: [
         {
           role: 'ai' as const,
-          content: `Namaste ${onboarding.name}! Welcome to your financial freedom journey. I'm Aura Twin, your AI financial mentor. As a ${onboarding.career}, you're starting with ₹${salary.toLocaleString('en-IN')} monthly salary. After expenses of ₹${expenses.toLocaleString('en-IN')}, you have ₹${initialCash.toLocaleString('en-IN')} to invest. Let's build your wealth together! 🌟`,
+          content: `Hello ${onboarding.name}! I'm Aura Twin, your financial advisor. I see you're a ${onboarding.career} with a monthly salary of ₹${salary.toLocaleString('en-IN')}. After accounting for ₹${expenses.toLocaleString('en-IN')} in monthly expenses, you have ₹${initialCash.toLocaleString('en-IN')} available for investment. I'm here to help you build a sustainable financial plan.`,
           timestamp: Date.now(),
         },
       ],
