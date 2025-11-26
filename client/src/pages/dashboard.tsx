@@ -47,9 +47,10 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
   };
 
   const calculateStockPortfolioValue = () => {
-    return gameState.stockHoldings?.reduce((total, holding) => {
+    if (!gameState.stockHoldings || gameState.stockHoldings.length === 0) return 0;
+    return gameState.stockHoldings.reduce((total, holding) => {
       return total + (holding.shares * holding.buyPrice);
-    }, 0) || 0;
+    }, 0);
   };
 
   const generateTrendData = () => {
