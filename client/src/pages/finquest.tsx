@@ -532,19 +532,27 @@ export default function FinQuest() {
         });
 
         // Send email notification for achievement
-        if (gameState.userProfile?.email) {
+        const userEmail = prev.userProfile?.email;
+        console.log('Achievement unlock - User email:', userEmail);
+        
+        if (userEmail) {
           fetch('/api/send-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              email: gameState.userProfile.email,
+              email: userEmail,
               subject: `🏆 Achievement Unlocked: ${achievement.title}`,
               title: achievement.title,
               message: achievement.description,
               type: 'achievement',
               icon: achievement.icon,
             }),
-          }).catch(err => console.log('Achievement email notification sent'));
+          })
+            .then(res => res.json())
+            .then(data => console.log('Email response:', data))
+            .catch(err => console.error('Email send error:', err));
+        } else {
+          console.warn('No email available for achievement notification');
         }
 
         confetti({
