@@ -950,7 +950,7 @@ export default function FinQuest() {
               </div>
 
               <div>
-                <Label htmlFor="name" className="text-primary text-lg">Avatar Name</Label>
+                <Label htmlFor="name" className="text-primary text-lg">Name</Label>
                 <Input
                   id="name"
                   data-testid="input-name"
