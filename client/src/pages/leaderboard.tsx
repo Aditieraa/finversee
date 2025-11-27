@@ -43,21 +43,21 @@ export default function Leaderboard() {
     const fetchLeaderboard = async () => {
       try {
         setLoading(true);
-        // Query leaderboard_view (properly ranked data) ordered by XP descending
-        const { data, error } = await supabase
-          .from('leaderboard_view')
-          .select('user_id, level, xp, cash_balance, net_worth')
-          .order('xp', { ascending: false })
+        // Query game_saves directly (BreakTheRace players) - all saves
+        const { data: gameSaves, error: gameSavesError } = await supabase
+          .from('game_saves')
+          .select('user_id, level, xp, cash_balance, passive_income, on_fast_track')
+          .order('passive_income', { ascending: false })
           .limit(100);
 
-        if (error) {
-          console.error('Leaderboard fetch error:', error);
+        if (gameSavesError) {
+          console.error('Game saves fetch error:', gameSavesError);
           return;
         }
 
-        if (data && data.length > 0) {
+        if (gameSaves && gameSaves.length > 0) {
           // Get user profiles for avatars and names
-          const userIds = data.map((entry: any) => entry.user_id);
+          const userIds = gameSaves.map((save: any) => save.user_id);
           const { data: profilesData } = await supabase
             .from('profiles')
             .select('id, name, avatar')
@@ -69,23 +69,26 @@ export default function Leaderboard() {
             return acc;
           }, {});
 
-          // Create leaderboard entries
-          const entries: LeaderboardEntry[] = data
-            .map((entry: any, idx: number) => {
+          // Create leaderboard entries - show all players with passive income > 0
+          const entries: LeaderboardEntry[] = gameSaves
+            .map((save: any, idx: number) => {
               // Get profile info
-              const profile = profileMap[entry.user_id];
+              const profile = profileMap[save.user_id];
               const avatarId = profile?.avatar || 'female1';
               const avatarPath = avatarMap[avatarId] || avatar1;
               
+              // Net worth = cash_balance + (passive_income represents holdings in BreakTheRace)
+              const netWorth = (save.cash_balance || 0) + ((save.passive_income || 0) * 1000);
+              
               return {
                 name: profile?.name || 'Anonymous',
-                level: entry.level || 1,
-                netWorth: entry.net_worth || 0,
+                level: save.level || 1,
+                netWorth,
                 rank: idx + 1,
                 avatar: avatarPath,
               };
             })
-            .filter(entry => entry.level > 0) // Show all players with any level
+            .filter(entry => entry.level > 0) // Only show players with level > 0
             .slice(0, 10); // Top 10
 
           setPlayers(entries);
