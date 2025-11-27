@@ -1583,7 +1583,7 @@ export default function FinQuest() {
             </DialogTitle>
           </DialogHeader>
 
-          <ScrollArea className="flex-1 pr-4 bg-gradient-to-b from-slate-900/30 to-slate-800/20">
+          <ScrollArea className="flex-1 pr-4 bg-gradient-to-b from-blue-950/30 to-blue-900/20">
             <div className="space-y-3 p-4">
               {gameState.chatHistory.map((msg, idx) => (
                 <div

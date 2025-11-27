@@ -62,7 +62,7 @@
 
 @layer components {
   .glassmorphic {
-    @apply bg-gradient-to-br from-slate-900/40 to-slate-800/20 backdrop-blur-md border border-slate-700/30;
+    @apply bg-gradient-to-br from-blue-950/40 to-blue-900/20 backdrop-blur-md border border-blue-600/30;
   }
 
   .card-interactive {
@@ -82,7 +82,7 @@
   }
 
   .interactive-hover {
-    @apply hover:bg-slate-800/50 transition-colors;
+    @apply hover:bg-blue-600/30 transition-colors;
   }
 
   .achievement-pop {

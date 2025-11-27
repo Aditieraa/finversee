@@ -520,7 +520,7 @@ export default function Budget({ gameState, onExpenseAdd }: BudgetProps) {
 
       {/* Add Goal Dialog */}
       <Dialog open={showAddGoal} onOpenChange={setShowAddGoal}>
-        <DialogContent className="border-blue-400/30 bg-slate-900/95 backdrop-blur-sm">
+        <DialogContent className="border-blue-400/30 bg-blue-950/95 backdrop-blur-sm">
           <DialogHeader>
             <DialogTitle className="text-white">Add New Goal</DialogTitle>
           </DialogHeader>
