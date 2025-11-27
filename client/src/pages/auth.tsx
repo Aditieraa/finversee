@@ -25,6 +25,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,12 +171,12 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
                   <p className="text-blue-200/60 text-sm">Play. Learn. Conquer Financial Freedom.</p>
                 </div>
 
-                {/* Form Title */}
-                <div className="mb-8">
-                  <h2 className="text-2xl font-bold text-white mb-2">
+                {/* Form Title - With smooth transition */}
+                <div className={`mb-8 transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
+                  <h2 className="text-2xl font-bold text-white mb-2 transition-all duration-500">
                     {isSignUp ? 'Create Your Account' : 'Welcome Back'}
                   </h2>
-                  <p className="text-blue-200/60 text-sm">
+                  <p className="text-blue-200/60 text-sm transition-all duration-500">
                     {isSignUp 
                       ? 'Start your journey to financial freedom today'
                       : 'Sign in to continue your financial journey'
@@ -184,39 +185,41 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
                 </div>
 
                 <form onSubmit={handleAuth} className="space-y-6">
-                  {/* Email Input */}
-                  <div className="space-y-2 group">
-                    <Label htmlFor="email" className="text-blue-100 font-semibold text-sm">Email Address</Label>
+                  {/* Email Input - With smooth animation */}
+                  <div className={`space-y-2 group transition-all duration-500 ${isTransitioning ? 'animate-formSlideOut' : 'animate-formSlideIn'}`}>
+                    <Label htmlFor="email" className="text-blue-100 font-semibold text-sm block">Email Address</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-5 w-5 text-blue-400/50 pointer-events-none" />
+                      <Mail className="absolute left-3 top-3 h-5 w-5 text-blue-400/50 pointer-events-none transition-colors group-hover:text-blue-400/80" />
                       <Input
                         id="email"
                         data-testid="input-auth-email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        onFocus={(e) => e.currentTarget.classList.add('animate-inputFocusGlow')}
                         placeholder="you@example.com"
                         required
-                        className="pl-10 bg-blue-950/30 border border-blue-400/20 text-white placeholder:text-blue-300/30 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 group-hover:border-blue-400/40 rounded-lg"
+                        className="pl-10 bg-blue-950/30 border border-blue-400/20 text-white placeholder:text-blue-300/30 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 group-hover:border-blue-400/40 rounded-lg input-focus-animation"
                       />
                     </div>
                   </div>
 
-                  {/* Password Input */}
-                  <div className="space-y-2 group">
-                    <Label htmlFor="password" className="text-blue-100 font-semibold text-sm">Password</Label>
+                  {/* Password Input - With smooth animation */}
+                  <div className={`space-y-2 group transition-all duration-500 ${isTransitioning ? 'animate-formSlideOut' : 'animate-formSlideIn'}`} style={{ animationDelay: '0.1s' }}>
+                    <Label htmlFor="password" className="text-blue-100 font-semibold text-sm block">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-5 w-5 text-blue-400/50 pointer-events-none" />
+                      <Lock className="absolute left-3 top-3 h-5 w-5 text-blue-400/50 pointer-events-none transition-colors group-hover:text-blue-400/80" />
                       <Input
                         id="password"
                         data-testid="input-auth-password"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onFocus={(e) => e.currentTarget.classList.add('animate-inputFocusGlow')}
                         placeholder="••••••••"
                         required
                         minLength={6}
-                        className="pl-10 bg-blue-950/30 border border-blue-400/20 text-white placeholder:text-blue-300/30 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 group-hover:border-blue-400/40 rounded-lg"
+                        className="pl-10 bg-blue-950/30 border border-blue-400/20 text-white placeholder:text-blue-300/30 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 group-hover:border-blue-400/40 rounded-lg input-focus-animation"
                       />
                     </div>
                   </div>
@@ -276,11 +279,15 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
                       <button
                         type="button"
                         onClick={() => {
-                          setIsSignUp(!isSignUp);
-                          setEmail('');
-                          setPassword('');
+                          setIsTransitioning(true);
+                          setTimeout(() => {
+                            setIsSignUp(!isSignUp);
+                            setEmail('');
+                            setPassword('');
+                            setIsTransitioning(false);
+                          }, 300);
                         }}
-                        className="text-blue-400 hover:text-blue-300 font-semibold transition-colors underline"
+                        className="text-blue-400 hover:text-blue-300 font-semibold transition-colors underline hover:text-blue-200"
                         data-testid="button-toggle-auth-mode"
                       >
                         {isSignUp ? 'Sign In' : 'Sign Up'}

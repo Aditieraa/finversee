@@ -577,6 +577,81 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
   }
 
+  /* Form Transition Animations - Modern Signup/Signin */
+  @keyframes formSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes formSlideOut {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+  }
+
+  @keyframes inputFocusGlow {
+    0% {
+      box-shadow: 0 0 0 0 rgba(66, 165, 245, 0.1);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(66, 165, 245, 0.1);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(66, 165, 245, 0);
+    }
+  }
+
+  @keyframes labelFloatUp {
+    0% {
+      transform: translateY(0);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(-24px);
+      opacity: 1;
+    }
+  }
+
+  @keyframes buttonShimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  .animate-formSlideIn {
+    animation: formSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .animate-formSlideOut {
+    animation: formSlideOut 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .animate-inputFocusGlow {
+    animation: inputFocusGlow 0.6s ease-out;
+  }
+
+  .animate-labelFloatUp {
+    animation: labelFloatUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .input-focus-animation:focus {
+    animation: inputFocusGlow 0.6s ease-out;
+  }
+
   * {
     scroll-behavior: smooth;
   }
