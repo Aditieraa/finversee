@@ -23,6 +23,8 @@ import avatar5 from '@assets/generated_images/woman_red_hair_avatar.png';
 import avatar6 from '@assets/generated_images/man_brown_hair_avatar.png';
 // @ts-ignore
 import auraTwinImage from '@assets/generated_images/ai_mentor_assistant_icon.png';
+// @ts-ignore
+import piggyBankImage from '@assets/image_1764239697855.png';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -112,6 +114,7 @@ interface GameState {
   currentMonth: number;
   currentYear: number;
   cashBalance: number;
+  goldCoins: number;
   netWorth: number;
   userProfile: UserProfile | null;
   portfolio: Portfolio;
@@ -124,6 +127,7 @@ interface GameState {
   consecutiveLogins: number;
   monthlyInvestments: { sip: number; stocks: number; gold: number; realEstate: number; savings: number };
   monthlyExpensesThisMonth?: number;
+  financialGoal?: number;
 }
 
 const CAREER_DATA: Record<Career, { salary: number; expenses: number }> = {
@@ -164,6 +168,7 @@ export default function FinQuest() {
     currentMonth: 1,
     currentYear: 2025,
     cashBalance: 0,
+    goldCoins: 50000,
     netWorth: 0,
     userProfile: null,
     portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
@@ -176,6 +181,7 @@ export default function FinQuest() {
     consecutiveLogins: 1,
     monthlyInvestments: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
     monthlyExpensesThisMonth: 0,
+    financialGoal: 5000000,
   });
 
   const [onboarding, setOnboarding] = useState({
@@ -272,6 +278,7 @@ export default function FinQuest() {
         xp: gameState.xp,
         current_month: gameState.currentMonth,
         cash_balance: gameState.cashBalance,
+        gold_coins: gameState.goldCoins,
         portfolio: gameState.portfolio,
         achievements: gameState.achievements,
         financial_goal: gameState.financialGoal || 5000000,
@@ -355,6 +362,11 @@ export default function FinQuest() {
           .from('stocks')
           .select('*')
           .eq('game_save_id', data.id);
+
+        setGameState(prev => ({
+          ...prev,
+          goldCoins: data.gold_coins || prev.goldCoins,
+        }));
 
         // Convert chat messages to game format
         const chatHistory = (chatMessages || []).map((msg: any) => ({
@@ -1327,16 +1339,24 @@ export default function FinQuest() {
                     </Badge>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-lg border border-primary/30 glassmorphic interactive-hover">
-                      <p className="text-xs text-foreground/60 mb-1">Cash Balance</p>
-                      <p className="text-xl font-bold text-primary" data-testid="text-cash-balance">
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="p-3 rounded-lg border border-primary/30 glassmorphic interactive-hover">
+                      <p className="text-xs text-foreground/60 mb-1">Cash</p>
+                      <p className="text-lg font-bold text-primary" data-testid="text-cash-balance">
                         ₹{Math.round(gameState.cashBalance).toLocaleString('en-IN')}
                       </p>
                     </div>
-                    <div className="p-4 rounded-lg border border-primary/30 glassmorphic interactive-hover">
-                      <p className="text-xs text-foreground/60 mb-1">Portfolio Value</p>
-                      <p className="text-xl font-bold text-primary" data-testid="text-portfolio-value">
+                    <div className="p-3 rounded-lg border border-yellow-500/50 glassmorphic interactive-hover bg-yellow-950/20">
+                      <p className="text-xs text-yellow-200 mb-1 flex items-center gap-1">
+                        <Coins className="h-3 w-3" /> Gold
+                      </p>
+                      <p className="text-lg font-bold text-yellow-300" data-testid="text-gold-coins">
+                        {Math.round(gameState.goldCoins).toLocaleString('en-IN')}
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-lg border border-primary/30 glassmorphic interactive-hover">
+                      <p className="text-xs text-foreground/60 mb-1">Portfolio</p>
+                      <p className="text-lg font-bold text-primary" data-testid="text-portfolio-value">
                         ₹{Math.round(Object.values(gameState.portfolio).reduce((a, b) => a + b, 0)).toLocaleString('en-IN')}
                       </p>
                     </div>
