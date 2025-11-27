@@ -843,7 +843,10 @@ export default function FinQuest() {
 
       const newCash = prev.cashBalance + monthlySavings + lifeEventImpact;
       const portfolioValue = Object.values(updatedPortfolio).reduce((a, b) => a + b, 0);
-      const newNetWorth = newCash + portfolioValue;
+      const stockInvestmentValue = prev.stockHoldings && prev.stockHoldings.length > 0
+        ? prev.stockHoldings.reduce((total: number, h: any) => total + (h.investmentAmount || 0), 0)
+        : 0;
+      const newNetWorth = newCash + portfolioValue + stockInvestmentValue;
 
       let aiMessage = `Month ${actualNextMonth}, ${nextYear} update:\n`;
       aiMessage += `💰 Salary: +₹${newSalary.toLocaleString('en-IN')}\n`;
