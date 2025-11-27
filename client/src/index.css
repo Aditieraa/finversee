@@ -46,6 +46,57 @@
   animation: money-pop 0.8s ease-out forwards;
 }
 
+/* Dice Roll Animation */
+@keyframes dice-roll {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1);
+    opacity: 1;
+  }
+  25% {
+    transform: rotateX(180deg) rotateY(-90deg) rotateZ(45deg) scale(1.1);
+  }
+  50% {
+    transform: rotateX(360deg) rotateY(180deg) rotateZ(-90deg) scale(1.15);
+  }
+  75% {
+    transform: rotateX(540deg) rotateY(-45deg) rotateZ(135deg) scale(1.1);
+  }
+  100% {
+    transform: rotateX(720deg) rotateY(0deg) rotateZ(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes dice-pop-in {
+  0% {
+    transform: scale(0) translateY(20px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes dice-pop-out {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0) translateY(-20px);
+    opacity: 0;
+  }
+}
+
+.animate-dice-roll {
+  animation: dice-pop-in 0.2s ease-out forwards, dice-roll 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.2s forwards, dice-pop-out 0.15s ease-in 0.9s forwards;
+}
+
 /* MODERN BLUE-WHITE COLOR SCHEME - Finverse 2026 */
 :root {
   --button-outline: rgba(66, 165, 245, 0.15);

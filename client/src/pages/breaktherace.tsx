@@ -148,6 +148,8 @@ export default function BreakTheRace() {
   const [cardData, setCardData] = useState<any>(null);
   const [selectedAssetToSell, setSelectedAssetToSell] = useState<number | null>(null);
   const [animatingValue, setAnimatingValue] = useState<string | null>(null);
+  const [showDiceAnimation, setShowDiceAnimation] = useState(false);
+  const [diceResult, setDiceResult] = useState(0);
 
   const [gameState, setGameState] = useState<GameState>({
     career: null,
@@ -216,9 +218,19 @@ export default function BreakTheRace() {
 
   const rollDice = async () => {
     setDiceRolling(true);
-    playSound('dice'); // TEST: Dice sound effect
-    await new Promise(r => setTimeout(r, 1000));
+    setShowDiceAnimation(true);
+    
+    // Play sound and show animation simultaneously (synced to 800ms total)
+    playSound('dice');
+    
+    // Generate random result
     const roll = Math.floor(Math.random() * 6) + 1;
+    setDiceResult(roll);
+    
+    // Wait for animation + audio to complete (pop-in: 200ms + roll: 700ms + pop-out: 150ms = 1050ms, keeping at 800ms for tighter sync)
+    await new Promise(r => setTimeout(r, 1050));
+    
+    setShowDiceAnimation(false);
     setDiceRolling(false);
     
     const newPosition = (gameState.boardPosition + roll) % BOARD_SPACES.length;
@@ -558,6 +570,7 @@ export default function BreakTheRace() {
                 disabled={diceRolling}
                 size="lg"
                 className="w-full md:w-48"
+                data-testid="button-roll-dice"
               >
                 {diceRolling ? '🎲 Rolling...' : `🎲 Roll Dice (Last: ${gameState.dice})`}
               </Button>
@@ -572,6 +585,18 @@ export default function BreakTheRace() {
                 </Button>
               )}
             </div>
+
+            {/* Animated Dice Overlay */}
+            {showDiceAnimation && (
+              <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+                <div className="animate-dice-roll">
+                  <div className="w-24 h-24 bg-gradient-to-br from-primary/80 to-primary/40 rounded-lg flex items-center justify-center border-2 border-primary/60 shadow-2xl"
+                       style={{ perspective: '1200px' }}>
+                    <span className="text-5xl font-bold text-white drop-shadow-lg">{diceResult}</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Current Space */}
             <div className="text-center p-4 bg-foreground/5 rounded-lg border border-primary/20">
