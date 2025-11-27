@@ -2,6 +2,20 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Trophy, Star, Sparkles, Zap, Settings, LayoutDashboard, TrendingUp, DollarSign, Users } from 'lucide-react';
 
+// Format net worth with intelligent unit selection
+const formatNetWorth = (value: number): string => {
+  if (value >= 10000000) {
+    // Crores (1 Cr = 10,000,000)
+    return `₹${(value / 10000000).toFixed(1)}Cr`;
+  } else if (value >= 100000) {
+    // Lakhs (1 L = 100,000)
+    return `₹${(value / 100000).toFixed(1)}L`;
+  } else {
+    // Regular format with commas
+    return `₹${Math.round(value).toLocaleString('en-IN')}`;
+  }
+};
+
 interface Tab {
   id: string;
   label: string;
@@ -95,7 +109,7 @@ export function AppHeader({
           <div className="text-right hidden md:block">
             <p className="text-xs text-blue-200/70 font-semibold uppercase tracking-wide">NET WORTH</p>
             <p className="text-sm font-black text-green-400 animate-countUp">
-              ₹{Math.round(netWorth / 100000).toFixed(1)}L
+              {formatNetWorth(netWorth)}
             </p>
           </div>
 
