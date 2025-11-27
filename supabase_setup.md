@@ -271,14 +271,21 @@ created_at            TIMESTAMP      Message creation time
 Add these to your `.env.local` or Replit secrets:
 
 ```
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_SUPABASE_URL=https://jswgmgqfksskqhmsinvs.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzd2dtZ3Fma3Nza3FobXNpbnZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTkwNzMsImV4cCI6MjA3OTc5NTA3M30.MqQ1FAi6nG_17z7HAivA4GDCTYORBZCRZ8zvOX4TioA
 ```
 
 **For server-side** (if needed):
 ```
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key (DO NOT expose to frontend)
 ```
+
+### Environment Setup for Finverse
+
+1. In Replit, go to **Secrets** tab
+2. Add the following secrets:
+   - `VITE_SUPABASE_URL`: `https://jswgmgqfksskqhmsinvs.supabase.co`
+   - `VITE_SUPABASE_ANON_KEY`: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzd2dtZ3Fma3Nza3FobXNpbnZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTkwNzMsImV4cCI6MjA3OTc5NTA3M30.MqQ1FAi6nG_17z7HAivA4GDCTYORBZCRZ8zvOX4TioA`
 
 ## Step 7: Database Function for Auto-Profile Creation
 
