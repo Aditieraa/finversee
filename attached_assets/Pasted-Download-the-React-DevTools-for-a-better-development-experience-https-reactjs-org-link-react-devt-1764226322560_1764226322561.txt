@@ -1,0 +1,33 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+(index):1 Uncaught (in promise) ObjectUnderstand this error
+content.js:10 Mapify:warn Element not found for selector: 'mapify-window'
+log @ content.js:10Understand this warning
+stocks.tsx:206 📊 Stock Investment - User ID: 33efd23f-dbd1-4651-be3c-14625b6aa370
+jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves?select=id&user_id=eq.33efd23f-dbd1-4651-be3c-14625b6aa370&is_latest=eq.true:1  Failed to load resource: the server responded with a status of 406 ()Understand this error
+stocks.tsx:221 📝 Latest Save: null Error: Object
+stocks.tsx:224 ❌ No game save found for user
+handleInvest @ stocks.tsx:224Understand this error
+stocks.tsx:206 📊 Stock Investment - User ID: 33efd23f-dbd1-4651-be3c-14625b6aa370
+jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves?select=id&user_id=eq.33efd23f-dbd1-4651-be3c-14625b6aa370&is_latest=eq.true:1  Failed to load resource: the server responded with a status of 406 ()Understand this error
+stocks.tsx:221 📝 Latest Save: null Error: Object
+stocks.tsx:224 ❌ No game save found for user
+handleInvest @ stocks.tsx:224Understand this error
+stocks.tsx:206 📊 Stock Investment - User ID: 33efd23f-dbd1-4651-be3c-14625b6aa370
+jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves?select=id&user_id=eq.33efd23f-dbd1-4651-be3c-14625b6aa370&is_latest=eq.true:1  Failed to load resource: the server responded with a status of 406 ()Understand this error
+stocks.tsx:221 📝 Latest Save: null Error: Object
+stocks.tsx:224 ❌ No game save found for user
+handleInvest @ stocks.tsx:224Understand this error
+stocks.tsx:206 📊 Stock Investment - User ID: 33efd23f-dbd1-4651-be3c-14625b6aa370
+jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves?select=id&user_id=eq.33efd23f-dbd1-4651-be3c-14625b6aa370&is_latest=eq.true:1  Failed to load resource: the server responded with a status of 406 ()Understand this error
+stocks.tsx:221 📝 Latest Save: null Error: Object
+stocks.tsx:224 ❌ No game save found for user
+handleInvest @ stocks.tsx:224Understand this error
+stocks.tsx:206 📊 Stock Investment - User ID: 33efd23f-dbd1-4651-be3c-14625b6aa370
+jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves?select=id&user_id=eq.33efd23f-dbd1-4651-be3c-14625b6aa370&is_latest=eq.true:1  Failed to load resource: the server responded with a status of 406 ()Understand this error
+stocks.tsx:221 📝 Latest Save: null Error: Object
+stocks.tsx:224 ❌ No game save found for user
+handleInvest @ stocks.tsx:224Understand this error
+stocks.tsx:206 📊 Stock Investment - User ID: 33efd23f-dbd1-4651-be3c-14625b6aa370
+jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves?select=id&user_id=eq.33efd23f-dbd1-4651-be3c-14625b6aa370&is_latest=eq.true:1  Failed to load resource: the server responded with a status of 406 ()Understand this error
+stocks.tsx:221 📝 Latest Save: null Error: Object
+stocks.tsx:224 ❌ No game save found for use
