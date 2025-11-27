@@ -61,21 +61,17 @@ export default function Dashboard({
   };
 
   const generateCategoryData = () => {
-    // REAL portfolio based on user's actual cash flow (not game portfolio)
-    const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
-    const monthsSaved = Math.max(gameState.currentMonth - 1, 0);
-    
-    // Calculate realistic portfolio from real savings
-    const realPortfolio = {
-      sip: monthlyAvailable * 0.40 * monthsSaved,           // 40% to SIP
-      stocks: monthlyAvailable * 0.25 * monthsSaved,        // 25% to Stocks
-      gold: monthlyAvailable * 0.15 * monthsSaved,          // 15% to Gold
-      realEstate: monthlyAvailable * 0.10 * monthsSaved,    // 10% to Real Estate
-      savings: monthlyAvailable * 0.10 * monthsSaved,       // 10% to Savings
+    // Use ACTUAL portfolio values from gameState (not theoretical)
+    const actualPortfolio = {
+      sip: gameState.portfolio?.sip || 0,
+      stocks: gameState.portfolio?.stocks || 0,
+      gold: gameState.portfolio?.gold || 0,
+      realEstate: gameState.portfolio?.realEstate || 0,
+      savings: gameState.portfolio?.savings || 0,
     };
     
-    const total = Object.values(realPortfolio).reduce((a: number, b: number) => a + b, 0);
-    return Object.entries(realPortfolio).map(([name, value]: [string, any]) => ({
+    const total = Object.values(actualPortfolio).reduce((a: number, b: number) => a + b, 0);
+    return Object.entries(actualPortfolio).map(([name, value]: [string, any]) => ({
       name: name === 'realEstate' ? 'Real Estate' : name.charAt(0).toUpperCase() + name.slice(1),
       value: value,
       percentage: total > 0 ? ((value / total) * 100).toFixed(1) : 0,
@@ -103,34 +99,27 @@ export default function Dashboard({
   const spendingData = generateSpendingPattern();
   const stockPortfolioValue = calculateStockPortfolioValue();
 
-  // REAL PORTFOLIO - based on actual cash flow, not game state
+  // ACTUAL PORTFOLIO - from gameState, not calculated
   const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
-  const monthsSaved = Math.max(gameState.currentMonth - 1, 0);
-  const realPortfolio = {
-    sip: monthlyAvailable * 0.40 * monthsSaved,
-    stocks: monthlyAvailable * 0.25 * monthsSaved,
-    gold: monthlyAvailable * 0.15 * monthsSaved,
-    realEstate: monthlyAvailable * 0.10 * monthsSaved,
-    savings: monthlyAvailable * 0.10 * monthsSaved,
-  };
-  const totalRealPortfolio = Object.values(realPortfolio).reduce((a: number, b: number) => a + b, 0);
+  const actualPortfolioTotal = Object.values(gameState.portfolio || {}).reduce((a: number, b: number) => a + b, 0);
+  const totalInvestedValue = actualPortfolioTotal + stockPortfolioValue;
   
-  // Real cash balance = cumulative monthly available (not game cashBalance)
-  const realCashBalance = monthlyAvailable * monthsSaved;
+  // Actual cash balance from gameState
+  const cashBalance = gameState.cashBalance || 0;
   
-  const growthRate = totalRealPortfolio > 0 ? ((totalRealPortfolio / monthlyAvailable) / monthsSaved * 100) : 0;
+  const growthRate = monthlyAvailable > 0 ? (totalInvestedValue / monthlyAvailable / Math.max(gameState.currentMonth - 1, 1) * 100) : 0;
   const financialHealth = Math.min(Math.max((growthRate / 50 * 100), 0), 100);
 
   // Calculate emergency fund level (target: 3-6 months of expenses)
   const emergencyFundTarget = (gameState.userProfile?.expenses || 50000) * 6;
-  const emergencyFundLevel = (realCashBalance / emergencyFundTarget) * 100;
+  const emergencyFundLevel = (cashBalance / emergencyFundTarget) * 100;
 
   // Calculate savings rate
   const savingsRate = monthlyAvailable > 0 ? (monthlyAvailable / (gameState.userProfile?.salary || 1)) * 100 : 0;
 
-  // Calculate portfolio percentage
-  const totalNetWorth = realCashBalance + totalRealPortfolio + stockPortfolioValue;
-  const portfolioPercentage = totalNetWorth > 0 ? ((totalRealPortfolio + stockPortfolioValue) / totalNetWorth) * 100 : 0;
+  // Calculate portfolio percentage - net worth = cash + investments
+  const totalNetWorth = cashBalance + totalInvestedValue;
+  const portfolioPercentage = totalNetWorth > 0 ? (totalInvestedValue / totalNetWorth) * 100 : 0;
 
   return (
     <div className="space-y-6 pb-20">
@@ -150,9 +139,9 @@ export default function Dashboard({
             <div>
               <p className="text-xs text-blue-200/70 mb-2 font-semibold">CASH AVAILABLE</p>
               <p className="text-3xl font-bold text-blue-50">
-                ₹<NumberCounter value={Math.round(gameState.userProfile?.salary || 0)} />
+                ₹<NumberCounter value={Math.round(cashBalance)} />
               </p>
-              <p className="text-xs text-blue-200/50 mt-2">Monthly salary</p>
+              <p className="text-xs text-blue-200/50 mt-2">Cash on hand</p>
             </div>
             <Coins className="h-8 w-8 text-blue-400/60" />
           </div>
@@ -178,9 +167,9 @@ export default function Dashboard({
             <div>
               <p className="text-xs text-blue-200/70 mb-2 font-semibold">PORTFOLIO VALUE</p>
               <p className="text-4xl font-bold text-blue-50">
-                ₹<NumberCounter value={Math.round(totalRealPortfolio + stockPortfolioValue)} />
+                ₹<NumberCounter value={Math.round(totalInvestedValue)} />
               </p>
-              <p className="text-xs text-blue-200/50 mt-2">Real investments (SIP, Stocks, Gold, Real Estate)</p>
+              <p className="text-xs text-blue-200/50 mt-2">Actual investments (Portfolio + Stocks)</p>
             </div>
             <Target className="h-8 w-8 text-blue-400/60" />
           </div>
