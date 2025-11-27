@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { LineChart, Line, PieChart, Pie, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, TrendingDown, Coins, Target, AlertCircle, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { TrendingUp, TrendingDown, Coins, Target, AlertCircle, CheckCircle, Calendar } from 'lucide-react';
 
 interface DashboardProps {
   gameState: any;
@@ -21,12 +23,16 @@ const CHART_COLORS = {
 };
 
 export default function Dashboard({ gameState, monthlyDecisions }: DashboardProps) {
+  const [timeframe, setTimeframe] = useState<3 | 6 | 12>(6);
+  const [hoveredSlice, setHoveredSlice] = useState<number | null>(null);
+
   // Generate chart data from game state
-  const generateMonthlyData = () => {
+  const generateMonthlyData = (months: number) => {
     const data = [];
-    for (let i = 1; i <= Math.min(gameState.currentMonth, 12); i++) {
+    const displayMonths = Math.min(months, gameState.currentMonth, 12);
+    for (let i = 1; i <= displayMonths; i++) {
       data.push({
-        month: `Month ${i}`,
+        month: `M${i}`,
         income: gameState.userProfile?.salary || 0,
         expenses: gameState.userProfile?.expenses || 0,
         net: (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0),
@@ -53,20 +59,6 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
     }, 0);
   };
 
-  const generateTrendData = () => {
-    const trends = [];
-    const currentIncome = gameState.userProfile?.salary || 0;
-    for (let i = 0; i < 6; i++) {
-      trends.push({
-        month: `${String.fromCharCode(74 + i)}an`,
-        income: currentIncome + (Math.random() - 0.5) * 20000,
-        expenses: (gameState.userProfile?.expenses || 0) + (Math.random() - 0.5) * 15000,
-        savings: (Math.random() - 0.5) * 50000,
-      });
-    }
-    return trends;
-  };
-
   const generateSpendingPattern = () => {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     return days.map((day, idx) => ({
@@ -75,9 +67,8 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
     }));
   };
 
-  const monthlyData = generateMonthlyData();
+  const monthlyData = generateMonthlyData(timeframe);
   const categoryData = generateCategoryData();
-  const trendData = generateTrendData();
   const spendingData = generateSpendingPattern();
   const stockPortfolioValue = calculateStockPortfolioValue();
 
@@ -87,9 +78,10 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
 
   return (
     <div className="space-y-6 pb-6">
-      {/* Summary Cards */}
+      {/* SECTION 1: Financial Snapshot - Top */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate">
+        {/* Cash Available */}
+        <Card className="border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs text-blue-200/70 mb-2 font-semibold">CASH AVAILABLE</p>
@@ -100,7 +92,8 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
           </div>
         </Card>
 
-        <Card className="border-red-400/30 bg-gradient-to-br from-red-900/40 to-red-950/30 backdrop-blur-sm p-6 hover-elevate">
+        {/* Monthly Expenses */}
+        <Card className="border-red-400/30 bg-gradient-to-br from-red-900/40 to-red-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs text-red-200/70 mb-2 font-semibold">MONTHLY EXPENSES</p>
@@ -111,36 +104,45 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
           </div>
         </Card>
 
-        <Card className="border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate">
+        {/* Portfolio Value - LARGER (spans 2 cols on medium+) */}
+        <Card className="border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card md:col-span-2">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs text-blue-200/70 mb-2 font-semibold">PORTFOLIO VALUE</p>
-              <p className="text-3xl font-bold text-blue-50 animate-countUp">₹{Math.round(totalPortfolio + calculateStockPortfolioValue()).toLocaleString('en-IN')}</p>
-              <p className="text-xs text-blue-200/50 mt-2">All investments</p>
+              <p className="text-4xl font-bold text-blue-50 animate-countUp">₹{Math.round(totalPortfolio + stockPortfolioValue).toLocaleString('en-IN')}</p>
+              <p className="text-xs text-blue-200/50 mt-2">All investments (stocks + holdings)</p>
             </div>
             <Target className="h-8 w-8 text-blue-400/60" />
           </div>
         </Card>
-
-        <Card className="border-green-400/30 bg-gradient-to-br from-green-900/40 to-green-950/30 backdrop-blur-sm p-6 hover-elevate">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs text-green-200/70 mb-2 font-semibold">GROWTH RATE</p>
-              <p className="text-3xl font-bold text-green-50 animate-countUp">{growthRate.toFixed(1)}%</p>
-              <p className="text-xs text-green-200/50 mt-2">Monthly growth</p>
-            </div>
-            <TrendingUp className="h-8 w-8 text-green-400/60" />
-          </div>
-        </Card>
       </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Money Flow Chart - Area Chart with Gradient */}
-        <Card className="border-blue-400/20 bg-blue-950/40 backdrop-blur-sm p-6 shadow-card">
-          <h3 className="text-xl font-bold text-white mb-1">Monthly Cash Flow</h3>
-          <p className="text-sm text-blue-200/60 mb-4">Income, Expenses & Net Savings</p>
-          <ResponsiveContainer width="100%" height={280}>
+      {/* SECTION 2: Monthly Cash Flow - PRIMARY CENTRAL WIDGET */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="border-blue-400/20 bg-blue-950/40 backdrop-blur-sm p-6 shadow-card lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-xl font-bold text-white">Monthly Cash Flow</h3>
+              <p className="text-sm text-blue-200/60">Income, Expenses & Net Savings</p>
+            </div>
+            {/* Timeframe Toggle */}
+            <div className="flex gap-2">
+              {[3, 6, 12].map(months => (
+                <Button
+                  key={months}
+                  size="sm"
+                  variant={timeframe === months ? 'default' : 'outline'}
+                  onClick={() => setTimeframe(months as 3 | 6 | 12)}
+                  className="text-xs h-8"
+                  data-testid={`button-timeframe-${months}`}
+                >
+                  {months}M
+                </Button>
+              ))}
+            </div>
+          </div>
+          
+          <ResponsiveContainer width="100%" height={320}>
             <AreaChart data={monthlyData}>
               <defs>
                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
@@ -156,184 +158,183 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
               <XAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
               <YAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
               <Tooltip contentStyle={{ backgroundColor: '#1A237E', border: '1px solid rgba(66, 165, 245, 0.3)', borderRadius: '8px' }} />
+              <Legend />
               <Area type="monotoneX" dataKey="income" stroke="#66BB6A" strokeWidth={2} fillOpacity={1} fill="url(#colorIncome)" />
               <Area type="monotoneX" dataKey="expenses" stroke="#E53935" strokeWidth={2} fillOpacity={1} fill="url(#colorExpenses)" />
             </AreaChart>
           </ResponsiveContainer>
         </Card>
 
-        {/* Portfolio Breakdown Donut Chart */}
-        {(() => {
-          const totalValue = categoryData.reduce((sum, item) => sum + item.value, 0);
-          const donutData = categoryData.filter(item => item.value > 0).map(item => ({
-            ...item,
-            percentage: totalValue > 0 ? ((item.value / totalValue) * 100).toFixed(1) : 0
-          }));
-          
-          return (
-            <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6 shadow-card lg:col-span-1">
-              <h3 className="text-xl font-bold text-white mb-1">Portfolio Breakdown</h3>
-              <p className="text-sm text-purple-200/60 mb-4">Asset allocation across categories</p>
-              
-              {donutData.length === 0 ? (
-                <div className="h-80 flex items-center justify-center">
-                  <p className="text-purple-300/60 text-center">No investments yet. Start investing to see your portfolio breakdown!</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                      <Pie
-                        data={donutData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={80}
-                        paddingAngle={2}
-                        dataKey="value"
-                      >
-                        {donutData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: '#1A237E', 
-                          border: '1px solid rgba(66, 165, 245, 0.3)',
-                          borderRadius: '8px'
-                        }}
-                        formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  
-                  <div className="grid grid-cols-2 gap-2">
-                    {donutData.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 p-2 rounded-lg bg-purple-900/20 hover-elevate cursor-pointer transition-all">
-                        <div 
-                          className="w-2.5 h-2.5 rounded-full"
-                          style={{ backgroundColor: item.color }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-semibold text-purple-200 truncate">{item.name}</p>
-                          <p className="text-xs text-purple-200/60">{item.percentage}%</p>
-                        </div>
-                      </div>
-                    ))}
+        {/* SECTION 3: Right-Hand Rail - Growth Rate Indicator */}
+        <Card className="border-green-400/30 bg-gradient-to-br from-green-900/40 to-green-950/30 backdrop-blur-sm p-6 shadow-card">
+          <div className="h-full flex flex-col justify-between">
+            <div>
+              <p className="text-xs text-green-200/70 mb-2 font-semibold">GROWTH RATE</p>
+              <p className="text-3xl font-bold text-green-50 animate-countUp">{growthRate.toFixed(1)}%</p>
+              <p className="text-xs text-green-200/50 mt-2">Monthly growth</p>
+            </div>
+            <div className="mt-4 pt-4 border-t border-green-400/20">
+              <Badge className="bg-green-500/20 text-green-300 border-green-500/40 text-xs">
+                {growthRate > 10 ? 'Excellent' : growthRate > 5 ? 'Good' : growthRate > 0 ? 'Fair' : 'Needs Work'}
+              </Badge>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* SECTION 4: Main Content + Right Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Secondary Charts */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Weekly Spending Pattern */}
+          <Card className="border-green-400/20 bg-green-950/40 backdrop-blur-sm p-6 shadow-card">
+            <h3 className="text-xl font-bold text-white mb-1">Weekly Spending Pattern</h3>
+            <p className="text-sm text-green-200/60 mb-4">Daily spending trends</p>
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={spendingData}>
+                <defs>
+                  <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#FFC107" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#FFC107" stopOpacity={0.01} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.15)" vertical={false} />
+                <XAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
+                <YAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#1A237E', border: '1px solid rgba(66, 165, 245, 0.3)', borderRadius: '8px' }} />
+                <Area type="monotoneX" dataKey="spending" stroke="#FFB74D" strokeWidth={2} fillOpacity={1} fill="url(#colorSpending)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </Card>
+        </div>
+
+        {/* Right: Persistent Right-Hand Rail */}
+        <div className="space-y-6">
+          {/* Portfolio Breakdown Donut Chart */}
+          {(() => {
+            const totalValue = categoryData.reduce((sum, item) => sum + item.value, 0);
+            const donutData = categoryData.filter(item => item.value > 0).map(item => ({
+              ...item,
+              percentage: totalValue > 0 ? ((item.value / totalValue) * 100).toFixed(1) : 0
+            }));
+            
+            return (
+              <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6 shadow-card">
+                <h3 className="text-lg font-bold text-white mb-1">Portfolio Breakdown</h3>
+                <p className="text-xs text-purple-200/60 mb-4">Asset allocation</p>
+                
+                {donutData.length === 0 ? (
+                  <div className="h-48 flex items-center justify-center">
+                    <p className="text-purple-300/60 text-xs text-center">No investments yet</p>
                   </div>
+                ) : (
+                  <div className="space-y-3">
+                    <ResponsiveContainer width="100%" height={180}>
+                      <PieChart>
+                        <Pie
+                          data={donutData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={40}
+                          outerRadius={65}
+                          paddingAngle={2}
+                          dataKey="value"
+                          onMouseEnter={(_, index) => setHoveredSlice(index)}
+                          onMouseLeave={() => setHoveredSlice(null)}
+                        >
+                          {donutData.map((entry, index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={entry.color}
+                              opacity={hoveredSlice === null || hoveredSlice === index ? 1 : 0.5}
+                              className="transition-opacity"
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#1A237E', 
+                            border: '1px solid rgba(66, 165, 245, 0.3)',
+                            borderRadius: '8px',
+                            fontSize: '12px'
+                          }}
+                          formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    
+                    <div className="space-y-2">
+                      {donutData.map((item, idx) => (
+                        <div 
+                          key={idx} 
+                          className="flex items-center gap-2 p-2 rounded-lg bg-purple-900/20 hover-elevate cursor-pointer transition-all text-xs"
+                          onMouseEnter={() => setHoveredSlice(idx)}
+                          onMouseLeave={() => setHoveredSlice(null)}
+                        >
+                          <div 
+                            className="w-2 h-2 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: item.color }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-purple-200 truncate">{item.name}</p>
+                            <p className="text-purple-200/60">{item.percentage}%</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </Card>
+            );
+          })()}
+
+          {/* Consolidated Key Insights & Health Score */}
+          <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-6 shadow-card">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-cyan-400" />
+              Health Score
+            </h3>
+            
+            <div className="flex items-center justify-center py-4 mb-4">
+              <div className="relative w-28 h-28">
+                <svg className="w-28 h-28 transform -rotate-90" viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(100, 150, 200, 0.2)" strokeWidth="8" />
+                  <circle 
+                    cx="60" 
+                    cy="60" 
+                    r="50" 
+                    fill="none" 
+                    stroke="#42A5F5" 
+                    strokeWidth="8" 
+                    strokeDasharray={`${(financialHealth / 100) * 314} 314`}
+                    className="transition-all"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xl font-bold text-cyan-300">{Math.round(financialHealth)}</span>
                 </div>
-              )}
-            </Card>
-          );
-        })()}
+              </div>
+            </div>
+            
+            <p className="text-center text-cyan-200 text-xs font-semibold mb-3">
+              {financialHealth > 75 ? 'Excellent' : financialHealth > 50 ? 'Good' : financialHealth > 25 ? 'Fair' : 'Needs Work'}
+            </p>
 
-        {/* Trend Analysis */}
-        <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-6 shadow-card">
-          <h3 className="text-xl font-bold text-white mb-1">Financial Trends</h3>
-          <p className="text-sm text-cyan-200/60 mb-4">Performance metrics & indicators</p>
-          <div className="space-y-4 mb-4">
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm text-cyan-200">Income Trend</span>
-                <span className="text-sm font-bold text-green-400">+5.2%</span>
+            {/* Key Insights */}
+            <div className="border-t border-cyan-400/20 pt-4 space-y-2">
+              <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                <p className="text-xs text-green-300 font-semibold">✓ Portfolio diversified</p>
               </div>
-              <Progress value={75} className="h-2" />
-            </div>
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm text-cyan-200">Expenses Trend</span>
-                <span className="text-sm font-bold text-red-400">-3.1%</span>
+              <div className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                <p className="text-xs text-yellow-300 font-semibold">⚠ Increase savings</p>
               </div>
-              <Progress value={45} className="h-2" />
-            </div>
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm text-cyan-200">Savings Rate</span>
-                <span className="text-sm font-bold text-blue-400">+12.8%</span>
+              <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                <p className="text-xs text-blue-300 font-semibold">📈 On track for goals</p>
               </div>
-              <Progress value={85} className="h-2" />
             </div>
-          </div>
-        </Card>
-
-        {/* Spending Pattern - Gradient Area Chart */}
-        <Card className="border-green-400/20 bg-green-950/40 backdrop-blur-sm p-6 shadow-card">
-          <h3 className="text-xl font-bold text-white mb-1">Weekly Spending Pattern</h3>
-          <p className="text-sm text-green-200/60 mb-4">Daily spending trends</p>
-          <ResponsiveContainer width="100%" height={280}>
-            <AreaChart data={spendingData}>
-              <defs>
-                <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#FFC107" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#FFC107" stopOpacity={0.01} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.15)" vertical={false} />
-              <XAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
-              <YAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
-              <Tooltip contentStyle={{ backgroundColor: '#1A237E', border: '1px solid rgba(66, 165, 245, 0.3)', borderRadius: '8px' }} />
-              <Area type="monotoneX" dataKey="spending" stroke="#FFB74D" strokeWidth={2} fillOpacity={1} fill="url(#colorSpending)" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </Card>
+          </Card>
+        </div>
       </div>
-
-      {/* Financial Health & Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-blue-400/20 bg-blue-950/40 backdrop-blur-sm p-6">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-blue-400" />
-            Financial Health Score
-          </h3>
-          <div className="flex items-center justify-center py-8">
-            <div className="relative w-32 h-32">
-              <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(100, 150, 200, 0.2)" strokeWidth="8" />
-                <circle cx="60" cy="60" r="50" fill="none" stroke="#3B82F6" strokeWidth="8" strokeDasharray={`${(financialHealth / 100) * 314} 314`} />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold text-blue-300">{Math.round(financialHealth)}</span>
-              </div>
-            </div>
-          </div>
-          <p className="text-center text-blue-200 text-sm">Excellent</p>
-        </Card>
-
-        <Card className="border-yellow-400/20 bg-yellow-950/40 backdrop-blur-sm p-6">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-yellow-400" />
-            Key Insights
-          </h3>
-          <div className="space-y-3">
-            <div className="p-3 rounded-lg border border-green-500/30 bg-green-500/10">
-              <p className="text-sm text-green-300">✓ Great cost control - expenses down 6.1%</p>
-            </div>
-            <div className="p-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10">
-              <p className="text-sm text-yellow-300">⚠ Savings declining 14.6% - urgent attention needed</p>
-            </div>
-            <div className="p-3 rounded-lg border border-blue-500/30 bg-blue-500/10">
-              <p className="text-sm text-blue-300">📈 Portfolio growing steadily - maintain momentum</p>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Monthly Bar Chart Trends */}
-      <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6">
-        <h3 className="text-lg font-bold text-white mb-4">Monthly Income vs Expenses vs Savings</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={trendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
-            <XAxis stroke="rgba(149, 165, 166, 0.6)" />
-            <YAxis stroke="rgba(149, 165, 166, 0.6)" />
-            <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
-            <Legend />
-            <Bar dataKey="income" fill="#BA68C8" />
-            <Bar dataKey="expenses" fill="#FF8C42" />
-            <Bar dataKey="savings" fill="#64B5F6" />
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
     </div>
   );
 }
