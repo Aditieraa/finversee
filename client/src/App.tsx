@@ -3,13 +3,13 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import FinQuest from "@/pages/finquest";
+import BreakTheRace from "@/pages/breaktherace";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={FinQuest} />
+      <Route path="/" component={BreakTheRace} />
       <Route component={NotFound} />
     </Switch>
   );
