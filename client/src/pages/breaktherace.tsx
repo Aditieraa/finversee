@@ -177,6 +177,13 @@ export default function BreakTheRace({ userId: propUserId }: BreakTheRaceProps) 
     }
   }, [animatingValue]);
 
+  // Check win condition whenever game state changes
+  useEffect(() => {
+    if (gameState.userProfile) {
+      checkEscapeRatRace(gameState);
+    }
+  }, [gameState.passiveIncome, gameState.cash, gameState.onFastTrack]);
+
   useEffect(() => {
     if (!propUserId) {
       checkAuth();
@@ -486,7 +493,7 @@ export default function BreakTheRace({ userId: propUserId }: BreakTheRaceProps) 
             <div className="space-y-2 mb-6 text-left">
               <p className="text-foreground/70"><strong>Passive Income:</strong> ₹{gameState.passiveIncome.toLocaleString('en-IN')}/month</p>
               <p className="text-foreground/70"><strong>Total Assets:</strong> {gameState.assets.length}</p>
-              <p className="text-foreground/70"><strong>Cash on Hand:</strong> ₹{gameState.cash.toLocaleString('en-IN')}</p>
+              <p className="text-foreground/70"><strong>Cash in Hand:</strong> ₹{gameState.cash.toLocaleString('en-IN')}</p>
             </div>
             <Button onClick={resetGame} className="w-full">Play Again</Button>
           </Card>
@@ -527,7 +534,7 @@ export default function BreakTheRace({ userId: propUserId }: BreakTheRaceProps) 
           {/* Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <Card className={`border-primary/30 glassmorphic p-4 ${animatingValue === 'cash' ? 'animate-pulse-scale' : ''}`}>
-              <div className="text-sm text-foreground/70">Cash on Hand</div>
+              <div className="text-sm text-foreground/70">Cash in Hand</div>
               <div className="text-2xl font-bold text-primary">₹{gameState.cash.toLocaleString('en-IN')}</div>
             </Card>
             <Card className={`border-primary/30 glassmorphic p-4 ${animatingValue === 'passive' ? 'animate-pulse-scale' : ''}`}>
