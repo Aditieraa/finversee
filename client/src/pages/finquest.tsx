@@ -366,28 +366,45 @@ export default function FinQuest() {
 
   const loadLeaderboard = async () => {
     try {
-      const { data, error } = await supabase
+      // Query game_saves table directly and calculate scores locally
+      const { data: savesData, error: savesError } = await supabase
         .from('game_saves')
-        .select('gs:game_saves(level, xp, cash_balance, portfolio), p:profiles(name)')
+        .select('user_id, level, cash_balance, portfolio')
         .eq('is_latest', true)
         .order('cash_balance', { ascending: false })
         .limit(10);
 
-      if (error) throw error;
+      if (savesError) throw savesError;
 
-      if (data) {
-        const leaderboardData = data
-          .filter((entry: any) => entry.p?.name)
-          .map((entry: any) => {
-            const portfolio = entry.gs?.portfolio || {};
+      if (savesData && savesData.length > 0) {
+        // Get user profiles for names
+        const userIds = savesData.map((save: any) => save.user_id);
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, name')
+          .in('id', userIds);
+
+        if (profilesError) throw profilesError;
+
+        // Create a map of user IDs to names
+        const nameMap = (profilesData || []).reduce((acc: any, profile: any) => {
+          acc[profile.id] = profile.name;
+          return acc;
+        }, {});
+
+        // Map game saves to leaderboard format with names
+        const leaderboardData = savesData
+          .map((save: any) => {
+            const portfolio = save.portfolio || {};
             const portfolioTotal = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
-            const netWorth = (entry.gs?.cash_balance || 0) + portfolioTotal;
+            const netWorth = (save.cash_balance || 0) + portfolioTotal;
             return {
-              name: entry.p.name,
+              name: nameMap[save.user_id] || 'Anonymous',
               score: netWorth || 0,
-              level: entry.gs?.level || 1,
+              level: save.level || 1,
             };
-          });
+          })
+          .filter((entry: any) => entry.name !== 'Anonymous');
 
         setLeaderboard(leaderboardData);
       }
@@ -459,14 +476,13 @@ export default function FinQuest() {
 
     if (userId && userId !== 'guest') {
       try {
-        // First try to upsert (insert or update) the profile
+        // First try to upsert (insert or update) the profile - don't include undefined email
         const { error: upsertError } = await supabase
           .from('profiles')
           .upsert({
             id: userId,
             name: onboarding.name,
             career: onboarding.career,
-            email: undefined,
             updated_at: new Date().toISOString(),
           });
         
@@ -508,14 +524,19 @@ export default function FinQuest() {
       try {
         const { error } = await supabase
           .from('game_saves')
-          .upsert({
+          .upsert([{
             user_id: userId,
-            game_state: newGameState,
-            chat_history: newGameState.chatHistory,
+            level: newGameState.level,
+            xp: newGameState.xp,
+            current_month: newGameState.currentMonth,
+            cash_balance: newGameState.cashBalance,
+            portfolio: newGameState.portfolio,
             achievements: newGameState.achievements,
-            leaderboard_score: newGameState.netWorth,
-            updated_at: new Date().toISOString(),
-          });
+            financial_goal: 5000000,
+            goal_progress: 0,
+            monthly_investments: newGameState.monthlyInvestments,
+            is_latest: true,
+          }]);
 
         if (error) {
           console.error('Error saving game state after onboarding:', error);
