@@ -1,0 +1,58 @@
+(index):1 Uncaught (in promise) {name: 'FetchError'}
+Promise.then
+main @ content.js:103
+(anonymous) @ content.js:103
+(anonymous) @ content.js:103
+(anonymous) @ content.js:103Understand this error
+content.js:10 Mapify:warn Element not found for selector: 'mapify-window'
+log @ content.js:10
+_log @ content.js:4
+o @ content.js:4
+_logFn @ content.js:4
+(anonymous) @ content.js:1
+xe @ content.js:10
+FS @ content.js:103
+(anonymous) @ content.js:103
+setInterval
+u @ content.js:32
+Ro @ content.js:32
+main @ content.js:103
+(anonymous) @ content.js:103
+(anonymous) @ content.js:103
+(anonymous) @ content.js:103Understand this warning
+auth.tsx:43 User created with ID: dc4c2ded-164a-4c45-9dee-df63a0262ef5
+@supabase_supabase-js.js?v=daf8dead:6859  POST https://jswgmgqfksskqhmsinvs.supabase.co/rest/v1/profiles 401 (Unauthorized)
+(anonymous) @ @supabase_supabase-js.js?v=daf8dead:6859
+(anonymous) @ @supabase_supabase-js.js?v=daf8dead:6877
+await in (anonymous)
+then @ @supabase_supabase-js.js?v=daf8dead:111Understand this error
+auth.tsx:55 Profile upsert result: {profileData: null, profileError: {…}}
+auth.tsx:58 ❌ Profile creation failed: {code: '42501', message: 'new row violates row-level security policy for table "profiles"', details: null, hint: null}
+handleAuth @ auth.tsx:58
+await in handleAuth
+callCallback2 @ chunk-UPELNCPK.js?v=daf8dead:3674
+invokeGuardedCallbackDev @ chunk-UPELNCPK.js?v=daf8dead:3699
+invokeGuardedCallback @ chunk-UPELNCPK.js?v=daf8dead:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-UPELNCPK.js?v=daf8dead:3736
+executeDispatch @ chunk-UPELNCPK.js?v=daf8dead:7014
+processDispatchQueueItemsInOrder @ chunk-UPELNCPK.js?v=daf8dead:7034
+processDispatchQueue @ chunk-UPELNCPK.js?v=daf8dead:7043
+dispatchEventsForPlugins @ chunk-UPELNCPK.js?v=daf8dead:7051
+(anonymous) @ chunk-UPELNCPK.js?v=daf8dead:7174
+batchedUpdates$1 @ chunk-UPELNCPK.js?v=daf8dead:18913
+batchedUpdates @ chunk-UPELNCPK.js?v=daf8dead:3579
+dispatchEventForPluginEventSystem @ chunk-UPELNCPK.js?v=daf8dead:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-UPELNCPK.js?v=daf8dead:5478
+dispatchEvent @ chunk-UPELNCPK.js?v=daf8dead:5472
+dispatchDiscreteEvent @ chunk-UPELNCPK.js?v=daf8dead:5449Understand this error
+@supabase_supabase-js.js?v=daf8dead:6859  GET https://jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves?select=*&user_id=eq.dc4c2ded-164a-4c45-9dee-df63a0262ef5&is_latest=eq.true 406 (Not Acceptable)
+(anonymous) @ @supabase_supabase-js.js?v=daf8dead:6859
+(anonymous) @ @supabase_supabase-js.js?v=daf8dead:6877
+await in (anonymous)
+then @ @supabase_supabase-js.js?v=daf8dead:111Understand this error
+@supabase_supabase-js.js?v=daf8dead:6859  POST https://jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves 401 (Unauthorized)
+(anonymous) @ @supabase_supabase-js.js?v=daf8dead:6859
+(anonymous) @ @supabase_supabase-js.js?v=daf8dead:6877
+await in (anonymous)
+then @ @supabase_supabase-js.js?v=daf8dead:111Understand this error
+finquest.tsx:541 Error saving game state after onboarding: {code: '42501', details: null, hint: null, message: 'new row violates row-level security policy for table "game_saves"'}

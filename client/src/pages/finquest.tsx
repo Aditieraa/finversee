@@ -468,11 +468,7 @@ export default function FinQuest() {
 
     if (userId && userId !== 'guest') {
       try {
-        // Get user email from auth session
-        const { data: { session } } = await supabase.auth.getSession();
-        const userEmail = session?.user?.email || 'user@example.com';
-
-        // Update the profile with email (required field)
+        // Update the profile - it was auto-created by the trigger
         const { error: updateError } = await supabase
           .from('profiles')
           .update({

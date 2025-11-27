@@ -42,32 +42,8 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         if (data.user) {
           console.log('User created with ID:', data.user.id);
           
-          try {
-            const { data: profileData, error: profileError } = await supabase
-              .from('profiles')
-              .upsert({
-                id: data.user.id,
-                email: data.user.email,
-                name: '',
-                career: null,
-              });
-            
-            console.log('Profile upsert result:', { profileData, profileError });
-            
-            if (profileError) {
-              console.error('❌ Profile creation failed:', {
-                code: profileError.code,
-                message: profileError.message,
-                details: profileError.details,
-                hint: profileError.hint,
-              });
-            } else {
-              console.log('✅ Profile created successfully');
-            }
-          } catch (profileErr) {
-            console.error('❌ Exception during profile creation:', profileErr);
-          }
-
+          // Profile is automatically created by database trigger - no need to create manually
+          
           toast({
             title: 'Account Created!',
             description: 'Welcome to Finverse. Starting your financial journey...',
