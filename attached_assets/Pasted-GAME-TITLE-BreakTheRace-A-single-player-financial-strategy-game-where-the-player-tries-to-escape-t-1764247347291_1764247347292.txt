@@ -1,0 +1,246 @@
+GAME TITLE: BreakTheRace
+
+A single-player financial strategy game where the player tries to escape the "rat race", reach the "fast track", and achieve financial independence.
+
+🎯 MAIN GAME OBJECTIVE
+
+Escape the Rat Race
+
+Player escapes when passive income ≥ total monthly expenses.
+
+Enter the Fast Track
+
+Once passive income ≥ expenses, move to Fast Track mode.
+
+Win the Game
+
+Player wins when:
+Passive income ≥ expenses + ₹40,00,000
+
+Then allow the player to buy their dream → Victory screen.
+
+🧑‍💼 STEP 1 – CAREER SELECTION
+
+Create a “Choose Career” screen with at least 6 professions. Each profession has:
+
+Salary (active income)
+
+Monthly expenses
+
+Starting cash
+
+Starting liabilities (loan or EMI)
+
+Example careers (you may add more):
+
+Teacher
+
+Software Engineer
+
+Doctor
+
+Sales Manager
+
+Accountant
+
+Designer
+
+After selection, load the main board screen.
+
+📊 STEP 2 – PLAYER FINANCIAL SHEET
+
+Maintain a real-time financial dashboard showing:
+
+Income
+
+Salary
+
+Passive income
+
+Expenses
+
+Taxes
+
+Loans/EMIs
+
+Living expenses
+
+Total expenses
+
+Assets
+
+Real estate
+
+Stocks
+
+Businesses
+
+Liabilities
+
+Car loan
+
+Home loan
+
+Education loan
+
+Net Cash
+
+Cash on hand
+
+Updated after every action
+
+This must update automatically.
+
+🎲 STEP 3 – BOARD MOVEMENT
+
+Create a circular board with spaces including:
+
+Payday
+
+Small Deal
+
+Big Deal
+
+Doodad
+
+Market
+
+Charity
+
+Opportunity
+
+Player rolls a 1–6 dice and moves clockwise.
+
+If they pass Payday → Add monthly cash flow (salary + passive income – expenses).
+
+💳 STEP 4 – CARD SYSTEM
+1. Small Deal Cards
+
+Affordable opportunities:
+
+Buy small stocks
+
+Small real estate
+
+Part-time business
+These add small amounts of passive income.
+
+2. Big Deal Cards
+
+High-value investments:
+
+Apartments
+
+Commercial property
+
+Large business
+These add high passive income but cost more.
+
+3. Market Cards
+
+Market fluctuations:
+
+Stock price up/down
+
+Property values rise/fall
+
+Opportunity to sell assets
+
+Interest rate changes
+
+4. Doodad Cards
+
+Unexpected expenses:
+
+Car repair
+
+Shopping
+
+Vacation
+
+Medical fees
+
+These subtract cash.
+
+🏁 STEP 5 – ESCAPING THE RAT RACE
+
+When:
+
+passive_income >= total_expenses
+
+
+Then:
+
+Trigger animation
+
+Move player to Fast Track mode
+
+Replace board with Fast Track version
+
+🚀 STEP 6 – FAST TRACK MODE
+
+Fast Track has bigger deals:
+
+Passive incomes are 10x higher
+
+Doodads are rare
+
+Chance to buy dream properties
+
+Goal:
+
+passive_income >= total_expenses + 4000000
+
+
+When reached, unlock "Buy Your Dream" button.
+
+👑 STEP 7 – WINNING THE GAME
+
+When player clicks “Buy Dream”:
+
+Show success animation
+
+Display:
+“You Won! You Broke the Race!”
+
+Show financial summary
+
+Offer “Play Again” button
+
+🎨 UI REQUIREMENTS
+
+Create a clean, fun, game-like interface:
+
+Soft pastel theme
+
+Smooth animations
+
+Clear dashboard
+
+Dice animation
+
+Card pop-ups
+
+Circular board with player token
+
+🧠 LOGIC REQUIREMENTS
+
+Implement everything in JavaScript:
+
+Financial calculations
+
+Dice movement
+
+Cashflow computations
+
+Asset/liability updates
+
+Card effects
+
+Rat race escape logic
+
+Fast track logic
+
+Win logic
+
+Use modular code structure.

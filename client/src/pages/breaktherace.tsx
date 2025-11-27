@@ -122,6 +122,7 @@ export default function BreakTheRace() {
   const [diceRolling, setDiceRolling] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [cardData, setCardData] = useState<any>(null);
+  const [selectedAssetToSell, setSelectedAssetToSell] = useState<number | null>(null);
 
   const [gameState, setGameState] = useState<GameState>({
     career: null,
@@ -214,6 +215,12 @@ export default function BreakTheRace() {
       setCardData({ type: 'bigdeal', ...deal });
       setShowCardModal(true);
     } else if (space === 'doodad') {
+      // Doodads are rare (30% chance) on Fast Track, always (100%) on Rat Race
+      const shouldSkipDoodad = gameState.onFastTrack && Math.random() > 0.3;
+      if (shouldSkipDoodad) {
+        toast({ title: '⭐ Lucky!', description: 'Doodad avoided on Fast Track!' });
+        return;
+      }
       const doodad = DOODADS[Math.floor(Math.random() * DOODADS.length)];
       setGameState(prev => ({ ...prev, cash: Math.max(0, prev.cash - doodad.cost) }));
       toast({ title: '⚠️ Oops!', description: `${doodad.name}: -₹${doodad.cost.toLocaleString('en-IN')}`, variant: 'destructive' });
@@ -284,6 +291,30 @@ export default function BreakTheRace() {
     setGameState(prev => ({ ...prev, hasWon: true }));
     confetti();
     await saveGameState({ ...gameState, hasWon: true });
+  };
+
+  const sellAsset = async (index: number) => {
+    const asset = gameState.assets[index];
+    const sellPrice = Math.round(asset.cost * 0.8); // Sell at 80% of purchase price
+    
+    setGameState(prev => ({
+      ...prev,
+      cash: prev.cash + sellPrice,
+      assets: prev.assets.filter((_, i) => i !== index),
+      passiveIncome: prev.passiveIncome - asset.passiveIncome,
+    }));
+    
+    toast({ title: '💰 Sold!', description: `${asset.name} sold for ₹${sellPrice.toLocaleString('en-IN')}` });
+    setSelectedAssetToSell(null);
+    
+    const updatedState = { 
+      ...gameState, 
+      cash: gameState.cash + sellPrice,
+      assets: gameState.assets.filter((_, i) => i !== index),
+      passiveIncome: gameState.passiveIncome - asset.passiveIncome,
+    };
+    await saveGameState(updatedState);
+    checkEscapeRatRace();
   };
 
   const saveGameState = async (state: GameState) => {
@@ -462,10 +493,22 @@ export default function BreakTheRace() {
               <h3 className="text-lg font-bold text-primary mb-4">Your Assets</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {gameState.assets.map((asset, idx) => (
-                  <div key={idx} className="p-3 bg-foreground/5 rounded-lg border border-primary/20">
-                    <p className="font-semibold text-foreground">{asset.name}</p>
-                    <p className="text-sm text-foreground/70">Cost: ₹{asset.cost.toLocaleString('en-IN')}</p>
-                    <p className="text-sm text-green-400">Income: ₹{asset.passiveIncome.toLocaleString('en-IN')}/month</p>
+                  <div key={idx} className="p-3 bg-foreground/5 rounded-lg border border-primary/20 flex flex-col justify-between">
+                    <div>
+                      <p className="font-semibold text-foreground">{asset.name}</p>
+                      <p className="text-sm text-foreground/70">Cost: ₹{asset.cost.toLocaleString('en-IN')}</p>
+                      <p className="text-sm text-green-400">Income: ₹{asset.passiveIncome.toLocaleString('en-IN')}/month</p>
+                      <p className="text-xs text-foreground/50 mt-1">Sell for: ₹{Math.round(asset.cost * 0.8).toLocaleString('en-IN')}</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => sellAsset(idx)}
+                      className="mt-2 w-full"
+                      data-testid={`button-sell-asset-${idx}`}
+                    >
+                      Sell Asset
+                    </Button>
                   </div>
                 ))}
               </div>
