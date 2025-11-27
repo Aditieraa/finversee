@@ -197,12 +197,9 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       ? (holdings[existingIndex].investmentAmount + actualInvestment) / (holdings[existingIndex].shares + wholeShares)
       : buyPrice;
 
-    // Note: In real app, this would update a ledger. For now, just track holdings
-    const newPortfolioStocks = gameState.portfolio.stocks + actualInvestment;
-
+    // Only track holdings - do NOT update portfolio (portfolio is for game only)
     setGameState({
       ...gameState,
-      portfolio: { ...gameState.portfolio, stocks: newPortfolioStocks },
       stockHoldings: updatedHoldings,
     });
 
@@ -275,9 +272,9 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       ? gameState.stockHoldings.filter(h => h.symbol !== holding.symbol)
       : [];
     
+    // Only update holdings - do NOT update portfolio (portfolio is for game only)
     setGameState({
       ...gameState,
-      portfolio: { ...gameState.portfolio, stocks: gameState.portfolio.stocks - holding.investmentAmount },
       stockHoldings: updatedHoldings,
     });
 
