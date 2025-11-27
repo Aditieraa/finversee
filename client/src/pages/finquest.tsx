@@ -1127,7 +1127,11 @@ export default function FinQuest() {
                   value={onboarding.name}
                   onChange={(e) => setOnboarding(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Enter your name"
-                  className="mt-2 interactive-hover"
+                  className="mt-2 interactive-hover text-slate-900"
+                  style={{
+                    backgroundColor: '#B3D9FF',
+                    color: '#1a1a1a',
+                  }}
                 />
               </div>
 
@@ -1139,7 +1143,11 @@ export default function FinQuest() {
                   value={onboarding.career}
                   onChange={(e) => setOnboarding(prev => ({ ...prev, career: e.target.value }))}
                   placeholder="e.g., Software Engineer, Doctor, Teacher"
-                  className="mt-2 interactive-hover"
+                  className="mt-2 interactive-hover text-slate-900"
+                  style={{
+                    backgroundColor: '#B3D9FF',
+                    color: '#1a1a1a',
+                  }}
                 />
               </div>
 
@@ -1152,7 +1160,11 @@ export default function FinQuest() {
                   value={onboarding.salary}
                   onChange={(e) => setOnboarding(prev => ({ ...prev, salary: e.target.value }))}
                   placeholder="Enter your monthly salary"
-                  className="mt-2 interactive-hover"
+                  className="mt-2 interactive-hover text-slate-900"
+                  style={{
+                    backgroundColor: '#B3D9FF',
+                    color: '#1a1a1a',
+                  }}
                 />
               </div>
 
@@ -1165,7 +1177,11 @@ export default function FinQuest() {
                   value={onboarding.expenses}
                   onChange={(e) => setOnboarding(prev => ({ ...prev, expenses: e.target.value }))}
                   placeholder="Enter your monthly expenses"
-                  className="mt-2 interactive-hover"
+                  className="mt-2 interactive-hover text-slate-900"
+                  style={{
+                    backgroundColor: '#B3D9FF',
+                    color: '#1a1a1a',
+                  }}
                 />
               </div>
 
