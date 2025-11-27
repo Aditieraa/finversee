@@ -258,34 +258,51 @@ export default function FinQuest() {
       const portfolioTotal = Object.values(gameState.portfolio).reduce((a: number, b: number) => a + b, 0);
       const netWorth = gameState.cashBalance + portfolioTotal;
       
-      const { error } = await supabase
+      const saveData = {
+        user_id: userId,
+        level: gameState.level,
+        xp: gameState.xp,
+        current_month: gameState.currentMonth,
+        cash_balance: gameState.cashBalance,
+        portfolio: gameState.portfolio,
+        achievements: gameState.achievements,
+        financial_goal: gameState.financialGoal || 5000000,
+        goal_progress: gameState.financialGoal ? (netWorth / gameState.financialGoal) * 100 : 0,
+        monthly_investments: gameState.monthlyInvestments,
+        is_latest: true,
+      };
+
+      console.log('💾 Attempting to save game state:', { userId, ...saveData });
+
+      // First try to upsert
+      const { data, error } = await supabase
         .from('game_saves')
-        .upsert(
-          {
-            user_id: userId,
-            level: gameState.level,
-            xp: gameState.xp,
-            current_month: gameState.currentMonth,
-            cash_balance: gameState.cashBalance,
-            portfolio: gameState.portfolio,
-            achievements: gameState.achievements,
-            financial_goal: gameState.financialGoal || 5000000,
-            goal_progress: gameState.financialGoal ? (netWorth / gameState.financialGoal) * 100 : 0,
-            monthly_investments: gameState.monthlyInvestments,
-            is_latest: true,
-          },
-          { onConflict: 'user_id' }
-        );
+        .upsert([saveData]);
 
       if (error) {
-        console.error('❌ Save error details:', {
+        console.error('❌ Upsert failed, trying insert instead:', {
           code: error.code,
           message: error.message,
           details: error.details,
           hint: error.hint,
           userId,
         });
-        throw error;
+
+        // If upsert fails, try a simple insert
+        const { error: insertError } = await supabase
+          .from('game_saves')
+          .insert([saveData]);
+
+        if (insertError) {
+          console.error('❌ Insert also failed:', {
+            code: insertError.code,
+            message: insertError.message,
+            details: insertError.details,
+            hint: insertError.hint,
+            userId,
+          });
+          throw insertError;
+        }
       }
 
       console.log('✅ Game state saved successfully');
@@ -299,7 +316,9 @@ export default function FinQuest() {
       
       await loadLeaderboard();
     } catch (error: any) {
-      console.error('Save error:', error);
+      console.error('❌ Final Save error:', error);
+      console.error('Error message:', error?.message);
+      console.error('Error details:', error?.details);
       if (!silent) {
         toast({
           title: 'Save Warning',
