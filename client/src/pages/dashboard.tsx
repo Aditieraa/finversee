@@ -6,10 +6,15 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Coins, Target, AlertCircle, CheckCircle, Calendar } from 'lucide-react';
 import { NumberCounter } from '@/components/number-counter';
+import { NextStepWidget } from '@/components/next-step-widget';
+import { QuickActionsBar } from '@/components/quick-actions-bar';
 
 interface DashboardProps {
   gameState: any;
   monthlyDecisions: any;
+  onAddIncome?: (amount: number) => void;
+  onAddExpense?: (amount: number) => void;
+  onInvest?: () => void;
 }
 
 const CHART_COLORS = {
@@ -23,7 +28,13 @@ const CHART_COLORS = {
   net: '#42A5F5',      /* Accent Blue */
 };
 
-export default function Dashboard({ gameState, monthlyDecisions }: DashboardProps) {
+export default function Dashboard({
+  gameState,
+  monthlyDecisions,
+  onAddIncome = () => {},
+  onAddExpense = () => {},
+  onInvest = () => {},
+}: DashboardProps) {
   const [timeframe, setTimeframe] = useState<3 | 6 | 12>(6);
   const [hoveredSlice, setHoveredSlice] = useState<number | null>(null);
 
@@ -77,8 +88,26 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
   const growthRate = gameState.netWorth > 0 ? ((gameState.netWorth - (gameState.userProfile?.salary - gameState.userProfile?.expenses || 0)) / (gameState.userProfile?.salary - gameState.userProfile?.expenses || 1) * 100) : 0;
   const financialHealth = Math.min(Math.max((growthRate / 5 * 100), 0), 100);
 
+  // Calculate emergency fund level (target: 3-6 months of expenses)
+  const emergencyFundTarget = (gameState.userProfile?.expenses || 50000) * 6;
+  const emergencyFundLevel = (gameState.cashBalance / emergencyFundTarget) * 100;
+
+  // Calculate savings rate
+  const monthlyNet = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
+  const savingsRate = monthlyNet > 0 ? (monthlyNet / (gameState.userProfile?.salary || 1)) * 100 : 0;
+
+  // Calculate portfolio percentage
+  const totalNetWorth = gameState.cashBalance + totalPortfolio + stockPortfolioValue;
+  const portfolioPercentage = totalNetWorth > 0 ? ((totalPortfolio + stockPortfolioValue) / totalNetWorth) * 100 : 0;
+
   return (
-    <div className="space-y-6 pb-6">
+    <div className="space-y-6 pb-20">
+      {/* Quick Actions Bar */}
+      <QuickActionsBar
+        onAddIncome={onAddIncome}
+        onAddExpense={onAddExpense}
+        onInvest={onInvest}
+      />
       {/* SECTION 1: Financial Snapshot - Top */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Cash Available */}
@@ -217,6 +246,23 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
 
         {/* Right: Persistent Right-Hand Rail */}
         <div className="space-y-6">
+          {/* Next Step Widget - Top Priority Recommendation */}
+          <NextStepWidget
+            financialHealth={financialHealth}
+            emergencyFundLevel={Math.min(emergencyFundLevel, 100)}
+            savingsRate={savingsRate}
+            portfolioPercentage={portfolioPercentage}
+            onTakeAction={() => {
+              if (emergencyFundLevel < 30) {
+                alert('Set up automatic savings for your emergency fund');
+              } else if (savingsRate < 20) {
+                alert('Create a savings goal');
+              } else {
+                onInvest();
+              }
+            }}
+          />
+
           {/* Portfolio Breakdown Donut Chart */}
           {(() => {
             const totalValue = categoryData.reduce((sum, item) => sum + item.value, 0);

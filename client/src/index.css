@@ -353,6 +353,17 @@
     }
   }
 
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @keyframes fadeInUp {
     from {
       opacity: 0;
@@ -478,6 +489,10 @@
 
   .animate-notificationSlideOut {
     animation: notificationSlideOut 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  .animate-slideInUp {
+    animation: slideInUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .shimmer {
