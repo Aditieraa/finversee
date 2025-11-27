@@ -1363,7 +1363,7 @@ export default function FinQuest() {
       <AppHeader 
         level={gameState.level}
         xp={gameState.xp}
-        netWorth={gameState.netWorth}
+        netWorth={calculateNetWorth()}
         userName={gameState.userProfile?.name}
         userAvatar={gameState.userProfile?.avatar ? avatarMap[gameState.userProfile.avatar] : undefined}
         tabs={[
