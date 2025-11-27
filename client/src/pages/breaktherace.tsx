@@ -541,12 +541,7 @@ export default function BreakTheRace() {
           </div>
 
           {/* Board Game */}
-          <Card className="border-primary/30 glassmorphic p-8 mb-6 relative">
-            {/* Logo in Top Right */}
-            <div className="absolute top-4 right-4">
-              <img src={breakTheRaceLogoUrl} alt="Break The Race" className="w-20 h-20 object-contain opacity-80" />
-            </div>
-            
+          <Card className="border-primary/30 glassmorphic p-8 mb-6">
             <h2 className="text-2xl font-bold text-primary mb-4 text-center">
               {gameState.onFastTrack ? '🚀 FAST TRACK' : '🐭 RAT RACE'}
             </h2>
