@@ -47,7 +47,7 @@ export function QuickActionsBar({
     <>
       {/* Fixed Floating Action Bar */}
       {isOpen && (
-      <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-3 bg-blue-950/80 backdrop-blur-md border border-blue-400/30 rounded-lg px-4 py-4 shadow-2xl animate-slideInUp max-w-xs">
+      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 flex flex-col gap-3 bg-blue-950/80 backdrop-blur-md border border-blue-400/30 rounded-lg px-4 py-4 shadow-2xl animate-slideInUp w-64">
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs font-semibold text-blue-300">Quick Actions</p>
           <Button
@@ -102,11 +102,11 @@ export function QuickActionsBar({
       {!isOpen && (
         <Button
           size="icon"
-          className="fixed bottom-6 left-6 z-40 h-10 w-10 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 rounded-full shadow-2xl"
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 h-16 w-16 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 hover:from-blue-500 hover:via-blue-600 hover:to-blue-700 rounded-full shadow-2xl transition-all hover:scale-110 flex items-center justify-center border border-blue-300/50"
           onClick={onToggle}
           data-testid="button-toggle-actions"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-7 w-7 text-white" />
         </Button>
       )}
 
