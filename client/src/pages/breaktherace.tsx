@@ -371,30 +371,34 @@ export default function BreakTheRace() {
     if (!userId || userId === 'guest') return;
 
     try {
-      // First mark old saves as not latest
-      await supabase
-        .from('game_saves')
-        .update({ is_latest: false })
-        .eq('user_id', userId)
-        .eq('is_latest', true);
-
       const saveData = {
         user_id: userId,
+        career: state.userProfile?.career || '',
+        board_position: state.boardPosition,
+        dice: state.dice,
+        cash_balance: state.cash,
+        passive_income: state.passiveIncome,
+        total_expenses: state.totalExpenses,
+        assets: state.assets,
+        liabilities: state.liabilities,
+        on_fast_track: state.onFastTrack,
+        has_won: state.hasWon,
         level: state.assets.length + 1,
         xp: Math.round(state.passiveIncome / 1000),
-        current_month: state.boardPosition,
-        cash_balance: state.cash,
-        gold_coins: 50000,
-        portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: state.assets.length, savings: 0 },
-        achievements: [],
-        financial_goal: 5000000,
-        goal_progress: (state.cash / 5000000) * 100,
-        monthly_investments: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
         is_latest: true,
+        updated_at: new Date().toISOString(),
       };
 
-      await supabase.from('game_saves').insert([saveData]);
-      console.log('📊 Game saved and synced to leaderboard');
+      // Upsert: update if exists, insert if new
+      const { error } = await supabase
+        .from('game_saves')
+        .upsert(saveData, { onConflict: 'user_id' });
+
+      if (error) {
+        console.error('Save error:', error);
+      } else {
+        console.log('📊 Game saved: ' + (state.hasWon ? 'WON! 🏆' : 'In Progress'));
+      }
     } catch (error) {
       console.error('Save error:', error);
     }

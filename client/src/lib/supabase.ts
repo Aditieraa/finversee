@@ -8,10 +8,19 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export interface GameSave {
   id?: string;
   user_id: string;
-  game_state: any;
-  chat_history: any[];
-  achievements: any[];
-  leaderboard_score: number;
+  career: string;
+  board_position: number;
+  dice: number;
+  cash_balance: number;
+  passive_income: number;
+  total_expenses: number;
+  assets: any[];
+  liabilities: any[];
+  on_fast_track: boolean;
+  has_won: boolean;
+  level: number;
+  xp: number;
+  is_latest: boolean;
   updated_at?: string;
   created_at?: string;
 }
