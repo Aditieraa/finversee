@@ -44,11 +44,13 @@ export default function Dashboard({
     const data = [];
     const displayMonths = Math.min(months, gameState.currentMonth, 12);
     for (let i = 1; i <= displayMonths; i++) {
+      // Show actual monthly expenses (tracked from Quick Actions) or profile expenses if no tracked expenses
+      const monthlyExpenses = i === displayMonths ? (gameState.monthlyExpensesThisMonth || gameState.userProfile?.expenses || 0) : (gameState.userProfile?.expenses || 0);
       data.push({
         month: `M${i}`,
         income: gameState.userProfile?.salary || 0,
-        expenses: gameState.userProfile?.expenses || 0,
-        net: (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0),
+        expenses: monthlyExpenses,
+        net: (gameState.userProfile?.salary || 0) - monthlyExpenses,
       });
     }
     return data;

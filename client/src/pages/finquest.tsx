@@ -1307,6 +1307,7 @@ export default function FinQuest() {
                 ...prev,
                 cashBalance: Math.max(0, prev.cashBalance - amount),
                 netWorth: Math.max(0, prev.netWorth - amount),
+                monthlyExpensesThisMonth: (prev.monthlyExpensesThisMonth || 0) + amount,
               }));
               toast({ title: 'Expense Added', description: `₹${amount.toLocaleString('en-IN')} deducted from cash` });
             }}
