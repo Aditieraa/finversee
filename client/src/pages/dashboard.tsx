@@ -61,9 +61,21 @@ export default function Dashboard({
   };
 
   const generateCategoryData = () => {
-    const portfolio = gameState.portfolio;
-    const total = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
-    return Object.entries(portfolio).map(([name, value]: [string, any]) => ({
+    // REAL portfolio based on user's actual cash flow (not game portfolio)
+    const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
+    const monthsSaved = Math.max(gameState.currentMonth - 1, 0);
+    
+    // Calculate realistic portfolio from real savings
+    const realPortfolio = {
+      sip: monthlyAvailable * 0.40 * monthsSaved,           // 40% to SIP
+      stocks: monthlyAvailable * 0.25 * monthsSaved,        // 25% to Stocks
+      gold: monthlyAvailable * 0.15 * monthsSaved,          // 15% to Gold
+      realEstate: monthlyAvailable * 0.10 * monthsSaved,    // 10% to Real Estate
+      savings: monthlyAvailable * 0.10 * monthsSaved,       // 10% to Savings
+    };
+    
+    const total = Object.values(realPortfolio).reduce((a: number, b: number) => a + b, 0);
+    return Object.entries(realPortfolio).map(([name, value]: [string, any]) => ({
       name: name === 'realEstate' ? 'Real Estate' : name.charAt(0).toUpperCase() + name.slice(1),
       value: value,
       percentage: total > 0 ? ((value / total) * 100).toFixed(1) : 0,
@@ -91,21 +103,34 @@ export default function Dashboard({
   const spendingData = generateSpendingPattern();
   const stockPortfolioValue = calculateStockPortfolioValue();
 
-  const totalPortfolio = Object.values(gameState.portfolio).reduce((a: number, b: number) => a + b, 0);
-  const growthRate = gameState.netWorth > 0 ? ((gameState.netWorth - (gameState.userProfile?.salary - gameState.userProfile?.expenses || 0)) / (gameState.userProfile?.salary - gameState.userProfile?.expenses || 1) * 100) : 0;
-  const financialHealth = Math.min(Math.max((growthRate / 5 * 100), 0), 100);
+  // REAL PORTFOLIO - based on actual cash flow, not game state
+  const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
+  const monthsSaved = Math.max(gameState.currentMonth - 1, 0);
+  const realPortfolio = {
+    sip: monthlyAvailable * 0.40 * monthsSaved,
+    stocks: monthlyAvailable * 0.25 * monthsSaved,
+    gold: monthlyAvailable * 0.15 * monthsSaved,
+    realEstate: monthlyAvailable * 0.10 * monthsSaved,
+    savings: monthlyAvailable * 0.10 * monthsSaved,
+  };
+  const totalRealPortfolio = Object.values(realPortfolio).reduce((a: number, b: number) => a + b, 0);
+  
+  // Real cash balance = cumulative monthly available (not game cashBalance)
+  const realCashBalance = monthlyAvailable * monthsSaved;
+  
+  const growthRate = totalRealPortfolio > 0 ? ((totalRealPortfolio / monthlyAvailable) / monthsSaved * 100) : 0;
+  const financialHealth = Math.min(Math.max((growthRate / 50 * 100), 0), 100);
 
   // Calculate emergency fund level (target: 3-6 months of expenses)
   const emergencyFundTarget = (gameState.userProfile?.expenses || 50000) * 6;
-  const emergencyFundLevel = (gameState.cashBalance / emergencyFundTarget) * 100;
+  const emergencyFundLevel = (realCashBalance / emergencyFundTarget) * 100;
 
   // Calculate savings rate
-  const monthlyNet = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
-  const savingsRate = monthlyNet > 0 ? (monthlyNet / (gameState.userProfile?.salary || 1)) * 100 : 0;
+  const savingsRate = monthlyAvailable > 0 ? (monthlyAvailable / (gameState.userProfile?.salary || 1)) * 100 : 0;
 
   // Calculate portfolio percentage
-  const totalNetWorth = gameState.cashBalance + totalPortfolio + stockPortfolioValue;
-  const portfolioPercentage = totalNetWorth > 0 ? ((totalPortfolio + stockPortfolioValue) / totalNetWorth) * 100 : 0;
+  const totalNetWorth = realCashBalance + totalRealPortfolio + stockPortfolioValue;
+  const portfolioPercentage = totalNetWorth > 0 ? ((totalRealPortfolio + stockPortfolioValue) / totalNetWorth) * 100 : 0;
 
   return (
     <div className="space-y-6 pb-20">
@@ -119,15 +144,15 @@ export default function Dashboard({
       />
       {/* SECTION 1: Financial Snapshot - Top */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Cash Available */}
+        {/* Cash Available - REAL DATA */}
         <Card className="border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card card-interactive">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs text-blue-200/70 mb-2 font-semibold">CASH AVAILABLE</p>
               <p className="text-3xl font-bold text-blue-50">
-                ₹<NumberCounter value={Math.round(gameState.cashBalance)} />
+                ₹<NumberCounter value={Math.round(realCashBalance)} />
               </p>
-              <p className="text-xs text-blue-200/50 mt-2">Total savings</p>
+              <p className="text-xs text-blue-200/50 mt-2">Real accumulated savings</p>
             </div>
             <Coins className="h-8 w-8 text-blue-400/60" />
           </div>
@@ -147,15 +172,15 @@ export default function Dashboard({
           </div>
         </Card>
 
-        {/* Portfolio Value - LARGER (spans 2 cols on medium+) */}
+        {/* Portfolio Value - REAL DATA - LARGER (spans 2 cols on medium+) */}
         <Card className="border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card md:col-span-2 card-interactive">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs text-blue-200/70 mb-2 font-semibold">PORTFOLIO VALUE</p>
               <p className="text-4xl font-bold text-blue-50">
-                ₹<NumberCounter value={Math.round(totalPortfolio + stockPortfolioValue)} />
+                ₹<NumberCounter value={Math.round(totalRealPortfolio + stockPortfolioValue)} />
               </p>
-              <p className="text-xs text-blue-200/50 mt-2">All investments (stocks + holdings)</p>
+              <p className="text-xs text-blue-200/50 mt-2">Real investments (SIP, Stocks, Gold, Real Estate)</p>
             </div>
             <Target className="h-8 w-8 text-blue-400/60" />
           </div>

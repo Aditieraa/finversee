@@ -33,6 +33,8 @@ interface GameState {
   cashBalance: number;
   portfolio: { stocks: number };
   stockHoldings: StockHolding[];
+  userProfile?: { salary: number; expenses: number };
+  currentMonth?: number;
 }
 
 interface StocksProps {
@@ -119,6 +121,11 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     return history;
   };
 
+  // REAL portfolio calculation for Stocks page (matches Dashboard)
+  const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
+  const monthsSaved = Math.max((gameState.currentMonth || 1) - 1, 0);
+  const realStocksPortfolio = monthlyAvailable * 0.25 * monthsSaved; // 25% allocated to stocks
+  
   const selectedStockData = stocks.find(s => s.symbol === selectedStock);
   const filteredStocks = stocks.filter(s =>
     s.symbol.toLowerCase().includes(searchQuery.toLowerCase())
@@ -330,6 +337,13 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
           <Badge className="bg-green-500/20 text-green-300 border-green-400/30">Live Data</Badge>
         </div>
       </div>
+
+      {/* Real Portfolio Allocation */}
+      <Card className="border-amber-400/20 bg-amber-950/40 backdrop-blur-sm p-4">
+        <p className="text-amber-200/60 text-xs mb-1">Real Portfolio - Stocks Allocation (25% of savings)</p>
+        <p className="text-2xl font-bold text-amber-100">₹{realStocksPortfolio.toFixed(0)}</p>
+        <p className="text-xs text-amber-200/40 mt-1">Based on ₹{monthlyAvailable.toLocaleString('en-IN')}/month × {monthsSaved} months saved</p>
+      </Card>
 
       {/* Portfolio Summary */}
       {gameState.stockHoldings && gameState.stockHoldings.length > 0 && (
