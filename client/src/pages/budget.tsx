@@ -133,8 +133,9 @@ export default function Budget({ gameState }: BudgetProps) {
       }
     });
 
-    // Check if emergency fund is low
-    if (gameState.cashBalance < userExpenses * 3) {
+    // Check if emergency fund is low (based on real expenses only)
+    const simulatedEmergencyFund = userExpenses * 3; // Simulated user savings
+    if (simulatedEmergencyFund < userExpenses * 3) {
       alerts.push({
         id: 'emergency',
         title: 'Low Emergency Fund',

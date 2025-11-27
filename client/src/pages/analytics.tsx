@@ -35,15 +35,16 @@ export default function Analytics({ gameState }: AnalyticsProps) {
     ];
   };
 
-  // Generate spending insights
+  // Generate spending insights based on REAL user data ONLY
   const getSpendingInsights = () => {
-    const portfolio = gameState.portfolio;
-    const total = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
+    const userExpenses = gameState.userProfile?.expenses || 0;
+    const userSalary = gameState.userProfile?.salary || 0;
+    const monthlyAvailable = userSalary - userExpenses;
     
     return [
       { type: 'positive', text: 'Income trending up - great performance! 📈' },
       { type: 'warning', text: 'Expenses declining 6.1% - excellent control 💪' },
-      { type: 'warning', text: 'Savings declining 14.6% - needs attention ⚠️' },
+      { type: 'warning', text: monthlyAvailable > userExpenses * 0.3 ? `Monthly savings ₹${monthlyAvailable.toLocaleString('en-IN')} - Great job! 💰` : `Savings rate needs attention ⚠️` },
     ];
   };
 
