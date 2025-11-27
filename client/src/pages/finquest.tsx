@@ -263,19 +263,18 @@ export default function FinQuest() {
     }
   }, [userId, gameState]);
 
-  // Update netWorth whenever cash, portfolio, or BreakTheRace assets change
+  // Update netWorth whenever cash or portfolio change
   useEffect(() => {
     const portfolioTotal = Object.values(gameState.portfolio).reduce((a: number, b: number) => a + b, 0);
-    const breakTheRaceAssetValue = gameState.assets && gameState.assets.length > 0
-      ? gameState.assets.reduce((total: number, asset: any) => total + (asset.cost || 0), 0)
-      : 0;
-    const calculatedNetWorth = gameState.cashBalance + portfolioTotal + breakTheRaceAssetValue;
+    const calculatedNetWorth = gameState.cashBalance + portfolioTotal;
     
-    setGameState(prev => ({
-      ...prev,
-      netWorth: calculatedNetWorth
-    }));
-  }, [gameState.cashBalance, gameState.portfolio, gameState.assets]);
+    if (calculatedNetWorth !== gameState.netWorth) {
+      setGameState(prev => ({
+        ...prev,
+        netWorth: calculatedNetWorth
+      }));
+    }
+  }, [gameState.cashBalance, gameState.portfolio]);
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();

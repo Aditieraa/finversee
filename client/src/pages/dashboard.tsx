@@ -104,17 +104,14 @@ export default function Dashboard({
   // ACTUAL PORTFOLIO - from gameState only
   const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
   
-  // Portfolio value = only actual stock investments (investmentAmount) + BreakTheRace assets
+  // Portfolio value = only actual stock investments (investmentAmount)
   const stockInvestmentValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
     ? gameState.stockHoldings.reduce((total: number, holding: any) => total + (holding.investmentAmount || 0), 0)
     : 0;
-  const breakTheRaceAssetValue = gameState.assets && gameState.assets.length > 0
-    ? gameState.assets.reduce((total: number, asset: any) => total + (asset.cost || 0), 0)
-    : 0;
-  const totalInvestedValue = stockInvestmentValue + breakTheRaceAssetValue;
+  const totalInvestedValue = stockInvestmentValue;
   
-  // Cash available = actual cash on hand from BreakTheRace or monthly savings
-  const cashBalance = gameState.cash !== undefined ? gameState.cash : monthlyAvailable;
+  // Cash available = actual cash balance from FinQuest gameState
+  const cashBalance = gameState.cashBalance || 0;
   
   const growthRate = monthlyAvailable > 0 ? (totalInvestedValue / monthlyAvailable / Math.max(gameState.currentMonth - 1, 1) * 100) : 0;
   const financialHealth = Math.min(Math.max((growthRate / 50 * 100), 0), 100);
