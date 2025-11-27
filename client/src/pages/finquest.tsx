@@ -236,9 +236,9 @@ export default function FinQuest() {
   useEffect(() => {
     if (userId && userId !== 'guest') {
       loadGameState();
+      checkDailyLogin();
     }
     if (userId) {
-      checkDailyLogin();
       loadLeaderboard();
     }
   }, [userId]);
@@ -272,6 +272,7 @@ export default function FinQuest() {
       const portfolioTotal = Object.values(gameState.portfolio).reduce((a: number, b: number) => a + b, 0);
       const netWorth = gameState.cashBalance + portfolioTotal;
       
+      // Save game state
       const saveData = {
         user_id: userId,
         level: gameState.level,
@@ -314,6 +315,21 @@ export default function FinQuest() {
 
       console.log('✅ Game state saved successfully');
 
+      // Also save/update user profile to ensure all user data is persisted
+      if (gameState.userProfile) {
+        await supabase
+          .from('profiles')
+          .update({
+            name: gameState.userProfile.name,
+            career: gameState.userProfile.career,
+            avatar: gameState.userProfile.avatar,
+            monthly_salary: gameState.userProfile.salary,
+            monthly_expenses: gameState.userProfile.expenses,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', userId);
+      }
+
       if (!silent) {
         toast({
           title: '💾 Game Saved',
@@ -340,6 +356,18 @@ export default function FinQuest() {
     if (!userId || userId === 'guest') return;
 
     try {
+      // 1. Load user profile
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error('Profile load error:', profileError);
+      }
+
+      // 2. Load game save data
       const { data, error } = await supabase
         .from('game_saves')
         .select('*')
@@ -363,11 +391,6 @@ export default function FinQuest() {
           .select('*')
           .eq('game_save_id', data.id);
 
-        setGameState(prev => ({
-          ...prev,
-          goldCoins: data.gold_coins || prev.goldCoins,
-        }));
-
         // Convert chat messages to game format
         const chatHistory = (chatMessages || []).map((msg: any) => ({
           role: msg.role as 'user' | 'ai',
@@ -384,12 +407,23 @@ export default function FinQuest() {
           purchaseDate: stock.purchase_date,
         }));
 
+        // Restore user profile from profiles table
+        const userProfile = profileData ? {
+          name: profileData.name || '',
+          career: profileData.career as Career,
+          salary: profileData.monthly_salary || 0,
+          expenses: profileData.monthly_expenses || 0,
+          avatar: profileData.avatar as AvatarType,
+        } : null;
+
         setGameState(prev => ({
           ...prev,
+          userProfile: userProfile,
           level: data.level,
           xp: data.xp,
           currentMonth: data.current_month,
           cashBalance: data.cash_balance,
+          goldCoins: data.gold_coins || 50000,
           portfolio: data.portfolio,
           achievements: data.achievements,
           financialGoal: data.financial_goal,
@@ -397,9 +431,13 @@ export default function FinQuest() {
           chatHistory: chatHistory.length > 0 ? chatHistory : prev.chatHistory,
           stockHoldings: stockHoldings.length > 0 ? stockHoldings : prev.stockHoldings,
         }));
+
+        // Close onboarding since we loaded user data
+        setOnboarding({ active: false, step: 1, name: '', career: '', salary: '', expenses: '', avatar: 'female1' });
+
         toast({
-          title: '✨ Progress Loaded',
-          description: 'Welcome back! Your game has been restored.',
+          title: '✨ Welcome Back!',
+          description: `Progress restored for ${userProfile?.name || 'Player'}. Level ${data.level}`,
         });
       }
     } catch (error: any) {
