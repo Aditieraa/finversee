@@ -121,20 +121,23 @@ export default function Leaderboard() {
         ) : (
           players.map((player, idx) => {
             const medalColors = {
-              1: 'from-yellow-500/20 to-yellow-600/10',
-              2: 'from-gray-500/20 to-gray-600/10',
-              3: 'from-orange-500/20 to-orange-600/10',
+              1: 'from-yellow-400/30 via-yellow-500/20 to-amber-600/10',
+              2: 'from-slate-300/30 via-slate-400/20 to-slate-600/10',
+              3: 'from-orange-400/30 via-orange-500/20 to-orange-600/10',
             };
             const textColors = {
-              1: 'text-yellow-300',
-              2: 'text-gray-300',
-              3: 'text-orange-300',
+              1: 'text-yellow-200',
+              2: 'text-slate-200',
+              3: 'text-orange-200',
             };
             const borderColors = {
-              1: 'border-yellow-400/30',
-              2: 'border-gray-400/30',
-              3: 'border-orange-400/30',
+              1: 'border-yellow-400/50 shadow-lg shadow-yellow-500/20',
+              2: 'border-slate-400/50 shadow-lg shadow-slate-400/20',
+              3: 'border-orange-400/50 shadow-lg shadow-orange-500/20',
             };
+            const shadowClass = idx < 3
+              ? `${borderColors[player.rank as keyof typeof borderColors]} animate-celebratory`
+              : '';
 
             const bgClass = idx < 3 
               ? `bg-gradient-to-br ${medalColors[player.rank as keyof typeof medalColors]}`
@@ -147,7 +150,7 @@ export default function Leaderboard() {
               : 'border-blue-400/20';
 
             return (
-              <Card key={player.rank} className={`border-2 ${borderClass} ${bgClass} backdrop-blur-sm p-4 hover-elevate`}>
+              <Card key={player.rank} className={`border-2 ${borderClass} ${bgClass} backdrop-blur-md p-4 hover-elevate ${shadowClass}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     {player.avatar && (

@@ -179,7 +179,7 @@ export default function Dashboard({
           </div>
           
           <ResponsiveContainer width="100%" height={320}>
-            <AreaChart data={monthlyData}>
+            <AreaChart data={monthlyData} animationDuration={800}>
               <defs>
                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#66BB6A" stopOpacity={0.3} />
@@ -193,10 +193,34 @@ export default function Dashboard({
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.15)" vertical={false} />
               <XAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
               <YAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
-              <Tooltip contentStyle={{ backgroundColor: '#1A237E', border: '1px solid rgba(66, 165, 245, 0.3)', borderRadius: '8px' }} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1A237E', 
+                  border: '1px solid rgba(66, 165, 245, 0.3)', 
+                  borderRadius: '8px',
+                  boxShadow: '0 0 12px rgba(66, 165, 245, 0.2)'
+                }}
+                cursor={{ strokeDasharray: '5 5', stroke: 'rgba(66, 165, 245, 0.5)' }}
+              />
               <Legend />
-              <Area type="monotoneX" dataKey="income" stroke="#66BB6A" strokeWidth={2} fillOpacity={1} fill="url(#colorIncome)" />
-              <Area type="monotoneX" dataKey="expenses" stroke="#E53935" strokeWidth={2} fillOpacity={1} fill="url(#colorExpenses)" />
+              <Area 
+                type="monotoneX" 
+                dataKey="income" 
+                stroke="#66BB6A" 
+                strokeWidth={2} 
+                fillOpacity={1} 
+                fill="url(#colorIncome)"
+                animationDuration={800}
+              />
+              <Area 
+                type="monotoneX" 
+                dataKey="expenses" 
+                stroke="#E53935" 
+                strokeWidth={2} 
+                fillOpacity={1} 
+                fill="url(#colorExpenses)"
+                animationDuration={800}
+              />
             </AreaChart>
           </ResponsiveContainer>
         </Card>
@@ -282,39 +306,49 @@ export default function Dashboard({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <ResponsiveContainer width="100%" height={180}>
-                      <PieChart>
-                        <Pie
-                          data={donutData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={40}
-                          outerRadius={65}
-                          paddingAngle={2}
-                          dataKey="value"
-                          onMouseEnter={(_, index) => setHoveredSlice(index)}
-                          onMouseLeave={() => setHoveredSlice(null)}
-                        >
-                          {donutData.map((entry, index) => (
-                            <Cell 
-                              key={`cell-${index}`} 
-                              fill={entry.color}
-                              opacity={hoveredSlice === null || hoveredSlice === index ? 1 : 0.5}
-                              className="transition-opacity"
-                            />
-                          ))}
-                        </Pie>
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: '#1A237E', 
-                            border: '1px solid rgba(66, 165, 245, 0.3)',
-                            borderRadius: '8px',
-                            fontSize: '12px'
-                          }}
-                          formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
+                    <div className="relative flex items-center justify-center">
+                      <ResponsiveContainer width="100%" height={200}>
+                        <PieChart>
+                          <Pie
+                            data={donutData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={50}
+                            outerRadius={75}
+                            paddingAngle={3}
+                            dataKey="value"
+                            onMouseEnter={(_, index) => setHoveredSlice(index)}
+                            onMouseLeave={() => setHoveredSlice(null)}
+                            animationDuration={600}
+                          >
+                            {donutData.map((entry, index) => (
+                              <Cell 
+                                key={`cell-${index}`} 
+                                fill={entry.color}
+                                opacity={hoveredSlice === null || hoveredSlice === index ? 1 : 0.4}
+                                className="transition-all hover:filter hover:brightness-110"
+                              />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            contentStyle={{ 
+                              backgroundColor: '#1A237E', 
+                              border: '1px solid rgba(66, 165, 245, 0.3)',
+                              borderRadius: '8px',
+                              fontSize: '12px'
+                            }}
+                            formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      {/* Center Text Display */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <p className="text-xs text-purple-200/60">Total Portfolio</p>
+                        <p className="text-xl font-bold text-purple-100">
+                          ₹{(totalValue / 100000).toFixed(1)}L
+                        </p>
+                      </div>
+                    </div>
                     
                     <div className="space-y-2">
                       {donutData.map((item, idx) => (

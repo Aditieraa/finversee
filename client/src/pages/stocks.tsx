@@ -71,6 +71,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
   const [investmentAmount, setInvestmentAmount] = useState('');
   const [activeTab, setActiveTab] = useState<'indian' | 'global'>('indian');
   const [successMessage, setSuccessMessage] = useState('');
+  const [hoveredStock, setHoveredStock] = useState<string | null>(null);
 
   // Fetch real-time stock data
   useEffect(() => {
