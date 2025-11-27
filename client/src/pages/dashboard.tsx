@@ -304,141 +304,144 @@ export default function Dashboard({
               }
             }}
           />
-
-          {/* Portfolio Breakdown Donut Chart */}
-          {(() => {
-            const totalValue = categoryData.reduce((sum, item) => sum + item.value, 0);
-            const donutData = categoryData.filter(item => item.value > 0).map(item => ({
-              ...item,
-              percentage: totalValue > 0 ? ((item.value / totalValue) * 100).toFixed(1) : 0
-            }));
-            
-            return (
-              <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6 shadow-card">
-                <h3 className="text-lg font-bold text-white mb-1">Portfolio Breakdown</h3>
-                <p className="text-xs text-purple-200/60 mb-4">Asset allocation</p>
-                
-                {donutData.length === 0 ? (
-                  <div className="h-48 flex items-center justify-center">
-                    <p className="text-purple-300/60 text-xs text-center">No investments yet</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="relative flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height={200}>
-                        <PieChart>
-                          <Pie
-                            data={donutData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={50}
-                            outerRadius={75}
-                            paddingAngle={3}
-                            dataKey="value"
-                            onMouseEnter={(_, index) => setHoveredSlice(index)}
-                            onMouseLeave={() => setHoveredSlice(null)}
-                            animationDuration={600}
-                          >
-                            {donutData.map((entry, index) => (
-                              <Cell 
-                                key={`cell-${index}`} 
-                                fill={entry.color}
-                                opacity={hoveredSlice === null || hoveredSlice === index ? 1 : 0.4}
-                                className="transition-all hover:filter hover:brightness-110"
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: '#1A237E', 
-                              border: '1px solid rgba(66, 165, 245, 0.3)',
-                              borderRadius: '8px',
-                              fontSize: '12px'
-                            }}
-                            formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                      {/* Center Text Display */}
-                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <p className="text-xs text-purple-200/60">Total Portfolio</p>
-                        <p className="text-xl font-bold text-purple-100">
-                          ₹{(totalValue / 100000).toFixed(1)}L
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      {donutData.map((item, idx) => (
-                        <div 
-                          key={idx} 
-                          className="flex items-center gap-2 p-2 rounded-lg bg-purple-900/20 hover-elevate cursor-pointer transition-all text-xs"
-                          onMouseEnter={() => setHoveredSlice(idx)}
-                          onMouseLeave={() => setHoveredSlice(null)}
-                        >
-                          <div 
-                            className="w-2 h-2 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: item.color }}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-purple-200 truncate">{item.name}</p>
-                            <p className="text-purple-200/60">{item.percentage}%</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </Card>
-            );
-          })()}
-
-          {/* Consolidated Key Insights & Health Score */}
-          <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-6 shadow-card">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-cyan-400" />
-              Health Score
-            </h3>
-            
-            <div className="flex items-center justify-center py-4 mb-4">
-              <div className="relative w-28 h-28">
-                <svg className="w-28 h-28 transform -rotate-90" viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(100, 150, 200, 0.2)" strokeWidth="8" />
-                  <circle 
-                    cx="60" 
-                    cy="60" 
-                    r="50" 
-                    fill="none" 
-                    stroke="#42A5F5" 
-                    strokeWidth="8" 
-                    strokeDasharray={`${(financialHealth / 100) * 314} 314`}
-                    className="transition-all"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-xl font-bold text-cyan-300">{Math.round(financialHealth)}</span>
-                </div>
-              </div>
-            </div>
-            
-            <p className="text-center text-cyan-200 text-xs font-semibold mb-3">
-              {financialHealth > 75 ? 'Excellent' : financialHealth > 50 ? 'Good' : financialHealth > 25 ? 'Fair' : 'Needs Work'}
-            </p>
-
-            {/* Key Insights */}
-            <div className="border-t border-cyan-400/20 pt-4 space-y-2">
-              <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
-                <p className="text-xs text-green-300 font-semibold">✓ Portfolio diversified</p>
-              </div>
-              <div className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                <p className="text-xs text-yellow-300 font-semibold">⚠ Increase savings</p>
-              </div>
-              <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                <p className="text-xs text-blue-300 font-semibold">📈 On track for goals</p>
-              </div>
-            </div>
-          </Card>
         </div>
+      </div>
+
+      {/* SECTION 5: Portfolio Breakdown & Health Score - Side by Side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Portfolio Breakdown Donut Chart */}
+        {(() => {
+          const totalValue = categoryData.reduce((sum, item) => sum + item.value, 0);
+          const donutData = categoryData.filter(item => item.value > 0).map(item => ({
+            ...item,
+            percentage: totalValue > 0 ? ((item.value / totalValue) * 100).toFixed(1) : 0
+          }));
+          
+          return (
+            <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6 shadow-card h-full flex flex-col">
+              <h3 className="text-lg font-bold text-white mb-1">Portfolio Breakdown</h3>
+              <p className="text-xs text-purple-200/60 mb-4">Asset allocation</p>
+              
+              {donutData.length === 0 ? (
+                <div className="flex-1 flex items-center justify-center">
+                  <p className="text-purple-300/60 text-xs text-center">No investments yet</p>
+                </div>
+              ) : (
+                <div className="flex-1 space-y-3 flex flex-col">
+                  <div className="relative flex items-center justify-center flex-1">
+                    <ResponsiveContainer width="100%" height="100%" minHeight={200}>
+                      <PieChart>
+                        <Pie
+                          data={donutData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={40}
+                          outerRadius={60}
+                          paddingAngle={3}
+                          dataKey="value"
+                          onMouseEnter={(_, index) => setHoveredSlice(index)}
+                          onMouseLeave={() => setHoveredSlice(null)}
+                          animationDuration={600}
+                        >
+                          {donutData.map((entry, index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={entry.color}
+                              opacity={hoveredSlice === null || hoveredSlice === index ? 1 : 0.4}
+                              className="transition-all hover:filter hover:brightness-110"
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#1A237E', 
+                            border: '1px solid rgba(66, 165, 245, 0.3)',
+                            borderRadius: '8px',
+                            fontSize: '12px'
+                          }}
+                          formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    {/* Center Text Display */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                      <p className="text-xs text-purple-200/60">Total Portfolio</p>
+                      <p className="text-lg font-bold text-purple-100">
+                        ₹{(totalValue / 100000).toFixed(1)}L
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {donutData.map((item, idx) => (
+                      <div 
+                        key={idx} 
+                        className="flex items-center gap-2 p-2 rounded-lg bg-purple-900/20 hover-elevate cursor-pointer transition-all text-xs"
+                        onMouseEnter={() => setHoveredSlice(idx)}
+                        onMouseLeave={() => setHoveredSlice(null)}
+                      >
+                        <div 
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-purple-200 truncate">{item.name}</p>
+                          <p className="text-purple-200/60">{item.percentage}%</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </Card>
+          );
+        })()}
+
+        {/* Consolidated Key Insights & Health Score */}
+        <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-6 shadow-card h-full flex flex-col">
+          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-cyan-400" />
+            Health Score
+          </h3>
+          
+          <div className="flex items-center justify-center py-4 mb-4">
+            <div className="relative w-24 h-24">
+              <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(100, 150, 200, 0.2)" strokeWidth="8" />
+                <circle 
+                  cx="60" 
+                  cy="60" 
+                  r="50" 
+                  fill="none" 
+                  stroke="#42A5F5" 
+                  strokeWidth="8" 
+                  strokeDasharray={`${(financialHealth / 100) * 314} 314`}
+                  className="transition-all"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-lg font-bold text-cyan-300">{Math.round(financialHealth)}</span>
+              </div>
+            </div>
+          </div>
+          
+          <p className="text-center text-cyan-200 text-xs font-semibold mb-4">
+            {financialHealth > 75 ? 'Excellent' : financialHealth > 50 ? 'Good' : financialHealth > 25 ? 'Fair' : 'Needs Work'}
+          </p>
+
+          {/* Key Insights */}
+          <div className="border-t border-cyan-400/20 pt-4 space-y-2">
+            <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+              <p className="text-xs text-green-300 font-semibold">✓ Portfolio diversified</p>
+            </div>
+            <div className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+              <p className="text-xs text-yellow-300 font-semibold">⚠ Increase savings</p>
+            </div>
+            <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+              <p className="text-xs text-blue-300 font-semibold">📈 On track for goals</p>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );
