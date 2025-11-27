@@ -47,7 +47,9 @@ export function QuickActionsBar({
     <>
       {/* Fixed Floating Action Bar */}
       {isOpen && (
-      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 flex flex-col gap-3 bg-blue-950/80 backdrop-blur-md border border-blue-400/30 rounded-lg px-4 py-4 shadow-2xl animate-slideInUp w-64">
+      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 flex flex-col gap-3 bg-blue-950/80 backdrop-blur-md border border-blue-400/30 rounded-lg px-4 py-4 shadow-2xl w-64" style={{
+        animation: 'quickActionsFadeIn 0.3s ease-out forwards'
+      }}>
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs font-semibold text-blue-300">Quick Actions</p>
           <Button
