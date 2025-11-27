@@ -4,29 +4,29 @@
 
 @layer base {
   :root {
-    /* Light Theme - Original Colors */
-    --primary: 176 190 197;
-    --primary-foreground: 26 26 26;
-    --secondary: 100 150 200;
-    --secondary-foreground: 255 255 255;
+    /* Dark Navy Theme with Cyan Accents */
+    --primary: 44 74 111;
+    --primary-foreground: 255 255 255;
+    --secondary: 0 229 255;
+    --secondary-foreground: 26 26 26;
     --destructive: 229 57 53;
     --destructive-foreground: 255 255 255;
-    --muted: 180 180 180;
-    --muted-foreground: 80 80 80;
+    --muted: 100 120 140;
+    --muted-foreground: 180 180 180;
     --accent: 0 229 255;
     --accent-foreground: 26 26 26;
-    --background: 197 217 232;
-    --foreground: 26 26 26;
-    --card: 220 230 240;
-    --card-foreground: 26 26 26;
-    --popover: 240 245 250;
-    --popover-foreground: 26 26 26;
-    --input: 160 130 109;
-    --input-foreground: 255 255 255;
-    --border: 176 190 197;
+    --background: 26 47 74;
+    --foreground: 230 241 255;
+    --card: 44 74 111;
+    --card-foreground: 230 241 255;
+    --popover: 50 85 120;
+    --popover-foreground: 230 241 255;
+    --input: 10 20 35;
+    --input-foreground: 230 241 255;
+    --border: 0 229 255;
     --ring: 0 229 255;
 
-    color-scheme: light;
+    color-scheme: dark;
   }
 
   html {
@@ -40,7 +40,7 @@
 
 @layer components {
   .glassmorphic {
-    @apply bg-white/60 backdrop-blur-md border border-white/40;
+    @apply bg-gradient-to-br from-slate-900/40 to-slate-800/20 backdrop-blur-md border border-cyan-500/30;
   }
 
   .card-interactive {
@@ -48,19 +48,19 @@
   }
 
   .hover-elevate {
-    @apply transition-all hover:shadow-lg hover:shadow-blue-300/30;
+    @apply transition-all hover:shadow-lg hover:shadow-cyan-500/20;
   }
 
   .active-elevate-2 {
-    @apply active:shadow-2xl active:shadow-blue-400/40;
+    @apply active:shadow-2xl active:shadow-cyan-600/30;
   }
 
   .neon-glow {
-    @apply shadow-lg shadow-blue-300/50;
+    @apply shadow-lg shadow-cyan-500/50;
   }
 
   .interactive-hover {
-    @apply hover:bg-blue-200/30 transition-colors;
+    @apply hover:bg-cyan-600/30 transition-colors;
   }
 
   .achievement-pop {
@@ -68,11 +68,11 @@
   }
 
   .progress-fill {
-    @apply bg-gradient-to-r from-blue-400 to-cyan-400;
+    @apply bg-gradient-to-r from-cyan-400 to-blue-400;
   }
 
   .shadow-card {
-    @apply shadow-lg shadow-black/10;
+    @apply shadow-lg shadow-black/30;
   }
 
   .scrollbar-hide {
@@ -97,7 +97,7 @@
   }
 
   .toggle-elevated {
-    @apply shadow-lg shadow-cyan-400/40 bg-cyan-400/20;
+    @apply shadow-lg shadow-cyan-400/40 bg-cyan-500/20;
   }
 }
 
@@ -189,11 +189,11 @@
   @keyframes cardLift {
     from {
       transform: translateY(0);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
     to {
       transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(0, 229, 255, 0.1);
+      box-shadow: 0 12px 32px rgba(0, 229, 255, 0.2);
     }
   }
 
