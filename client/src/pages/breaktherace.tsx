@@ -388,36 +388,37 @@ export default function BreakTheRace() {
           </Card>
         </div>
       ) : !gameState.career ? (
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-4">
-          <div className="mb-8">
-            <img src={breakTheRaceLogoUrl} alt="Break The Race" className="w-48 h-48 object-contain" />
-          </div>
+        <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-4">
           <Card className="border-primary/30 glassmorphic p-8 max-w-4xl w-full">
-            <h1 className="text-3xl font-bold text-primary mb-2 text-center">Choose Your Career</h1>
-            <p className="text-foreground/70 text-center mb-8">Select a career to start your journey to financial freedom</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(CAREERS).map(([key, career]) => (
-                <Button
-                  key={key}
-                  onClick={() => startNewGame(key as Career)}
-                  variant="outline"
-                  className="h-auto py-4 flex flex-col items-start"
-                >
-                  <span className="font-bold text-lg">{career.name}</span>
-                  <span className="text-sm text-foreground/60">₹{career.salary.toLocaleString('en-IN')} salary</span>
-                  <span className="text-sm text-foreground/60">₹{career.expenses.toLocaleString('en-IN')} expenses</span>
-                </Button>
-              ))}
+            {/* Hero Section with Logo */}
+            <div className="flex flex-col items-center mb-8 pb-6 border-b border-primary/20">
+              <img src={breakTheRaceLogoUrl} alt="Break The Race" className="w-40 h-40 object-contain mb-4" />
+              <h1 className="text-3xl font-bold text-primary mb-2 text-center">Break The Race</h1>
+              <p className="text-foreground/70 text-center text-sm">Escape the rat race. Reach the fast track. Achieve financial freedom.</p>
+            </div>
+            
+            {/* Career Selection */}
+            <div>
+              <h2 className="text-xl font-bold text-primary mb-4 text-center">Choose Your Career</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {Object.entries(CAREERS).map(([key, career]) => (
+                  <Button
+                    key={key}
+                    onClick={() => startNewGame(key as Career)}
+                    variant="outline"
+                    className="h-auto py-3 flex flex-col items-start text-left"
+                  >
+                    <span className="font-bold text-base">{career.name}</span>
+                    <span className="text-xs text-foreground/60">Salary: ₹{career.salary.toLocaleString('en-IN')}</span>
+                    <span className="text-xs text-foreground/60">Expenses: ₹{career.expenses.toLocaleString('en-IN')}</span>
+                  </Button>
+                ))}
+              </div>
             </div>
           </Card>
         </div>
       ) : (
         <div className="container mx-auto p-4 pb-8">
-          {/* Game Logo Header */}
-          <div className="flex justify-center mb-8">
-            <img src={breakTheRaceLogoUrl} alt="Break The Race" className="w-32 h-32 object-contain" />
-          </div>
-
           {/* Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <Card className="border-primary/30 glassmorphic p-4">
@@ -443,7 +444,12 @@ export default function BreakTheRace() {
           </div>
 
           {/* Board Game */}
-          <Card className="border-primary/30 glassmorphic p-8 mb-6">
+          <Card className="border-primary/30 glassmorphic p-8 mb-6 relative">
+            {/* Logo in Top Right */}
+            <div className="absolute top-4 right-4">
+              <img src={breakTheRaceLogoUrl} alt="Break The Race" className="w-20 h-20 object-contain opacity-80" />
+            </div>
+            
             <h2 className="text-2xl font-bold text-primary mb-4 text-center">
               {gameState.onFastTrack ? '🚀 FAST TRACK' : '🐭 RAT RACE'}
             </h2>
