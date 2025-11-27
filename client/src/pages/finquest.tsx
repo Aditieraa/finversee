@@ -62,7 +62,10 @@ import {
   PieChart,
   DollarSign,
   Users,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
+import { ScrollableTabs } from '@/components/scrollable-tabs';
 
 type Career = 'Engineer' | 'Designer' | 'CA' | 'Doctor' | 'Sales';
 type AvatarType = 'female1' | 'male1' | 'female2' | 'male2' | 'female3' | 'male3';
@@ -1195,6 +1198,7 @@ export default function FinQuest() {
         xp={gameState.xp}
         netWorth={gameState.netWorth}
         userName={gameState.userProfile?.name}
+        userAvatar={gameState.userProfile?.avatar ? avatarMap[gameState.userProfile.avatar] : undefined}
       />
 
       {/* Legacy Header Navigation */}
@@ -1233,63 +1237,53 @@ export default function FinQuest() {
             </div>
           </div>
 
-          {/* Navigation Tabs - Horizontal Scrollable */}
-          <div className="flex gap-2 overflow-x-auto pb-2 mt-3 -mx-4 px-4">
-            <Button
-              variant={currentView === 'dashboard' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setCurrentView('dashboard')}
-              className="flex items-center gap-2 whitespace-nowrap"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Dashboard
-            </Button>
-            <Button
-              variant={currentView === 'game' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setCurrentView('game')}
-              className="flex items-center gap-2 whitespace-nowrap"
-            >
-              <Zap className="h-4 w-4" />
-              Game
-            </Button>
-            <Button
-              variant={currentView === 'analytics' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setCurrentView('analytics')}
-              className="flex items-center gap-2 whitespace-nowrap"
-            >
-              <TrendingUpIcon className="h-4 w-4" />
-              Analytics
-            </Button>
-            <Button
-              variant={currentView === 'budget' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setCurrentView('budget')}
-              className="flex items-center gap-2 whitespace-nowrap"
-            >
-              <DollarSign className="h-4 w-4" />
-              Budget
-            </Button>
-            <Button
-              variant={currentView === 'stocks' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setCurrentView('stocks')}
-              className="flex items-center gap-2 whitespace-nowrap"
-            >
-              <TrendingUpIcon className="h-4 w-4" />
-              Stocks
-            </Button>
-            <Button
-              variant={currentView === 'leaderboard' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setCurrentView('leaderboard')}
-              className="flex items-center gap-2 whitespace-nowrap"
-            >
-              <Trophy className="h-4 w-4" />
-              Leaderboard
-            </Button>
-          </div>
+          {/* Navigation Tabs - Scrollable with Arrows */}
+          <ScrollableTabs
+            tabs={[
+              {
+                id: 'dashboard',
+                label: 'Dashboard',
+                icon: <LayoutDashboard className="h-4 w-4" />,
+                active: currentView === 'dashboard',
+                onClick: () => setCurrentView('dashboard'),
+              },
+              {
+                id: 'game',
+                label: 'Game',
+                icon: <Zap className="h-4 w-4" />,
+                active: currentView === 'game',
+                onClick: () => setCurrentView('game'),
+              },
+              {
+                id: 'analytics',
+                label: 'Analytics',
+                icon: <TrendingUpIcon className="h-4 w-4" />,
+                active: currentView === 'analytics',
+                onClick: () => setCurrentView('analytics'),
+              },
+              {
+                id: 'budget',
+                label: 'Budget',
+                icon: <DollarSign className="h-4 w-4" />,
+                active: currentView === 'budget',
+                onClick: () => setCurrentView('budget'),
+              },
+              {
+                id: 'stocks',
+                label: 'Stocks',
+                icon: <TrendingUpIcon className="h-4 w-4" />,
+                active: currentView === 'stocks',
+                onClick: () => setCurrentView('stocks'),
+              },
+              {
+                id: 'leaderboard',
+                label: 'Leaderboard',
+                icon: <Trophy className="h-4 w-4" />,
+                active: currentView === 'leaderboard',
+                onClick: () => setCurrentView('leaderboard'),
+              },
+            ]}
+          />
         </div>
       </header>
 
