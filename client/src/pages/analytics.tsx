@@ -26,11 +26,12 @@ export default function Analytics({ gameState }: AnalyticsProps) {
     return trends;
   };
 
-  // Generate spending forecast
+  // Generate spending forecast based on REAL user data ONLY
   const generateForecast = () => {
+    const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
     return [
-      { period: 'Next Month', forecast: '₹' + (gameState.userProfile?.salary - gameState.userProfile?.expenses || 0).toLocaleString('en-IN'), accuracy: 'Medium accuracy' },
-      { period: 'Next 3 Months', forecast: '₹' + ((gameState.userProfile?.salary - gameState.userProfile?.expenses || 0) * 3).toLocaleString('en-IN'), accuracy: 'Medium accuracy' },
+      { period: 'Next Month', forecast: '₹' + monthlyAvailable.toLocaleString('en-IN'), accuracy: 'Medium accuracy' },
+      { period: 'Next 3 Months', forecast: '₹' + (monthlyAvailable * 3).toLocaleString('en-IN'), accuracy: 'Medium accuracy' },
     ];
   };
 

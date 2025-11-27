@@ -57,11 +57,10 @@ export default function Budget({ gameState }: BudgetProps) {
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
   const [customCategories, setCustomCategories] = useState<CustomBudgetCategory[]>([]);
 
-  // Calculate budget categories based on user's actual expenses
+  // Calculate budget categories based on REAL user expenses (NOT game data)
   useEffect(() => {
     const userExpenses = gameState.userProfile?.expenses || 0;
-    const portfolio = gameState.portfolio || {};
-    const investments = gameState.monthlyInvestments || {};
+    const userSalary = gameState.userProfile?.salary || 0;
 
     // Break down expenses into proportional categories
     const categories: BudgetCategory[] = [
@@ -81,40 +80,40 @@ export default function Budget({ gameState }: BudgetProps) {
 
     setBudgetCategories(updatedCategories);
 
-    // Initialize goals based on portfolio
-    const totalPortfolio = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
+    // Initialize goals based on REAL user data ONLY (not game portfolio)
+    const monthlyAvailable = userSalary - userExpenses;
     const initialGoals: Goal[] = [
       {
         id: '1',
         name: 'Emergency Fund',
         targetAmount: userExpenses * 6,
-        currentAmount: gameState.cashBalance,
+        currentAmount: monthlyAvailable * 3, // Simulated - user's available cash
         deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
         priority: 'high',
-        status: gameState.cashBalance >= userExpenses * 6 ? 'completed' : 'active',
+        status: (monthlyAvailable * 3) >= userExpenses * 6 ? 'completed' : 'active',
       },
       {
         id: '2',
-        name: 'Investment Portfolio',
-        targetAmount: userExpenses * 10,
-        currentAmount: totalPortfolio,
-        deadline: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
+        name: 'Save 3 Months',
+        targetAmount: userExpenses * 3,
+        currentAmount: monthlyAvailable * 2,
+        deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
         priority: 'high',
-        status: totalPortfolio >= userExpenses * 10 ? 'completed' : 'active',
+        status: (monthlyAvailable * 2) >= userExpenses * 3 ? 'completed' : 'active',
       },
       {
         id: '3',
-        name: 'Net Worth Target',
-        targetAmount: gameState.userProfile?.salary * 12,
-        currentAmount: gameState.netWorth,
+        name: 'Annual Savings Goal',
+        targetAmount: monthlyAvailable * 12,
+        currentAmount: monthlyAvailable * 6,
         deadline: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
         priority: 'medium',
-        status: gameState.netWorth >= gameState.userProfile?.salary * 12 ? 'completed' : 'active',
+        status: (monthlyAvailable * 6) >= (monthlyAvailable * 12) ? 'completed' : 'active',
       },
     ];
 
     setGoals(initialGoals);
-  }, [gameState]);
+  }, [gameState.userProfile]);
 
   // Generate real-time alerts based on actual data
   const generateAlerts = (): BudgetAlert[] => {
