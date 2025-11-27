@@ -230,7 +230,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
         return;
       }
 
-      // Try to insert new stock
+      // Try to insert new stock (store prices as integers in paise to avoid numeric overflow)
       const { data, error: insertError } = await supabase
         .from('stocks')
         .insert({
@@ -239,10 +239,10 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
           symbol: selectedStockData.symbol,
           company_name: selectedStockData.symbol,
           quantity: wholeShares,
-          buy_price: buyPrice,
-          current_price: buyPrice,
-          total_invested: actualInvestment,
-          current_value: actualInvestment,
+          buy_price: Math.round(buyPrice * 100),
+          current_price: Math.round(buyPrice * 100),
+          total_invested: Math.round(actualInvestment * 100),
+          current_value: Math.round(actualInvestment * 100),
           purchase_date: new Date().toISOString(),
         })
         .select();

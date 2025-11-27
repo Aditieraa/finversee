@@ -398,12 +398,12 @@ export default function FinQuest() {
           timestamp: new Date(msg.created_at).getTime(),
         }));
 
-        // Convert stocks to stockHoldings format
+        // Convert stocks to stockHoldings format (convert prices from paise to rupees)
         const stockHoldings = (stocks || []).map((stock: any) => ({
           symbol: stock.symbol,
           shares: stock.quantity,
-          buyPrice: stock.buy_price,
-          investmentAmount: stock.total_invested,
+          buyPrice: stock.buy_price / 100,
+          investmentAmount: stock.total_invested / 100,
           purchaseDate: stock.purchase_date,
         }));
 
