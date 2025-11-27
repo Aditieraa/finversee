@@ -245,11 +245,20 @@ export default function FinQuest() {
 
   useEffect(() => {
     if (userId && userId !== 'guest' && gameState.userProfile) {
+      // Auto-save every 60 seconds
       const autoSaveInterval = setInterval(() => {
         saveGameState(true);
       }, 60000);
 
-      return () => clearInterval(autoSaveInterval);
+      // Refresh leaderboard every 10 seconds for real-time syncing
+      const leaderboardInterval = setInterval(() => {
+        loadLeaderboard();
+      }, 10000);
+
+      return () => {
+        clearInterval(autoSaveInterval);
+        clearInterval(leaderboardInterval);
+      };
     }
   }, [userId, gameState]);
 
@@ -487,8 +496,9 @@ export default function FinQuest() {
               avatar: avatarPath,
             };
           })
-          .filter((entry: any) => entry.name !== 'Anonymous');
+          .filter((entry: any) => entry.name !== 'Anonymous' && entry.level > 0 && entry.score > 0);
 
+        console.log('📊 Leaderboard updated with', leaderboardData.length, 'real players');
         setLeaderboard(leaderboardData);
       }
     } catch (error: any) {
