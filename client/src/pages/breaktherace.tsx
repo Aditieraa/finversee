@@ -352,13 +352,14 @@ export default function BreakTheRace({ userId: propUserId }: BreakTheRaceProps) 
 
     const updatedState = { ...gameState, cash: gameState.cash - adjustedCost, assets: [...gameState.assets, newAsset], passiveIncome: newPassiveIncome };
     await saveGameState(updatedState);
-    await checkEscapeRatRace();
+    await checkEscapeRatRace(updatedState);
   };
 
-  const checkEscapeRatRace = async () => {
+  const checkEscapeRatRace = async (stateToCheck?: GameState) => {
+    const checkState = stateToCheck || gameState;
     // TEST: Rat race → fast track switch
-    if (gameState.passiveIncome >= gameState.totalExpenses && !gameState.onFastTrack) {
-      const newState = { ...gameState, onFastTrack: true };
+    if (checkState.passiveIncome >= checkState.totalExpenses && !checkState.onFastTrack) {
+      const newState = { ...checkState, onFastTrack: true };
       setGameState(newState);
       await saveGameState(newState);
       playSound('deal');
@@ -366,9 +367,9 @@ export default function BreakTheRace({ userId: propUserId }: BreakTheRaceProps) 
       toast({ title: '🚀 You Escaped the Rat Race!', description: 'Welcome to the Fast Track! (10x multiplier on deals)' });
     }
 
-    // TEST: Winning condition triggers correctly
-    const dreamThreshold = gameState.totalExpenses + 40000;
-    if (gameState.passiveIncome >= dreamThreshold && gameState.onFastTrack) {
+    // TEST: Winning condition triggers correctly - need only ₹4,000 more than expenses
+    const dreamThreshold = checkState.totalExpenses + 4000;
+    if (checkState.passiveIncome >= dreamThreshold && checkState.onFastTrack) {
       setCanBuyDream(true);
       toast({ title: '🏆 Dream Unlocked!', description: 'You can now Buy Your Dream and WIN!' });
     }
