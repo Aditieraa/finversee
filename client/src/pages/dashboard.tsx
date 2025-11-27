@@ -21,13 +21,13 @@ interface DashboardProps {
 }
 
 const CHART_COLORS = {
-  sip: '#4CAF50',      /* Vibrant Green */
+  sip: '#64B5F6',      /* Light Blue */
   stocks: '#42A5F5',   /* Accent Blue */
-  gold: '#FFB74D',     /* Warm Amber */
-  realEstate: '#CE93D8', /* Modern Purple */
+  gold: '#7C4DFF',     /* Deep Purple */
+  realEstate: '#BA68C8', /* Medium Purple */
   savings: '#29B6F6',  /* Sky Blue */
-  income: '#66BB6A',   /* Green */
-  expenses: '#E53935', /* Warning Red */
+  income: '#1DE9B6',   /* Teal Cyan */
+  expenses: '#EF5350', /* Alert Red */
   net: '#42A5F5',      /* Accent Blue */
 };
 
@@ -342,13 +342,13 @@ export default function Dashboard({
           }));
           
           return (
-            <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6 shadow-card h-full flex flex-col">
-              <h3 className="text-lg font-bold text-white mb-1">Portfolio Breakdown</h3>
-              <p className="text-xs text-purple-200/60 mb-4">Asset allocation</p>
+            <Card className="border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-indigo-900/30 backdrop-blur-sm p-6 shadow-card h-full flex flex-col">
+              <h3 className="text-lg font-bold text-blue-50 mb-1">Portfolio Breakdown</h3>
+              <p className="text-xs text-blue-200/60 mb-4">Asset allocation</p>
               
               {donutData.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center">
-                  <p className="text-purple-300/60 text-xs text-center">No investments yet</p>
+                  <p className="text-blue-300/60 text-xs text-center">No investments yet</p>
                 </div>
               ) : (
                 <div className="flex-1 space-y-3 flex flex-col">
@@ -371,17 +371,18 @@ export default function Dashboard({
                             <Cell 
                               key={`cell-${index}`} 
                               fill={entry.color}
-                              opacity={hoveredSlice === null || hoveredSlice === index ? 1 : 0.4}
-                              className="transition-all hover:filter hover:brightness-110"
+                              opacity={hoveredSlice === null || hoveredSlice === index ? 1 : 0.35}
+                              className="transition-all hover:filter hover:brightness-125"
                             />
                           ))}
                         </Pie>
                         <Tooltip 
                           contentStyle={{ 
-                            backgroundColor: '#1A237E', 
-                            border: '1px solid rgba(66, 165, 245, 0.3)',
+                            backgroundColor: 'rgba(26, 35, 126, 0.95)', 
+                            border: '1px solid rgba(66, 165, 245, 0.5)',
                             borderRadius: '8px',
-                            fontSize: '12px'
+                            fontSize: '12px',
+                            color: '#e0e7ff'
                           }}
                           formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
                         />
@@ -389,8 +390,8 @@ export default function Dashboard({
                     </ResponsiveContainer>
                     {/* Center Text Display */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                      <p className="text-xs text-purple-200/60">Total Portfolio</p>
-                      <p className="text-lg font-bold text-purple-100">
+                      <p className="text-xs text-blue-200/70">Total Portfolio</p>
+                      <p className="text-2xl font-bold text-blue-100">
                         ₹{(totalValue / 100000).toFixed(1)}L
                       </p>
                     </div>
@@ -400,17 +401,17 @@ export default function Dashboard({
                     {donutData.map((item: any, idx: number) => (
                       <div 
                         key={idx} 
-                        className="flex items-center gap-2 p-2 rounded-lg bg-purple-900/20 hover-elevate cursor-pointer transition-all text-xs"
+                        className="flex items-center gap-2 p-2.5 rounded-md bg-blue-800/20 hover-elevate cursor-pointer transition-all text-xs border border-blue-500/10"
                         onMouseEnter={() => setHoveredSlice(idx)}
                         onMouseLeave={() => setHoveredSlice(null)}
                       >
                         <div 
-                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-sm"
                           style={{ backgroundColor: item.color }}
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-purple-200 truncate">{item.name}</p>
-                          <p className="text-purple-200/60">{item.percentage}%</p>
+                          <p className="font-semibold text-blue-200 truncate">{item.name}</p>
+                          <p className="text-blue-300/70">{item.percentage}%</p>
                         </div>
                       </div>
                     ))}
