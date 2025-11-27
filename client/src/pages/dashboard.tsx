@@ -162,36 +162,70 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
           </ResponsiveContainer>
         </Card>
 
-        {/* Portfolio Breakdown Bar - Gradient Bars */}
-        <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6 shadow-card">
-          <h3 className="text-xl font-bold text-white mb-1">Portfolio Breakdown</h3>
-          <p className="text-sm text-purple-200/60 mb-4">Asset allocation across categories</p>
-          {categoryData.every(item => item.value === 0) ? (
-            <div className="h-72 flex items-center justify-center">
-              <p className="text-purple-300/60 text-center">No investments yet. Start investing to see your portfolio breakdown!</p>
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={categoryData} layout="vertical">
-                <defs>
-                  <linearGradient id="gradient1" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#4CAF50" stopOpacity={0.8} />
-                    <stop offset="100%" stopColor="#66BB6A" stopOpacity={1} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.15)" horizontal={false} />
-                <XAxis type="number" stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
-                <YAxis dataKey="name" type="category" stroke="rgba(160, 180, 204, 0.4)" width={80} style={{ fontSize: '12px' }} />
-                <Tooltip contentStyle={{ backgroundColor: '#1A237E', border: '1px solid rgba(66, 165, 245, 0.3)', borderRadius: '8px' }} formatter={(value) => `₹${value.toLocaleString('en-IN')}`} />
-                <Bar dataKey="value" fill="#42A5F5" radius={[0, 10, 10, 0]}>
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </Card>
+        {/* Portfolio Breakdown Donut Chart */}
+        {(() => {
+          const totalValue = categoryData.reduce((sum, item) => sum + item.value, 0);
+          const donutData = categoryData.filter(item => item.value > 0).map(item => ({
+            ...item,
+            percentage: totalValue > 0 ? ((item.value / totalValue) * 100).toFixed(1) : 0
+          }));
+          
+          return (
+            <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6 shadow-card lg:col-span-1">
+              <h3 className="text-xl font-bold text-white mb-1">Portfolio Breakdown</h3>
+              <p className="text-sm text-purple-200/60 mb-4">Asset allocation across categories</p>
+              
+              {donutData.length === 0 ? (
+                <div className="h-80 flex items-center justify-center">
+                  <p className="text-purple-300/60 text-center">No investments yet. Start investing to see your portfolio breakdown!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <ResponsiveContainer width="100%" height={250}>
+                    <PieChart>
+                      <Pie
+                        data={donutData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={80}
+                        paddingAngle={2}
+                        dataKey="value"
+                      >
+                        {donutData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: '#1A237E', 
+                          border: '1px solid rgba(66, 165, 245, 0.3)',
+                          borderRadius: '8px'
+                        }}
+                        formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    {donutData.map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-2 p-2 rounded-lg bg-purple-900/20 hover-elevate cursor-pointer transition-all">
+                        <div 
+                          className="w-2.5 h-2.5 rounded-full"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-purple-200 truncate">{item.name}</p>
+                          <p className="text-xs text-purple-200/60">{item.percentage}%</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </Card>
+          );
+        })()}
 
         {/* Trend Analysis */}
         <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-6 shadow-card">

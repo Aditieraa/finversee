@@ -7,6 +7,8 @@ import Analytics from './analytics';
 import Budget from './budget';
 import Stocks from './stocks';
 import Leaderboard from './leaderboard';
+import { AppHeader } from '@/components/app-header';
+import { QuickActionsPanel } from '@/components/quick-actions-panel';
 // @ts-ignore
 import avatar1 from '@assets/generated_images/female_professional_avatar.png';
 // @ts-ignore
@@ -1187,10 +1189,18 @@ export default function FinQuest() {
 
   return (
     <div className="min-h-screen w-full" style={{ background: 'linear-gradient(135deg, #1B263B 0%, #2E4057 50%, #4A90E2 100%)', color: '#E6F1FF' }}>
-      {/* Header */}
-      <header className="border-b border-primary/20 glassmorphic sticky top-0 z-50">
+      {/* Modern Gamification Header */}
+      <AppHeader 
+        level={gameState.level}
+        xp={gameState.xp}
+        netWorth={gameState.netWorth}
+        userName={gameState.userProfile?.name}
+      />
+
+      {/* Legacy Header Navigation */}
+      <header className="border-b border-primary/20 glassmorphic sticky top-16 z-40">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-3 mb-2">
+          <div className="flex items-center justify-between py-3">
             <div className="flex items-center gap-4">
               <button
                 data-testid="button-mobile-menu"
@@ -1199,24 +1209,9 @@ export default function FinQuest() {
               >
                 {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
-              <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
-                <Sparkles className="h-6 w-6 glow" />
-                Finverse
-              </h1>
             </div>
 
             <div className="flex items-center gap-3">
-              {gameState.userProfile?.avatar && (
-                <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-primary/50">
-                  <img src={getAvatarUrl(gameState.userProfile.avatar)} alt={gameState.userProfile.name} className="w-full h-full object-cover" />
-                </div>
-              )}
-              <Badge className="bg-primary/20 text-primary border-primary/50 neon-glow">
-                Level {gameState.level}
-              </Badge>
-              <Badge className="bg-primary/30 text-white border-primary/50 neon-glow">
-                {gameState.xp} XP
-              </Badge>
               <Button
                 data-testid="button-aura-twin"
                 variant="outline"
