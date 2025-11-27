@@ -75,15 +75,15 @@ const CAREERS: Record<Career, CareerProfile> = {
 const BOARD_SPACES: BoardSpace[] = ['start', 'payday', 'smalldeal', 'market', 'doodad', 'bigdeal', 'opportunity', 'charity'];
 
 const SMALL_DEALS = [
-  { name: 'Stock Portfolio', cost: 5000, passiveIncome: 500 },
-  { name: 'Small Rental', cost: 50000, passiveIncome: 3000 },
-  { name: 'Online Business', cost: 10000, passiveIncome: 1000 },
+  { name: 'Stock Portfolio', cost: 5000, passiveIncome: 5000 },
+  { name: 'Small Rental', cost: 50000, passiveIncome: 15000 },
+  { name: 'Online Business', cost: 10000, passiveIncome: 8000 },
 ];
 
 const BIG_DEALS = [
-  { name: 'Apartment', cost: 500000, passiveIncome: 25000 },
-  { name: 'Commercial Property', cost: 1000000, passiveIncome: 60000 },
-  { name: 'Business Franchise', cost: 300000, passiveIncome: 40000 },
+  { name: 'Apartment', cost: 500000, passiveIncome: 50000 },
+  { name: 'Commercial Property', cost: 1000000, passiveIncome: 120000 },
+  { name: 'Business Franchise', cost: 300000, passiveIncome: 80000 },
 ];
 
 const DOODADS = [
@@ -367,7 +367,7 @@ export default function BreakTheRace({ userId: propUserId }: BreakTheRaceProps) 
     }
 
     // TEST: Winning condition triggers correctly
-    const dreamThreshold = gameState.totalExpenses + 400000;
+    const dreamThreshold = gameState.totalExpenses + 40000;
     if (gameState.passiveIncome >= dreamThreshold && gameState.onFastTrack) {
       setCanBuyDream(true);
       toast({ title: '🏆 Dream Unlocked!', description: 'You can now Buy Your Dream and WIN!' });
