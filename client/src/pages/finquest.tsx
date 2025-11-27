@@ -7,6 +7,7 @@ import Analytics from './analytics';
 import Budget from './budget';
 import Stocks from './stocks';
 import Leaderboard from './leaderboard';
+import Premium from './premium';
 import BreakTheRaceGame from './breaktherace';
 import { AppHeader } from '@/components/app-header';
 import { QuickActionsPanel } from '@/components/quick-actions-panel';
@@ -1409,6 +1410,13 @@ export default function FinQuest() {
             active: currentView === 'leaderboard',
             onClick: () => setCurrentView('leaderboard'),
           },
+          {
+            id: 'premium',
+            label: 'Premium',
+            icon: <Sparkles className="h-3.5 w-3.5" />,
+            active: currentView === 'premium',
+            onClick: () => setCurrentView('premium'),
+          },
         ]}
         onAuraTwin={() => setShowAuraTwin(true)}
         onProfile={() => setShowProfile(true)}
@@ -1478,6 +1486,11 @@ export default function FinQuest() {
         {/* Leaderboard View */}
         {currentView === 'leaderboard' && (
           <Leaderboard />
+        )}
+
+        {/* Premium View */}
+        {currentView === 'premium' && (
+          <Premium />
         )}
       </div>
 
