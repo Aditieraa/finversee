@@ -40,16 +40,26 @@ export default function Dashboard({
   const [timeframe, setTimeframe] = useState<3 | 6 | 12>(6);
   const [hoveredSlice, setHoveredSlice] = useState<number | null>(null);
 
-  // Generate chart data from game state
+  // Generate chart data from game state with realistic aggregated monthly expenses
   const generateMonthlyData = (months: number) => {
     const data = [];
-    const displayMonths = Math.min(months, gameState.currentMonth, 12);
+    const displayMonths = Math.min(months, gameState.currentMonth || 12, 12);
+    const baseSalary = gameState.userProfile?.salary || 0;
+    const baseExpenses = gameState.userProfile?.expenses || 0;
+    
     for (let i = 1; i <= displayMonths; i++) {
+      // Simulate monthly variations
+      const expenseVariation = Math.sin(i * 0.5) * (baseExpenses * 0.15) + (Math.random() - 0.5) * (baseExpenses * 0.1);
+      const monthlyExpenses = Math.max(0, Math.round(baseExpenses + expenseVariation));
+      const monthlyIncome = baseSalary;
+      const netWorth = gameState.netWorth + (i * gameState.netWorth * 0.02); // Progressive growth
+      
       data.push({
         month: `M${i}`,
-        income: gameState.userProfile?.salary || 0,
-        expenses: gameState.userProfile?.expenses || 0,
-        net: (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0),
+        income: monthlyIncome,
+        expenses: monthlyExpenses,
+        net: monthlyIncome - monthlyExpenses,
+        netWorth: Math.round(netWorth),
       });
     }
     return data;

@@ -40,12 +40,21 @@ interface BudgetCategory {
   percentage: number;
 }
 
-export default function Budget({ gameState }: BudgetProps) {
+interface BudgetProps {
+  gameState: any;
+  onExpenseAdd?: (amount: number) => void;
+}
+
+export default function Budget({ gameState, onExpenseAdd }: BudgetProps) {
   const [showAddGoal, setShowAddGoal] = useState(false);
+  const [showAddBudget, setShowAddBudget] = useState(false);
   const [goalName, setGoalName] = useState('');
   const [goalAmount, setGoalAmount] = useState('');
+  const [budgetName, setBudgetName] = useState('');
+  const [budgetAmount, setBudgetAmount] = useState('');
   const [goals, setGoals] = useState<Goal[]>([]);
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
+  const [customBudgets, setCustomBudgets] = useState<BudgetCategory[]>([]);
 
   // Calculate budget categories based on user's actual expenses
   useEffect(() => {
@@ -70,6 +79,16 @@ export default function Budget({ gameState }: BudgetProps) {
     }));
 
     setBudgetCategories(updatedCategories);
+    
+    // Load custom budgets from localStorage
+    const saved = localStorage.getItem('customBudgets');
+    if (saved) {
+      try {
+        setCustomBudgets(JSON.parse(saved));
+      } catch (e) {
+        console.error('Error loading custom budgets:', e);
+      }
+    }
 
     // Initialize goals based on portfolio
     const totalPortfolio = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
@@ -105,6 +124,27 @@ export default function Budget({ gameState }: BudgetProps) {
 
     setGoals(initialGoals);
   }, [gameState]);
+
+  // Add custom budget
+  const handleAddCustomBudget = () => {
+    if (!budgetName || !budgetAmount) return;
+    
+    const newBudget: BudgetCategory = {
+      name: budgetName,
+      budget: parseInt(budgetAmount),
+      spent: 0,
+      icon: '📊',
+      percentage: 0,
+    };
+    
+    const updated = [...customBudgets, newBudget];
+    setCustomBudgets(updated);
+    localStorage.setItem('customBudgets', JSON.stringify(updated));
+    
+    setBudgetName('');
+    setBudgetAmount('');
+    setShowAddBudget(false);
+  };
 
   // Generate real-time alerts based on actual data
   const generateAlerts = (): BudgetAlert[] => {
@@ -201,6 +241,88 @@ export default function Budget({ gameState }: BudgetProps) {
 
   return (
     <div className="space-y-6 pb-6">
+      {/* Custom Budgets Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-primary flex items-center gap-2">
+            <Target className="h-6 w-6" />
+            Custom Budgets
+          </h2>
+          <Button
+            onClick={() => setShowAddBudget(true)}
+            className="flex items-center gap-2 neon-glow interactive-hover"
+            data-testid="button-new-budget"
+          >
+            <Plus className="h-4 w-4" />
+            New Budget
+          </Button>
+        </div>
+        
+        {customBudgets.length === 0 ? (
+          <Card className="border-primary/20 glassmorphic p-8">
+            <p className="text-foreground/60 text-center">No custom budgets yet. Create your first one!</p>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {customBudgets.map((budget, idx) => (
+              <Card key={idx} className="border-primary/30 glassmorphic p-4" data-testid={`custom-budget-${idx}`}>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-semibold text-foreground">{budget.name}</p>
+                  <span className="text-sm text-foreground/60">₹{budget.budget.toLocaleString('en-IN')}</span>
+                </div>
+                <Progress value={Math.min(budget.percentage, 100)} className="h-2" />
+                <p className="text-xs text-foreground/50 mt-2">{budget.percentage.toFixed(1)}% spent</p>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Custom Budget Creation Dialog */}
+      <Dialog open={showAddBudget} onOpenChange={setShowAddBudget}>
+        <DialogContent className="border-primary/30 glassmorphic modal-slide w-full max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-primary flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Create Custom Budget
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="budget-name" className="text-sm text-foreground/70">Budget Category</Label>
+              <Input
+                id="budget-name"
+                type="text"
+                placeholder="e.g., Gym Membership"
+                value={budgetName}
+                onChange={(e) => setBudgetName(e.target.value)}
+                className="mt-2 interactive-hover"
+                data-testid="input-budget-name"
+              />
+            </div>
+            <div>
+              <Label htmlFor="budget-amount" className="text-sm text-foreground/70">Monthly Budget (₹)</Label>
+              <Input
+                id="budget-amount"
+                type="number"
+                placeholder="0"
+                value={budgetAmount}
+                onChange={(e) => setBudgetAmount(e.target.value)}
+                className="mt-2 interactive-hover"
+                data-testid="input-budget-amount"
+              />
+            </div>
+            <Button
+              onClick={handleAddCustomBudget}
+              className="w-full neon-glow interactive-hover font-bold"
+              data-testid="button-add-custom-budget"
+            >
+              <Plus className="mr-2 h-5 w-5" />
+              Create Budget
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* Budget Alerts */}
       {budgetAlerts.length > 0 && (
         <Card className="border-red-400/30 bg-red-950/40 backdrop-blur-sm p-6">

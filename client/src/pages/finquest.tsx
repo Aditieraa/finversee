@@ -1548,7 +1548,18 @@ export default function FinQuest() {
 
         {/* Budget View */}
         {currentView === 'budget' && (
-          <Budget gameState={gameState} />
+          <Budget 
+            gameState={gameState}
+            onExpenseAdd={(amount) => {
+              setGameState(prev => {
+                const newExpenses = (prev.userProfile?.expenses || 0) + amount;
+                return {
+                  ...prev,
+                  userProfile: { ...prev.userProfile, expenses: newExpenses },
+                };
+              });
+            }}
+          />
         )}
 
         {/* Stocks View */}
