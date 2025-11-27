@@ -1184,7 +1184,11 @@ export default function FinQuest() {
               <Button
                 data-testid="button-start-journey"
                 onClick={completeOnboarding}
-                className="w-full bg-neon-cyan text-black hover:bg-neon-cyan/90 shadow-neon-cyan font-bold text-lg py-6"
+                className="w-full font-bold text-lg py-6 text-slate-900"
+                style={{
+                  background: 'linear-gradient(135deg, #B3D9FF 0%, #D1E8FF 100%)',
+                  boxShadow: '0 0 30px rgba(177, 217, 255, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.3)',
+                }}
               >
                 <Zap className="mr-2 h-5 w-5" />
                 Start Your Financial Journey
