@@ -546,15 +546,27 @@ export default function BreakTheRace() {
             </Card>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex gap-2 justify-center">
-            <Button variant="outline" size="sm" onClick={() => setShowHelp(true)}>
-              <HelpCircle className="h-4 w-4 mr-2" />
-              Help
+          {/* Action Buttons - Sticky Footer */}
+          <div className="sticky bottom-0 bg-gradient-to-t from-slate-900 to-transparent pt-4 pb-2 -mx-4 px-4 flex gap-3 justify-center z-40">
+            <Button 
+              variant="outline" 
+              size="default" 
+              onClick={() => setShowHelp(true)}
+              className="gap-2"
+              data-testid="button-help"
+            >
+              <HelpCircle className="h-4 w-4" />
+              Help & Tutorial
             </Button>
-            <Button variant="outline" size="sm" onClick={resetGame}>
-              <RotateCcw className="h-4 w-4 mr-2" />
-              New Game
+            <Button 
+              variant="destructive" 
+              size="default" 
+              onClick={resetGame}
+              className="gap-2"
+              data-testid="button-new-game"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Start New Game
             </Button>
           </div>
         </div>
