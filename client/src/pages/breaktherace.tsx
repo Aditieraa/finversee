@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import breakTheRaceLogoUrl from '@assets/image_1764247647876.png';
+import diceRollAudio from '@assets/dice-roll.mp3';
 import {
   Dices,
   Trophy,
@@ -114,22 +115,25 @@ const OPPORTUNITIES = [
   { name: 'Found Money', effect: 10000, description: 'Money found on the street!' },
 ];
 
-// Sound Effects Manager (placeholder for audio system)
+// Sound Effects Manager - plays real audio files
 const playSound = (type: 'dice' | 'card' | 'cash' | 'deal' | 'win') => {
   try {
-    // Audio system ready for integration
-    // Can be extended with actual audio files
-    const soundMap: Record<string, string> = {
-      dice: 'dice-roll',
-      card: 'card-flip',
-      cash: 'cash-pop',
-      deal: 'deal-success',
-      win: 'victory'
+    const audioMap: Record<string, string | null> = {
+      dice: diceRollAudio,
+      card: null,
+      cash: null,
+      deal: null,
+      win: null
     };
-    // Sound effect triggered - logs for debugging
-    console.log(`🔊 Sound: ${soundMap[type]}`);
+    
+    const audioFile = audioMap[type];
+    if (audioFile) {
+      const audio = new Audio(audioFile);
+      audio.volume = 0.7;
+      audio.play().catch(() => {});
+    }
   } catch (e) {
-    console.log('Sound system ready');
+    // Silent fallback
   }
 };
 
