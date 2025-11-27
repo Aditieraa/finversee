@@ -57,9 +57,10 @@ export default function Budget({ gameState }: BudgetProps) {
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
   const [customCategories, setCustomCategories] = useState<CustomBudgetCategory[]>([]);
 
-  // Calculate budget categories based on REAL user expenses (NOT game data)
+  // Calculate budget categories based on REAL user expenses (synced from Dashboard updates)
   useEffect(() => {
-    const userExpenses = gameState.userProfile?.expenses || 0;
+    // Use current monthly expenses if updated via Dashboard toggle, otherwise use profile default
+    const userExpenses = gameState.monthlyExpensesThisMonth || gameState.userProfile?.expenses || 0;
     const userSalary = gameState.userProfile?.salary || 0;
 
     // Break down expenses into proportional categories
@@ -113,12 +114,12 @@ export default function Budget({ gameState }: BudgetProps) {
     ];
 
     setGoals(initialGoals);
-  }, [gameState.userProfile]);
+  }, [gameState.userProfile, gameState.monthlyExpensesThisMonth]);
 
-  // Generate real-time alerts based on actual data
+  // Generate real-time alerts based on actual data (synced from Dashboard)
   const generateAlerts = (): BudgetAlert[] => {
     const alerts: BudgetAlert[] = [];
-    const userExpenses = gameState.userProfile?.expenses || 0;
+    const userExpenses = gameState.monthlyExpensesThisMonth || gameState.userProfile?.expenses || 0;
 
     // Check for over-budget categories
     budgetCategories.forEach((cat, idx) => {
@@ -178,11 +179,11 @@ export default function Budget({ gameState }: BudgetProps) {
 
   const budgetAlerts = generateAlerts();
 
-  // Calculate totals
+  // Calculate totals (using synced values from Dashboard)
   const totalBudget = budgetCategories.reduce((sum, cat) => sum + cat.budget, 0);
   const totalSpent = budgetCategories.reduce((sum, cat) => sum + cat.spent, 0);
   const remaining = totalBudget - totalSpent;
-  const userExpenses = gameState.userProfile?.expenses || 0;
+  const userExpenses = gameState.monthlyExpensesThisMonth || gameState.userProfile?.expenses || 0;
   const userSalary = gameState.userProfile?.salary || 0;
   const monthlyIncome = userSalary;
   const savingsPerMonth = monthlyIncome - userExpenses;
