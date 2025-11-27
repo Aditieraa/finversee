@@ -281,7 +281,7 @@ export default function BreakTheRace() {
       toast({ title: '🚀 You Escaped the Rat Race!', description: 'Welcome to the Fast Track! (10x multiplier on deals)' });
     }
 
-    const dreamThreshold = gameState.totalExpenses + 4000000;
+    const dreamThreshold = gameState.totalExpenses + 400000;
     if (gameState.passiveIncome >= dreamThreshold && gameState.onFastTrack) {
       setCanBuyDream(true);
       toast({ title: '🏆 Dream Unlocked!', description: 'You can now Buy Your Dream and WIN!' });
@@ -609,7 +609,7 @@ export default function BreakTheRace() {
               <h4 className="font-bold text-primary mb-2">💰 Game Phases</h4>
               <p className="text-xs mb-2"><strong>Rat Race:</strong> Passive income must ≥ monthly expenses to escape</p>
               <p className="text-xs mb-2"><strong>Fast Track:</strong> Big deals cost 10x less, earn 10x more</p>
-              <p className="text-xs"><strong>Win:</strong> Reach passive income ≥ expenses + ₹40,00,000, then click "BUY YOUR DREAM"!</p>
+              <p className="text-xs"><strong>Win:</strong> Reach passive income ≥ expenses + ₹4,00,000, then click "BUY YOUR DREAM"!</p>
             </div>
             <div>
               <h4 className="font-bold text-primary mb-2">📊 Liabilities</h4>
