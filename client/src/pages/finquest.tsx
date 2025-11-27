@@ -1192,100 +1192,60 @@ export default function FinQuest() {
 
   return (
     <div className="min-h-screen w-full" style={{ background: 'linear-gradient(135deg, #1B263B 0%, #2E4057 50%, #4A90E2 100%)', color: '#E6F1FF' }}>
-      {/* Modern Gamification Header */}
+      {/* Unified Header - All elements merged */}
       <AppHeader 
         level={gameState.level}
         xp={gameState.xp}
         netWorth={gameState.netWorth}
         userName={gameState.userProfile?.name}
         userAvatar={gameState.userProfile?.avatar ? avatarMap[gameState.userProfile.avatar] : undefined}
+        tabs={[
+          {
+            id: 'dashboard',
+            label: 'Dashboard',
+            icon: <LayoutDashboard className="h-3.5 w-3.5" />,
+            active: currentView === 'dashboard',
+            onClick: () => setCurrentView('dashboard'),
+          },
+          {
+            id: 'game',
+            label: 'Game',
+            icon: <Zap className="h-3.5 w-3.5" />,
+            active: currentView === 'game',
+            onClick: () => setCurrentView('game'),
+          },
+          {
+            id: 'analytics',
+            label: 'Analytics',
+            icon: <TrendingUpIcon className="h-3.5 w-3.5" />,
+            active: currentView === 'analytics',
+            onClick: () => setCurrentView('analytics'),
+          },
+          {
+            id: 'budget',
+            label: 'Budget',
+            icon: <DollarSign className="h-3.5 w-3.5" />,
+            active: currentView === 'budget',
+            onClick: () => setCurrentView('budget'),
+          },
+          {
+            id: 'stocks',
+            label: 'Stocks',
+            icon: <TrendingUpIcon className="h-3.5 w-3.5" />,
+            active: currentView === 'stocks',
+            onClick: () => setCurrentView('stocks'),
+          },
+          {
+            id: 'leaderboard',
+            label: 'Leaderboard',
+            icon: <Trophy className="h-3.5 w-3.5" />,
+            active: currentView === 'leaderboard',
+            onClick: () => setCurrentView('leaderboard'),
+          },
+        ]}
+        onAuraTwin={() => setShowAuraTwin(true)}
+        onProfile={() => setShowProfile(true)}
       />
-
-      {/* Legacy Header Navigation */}
-      <header className="border-b border-primary/20 glassmorphic sticky top-16 z-40">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-3">
-            <div className="flex items-center gap-4">
-              <button
-                data-testid="button-mobile-menu"
-                className="lg:hidden text-primary"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Button
-                data-testid="button-aura-twin"
-                variant="outline"
-                className="border-primary/50 text-primary hover:bg-primary/20 neon-glow interactive-hover"
-                onClick={() => setShowAuraTwin(true)}
-              >
-                <Sparkles className="h-4 w-4 mr-2" />
-                Aura Twin
-              </Button>
-              <Button
-                data-testid="button-profile"
-                variant="ghost"
-                onClick={() => setShowProfile(true)}
-                className="text-primary hover:bg-primary/20 interactive-hover flex items-center gap-2"
-              >
-                <Settings className="h-5 w-5" />
-                <span className="hidden sm:inline text-sm">{gameState.userProfile?.name || 'Profile'}</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Navigation Tabs - Scrollable with Arrows */}
-          <ScrollableTabs
-            tabs={[
-              {
-                id: 'dashboard',
-                label: 'Dashboard',
-                icon: <LayoutDashboard className="h-4 w-4" />,
-                active: currentView === 'dashboard',
-                onClick: () => setCurrentView('dashboard'),
-              },
-              {
-                id: 'game',
-                label: 'Game',
-                icon: <Zap className="h-4 w-4" />,
-                active: currentView === 'game',
-                onClick: () => setCurrentView('game'),
-              },
-              {
-                id: 'analytics',
-                label: 'Analytics',
-                icon: <TrendingUpIcon className="h-4 w-4" />,
-                active: currentView === 'analytics',
-                onClick: () => setCurrentView('analytics'),
-              },
-              {
-                id: 'budget',
-                label: 'Budget',
-                icon: <DollarSign className="h-4 w-4" />,
-                active: currentView === 'budget',
-                onClick: () => setCurrentView('budget'),
-              },
-              {
-                id: 'stocks',
-                label: 'Stocks',
-                icon: <TrendingUpIcon className="h-4 w-4" />,
-                active: currentView === 'stocks',
-                onClick: () => setCurrentView('stocks'),
-              },
-              {
-                id: 'leaderboard',
-                label: 'Leaderboard',
-                icon: <Trophy className="h-4 w-4" />,
-                active: currentView === 'leaderboard',
-                onClick: () => setCurrentView('leaderboard'),
-              },
-            ]}
-          />
-        </div>
-      </header>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
