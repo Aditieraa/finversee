@@ -1367,7 +1367,11 @@ export default function FinQuest() {
                             setMonthlyDecisions(prev => ({ ...prev, [type]: Number(e.target.value) || 0 }))
                           }
                           placeholder="₹0"
-                          className="mt-1 interactive-hover"
+                          className="mt-1 interactive-hover h-12 text-slate-900"
+                          style={{
+                            backgroundColor: '#F0FAFF',
+                            color: '#1a1a1a',
+                          }}
                         />
                       </div>
                     ))}
