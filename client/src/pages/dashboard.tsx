@@ -16,6 +16,8 @@ interface DashboardProps {
   onAddIncome?: (amount: number) => void;
   onAddExpense?: (amount: number) => void;
   onInvest?: () => void;
+  quickActionsOpen?: boolean;
+  onToggleQuickActions?: () => void;
 }
 
 const CHART_COLORS = {
@@ -35,6 +37,8 @@ export default function Dashboard({
   onAddIncome = () => {},
   onAddExpense = () => {},
   onInvest = () => {},
+  quickActionsOpen = false,
+  onToggleQuickActions = () => {},
 }: DashboardProps) {
   const [timeframe, setTimeframe] = useState<3 | 6 | 12>(6);
   const [hoveredSlice, setHoveredSlice] = useState<number | null>(null);
@@ -110,6 +114,8 @@ export default function Dashboard({
         onAddIncome={onAddIncome}
         onAddExpense={onAddExpense}
         onInvest={onInvest}
+        isOpen={quickActionsOpen}
+        onToggle={onToggleQuickActions}
       />
       {/* SECTION 1: Financial Snapshot - Top */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

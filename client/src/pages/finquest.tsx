@@ -208,6 +208,7 @@ export default function FinQuest() {
   const [processingMonth, setProcessingMonth] = useState(false);
   const [leaderboard, setLeaderboard] = useState<Array<{ name: string; score: number; level: number; avatar?: string }>>([]);
   const [showAuraTwin, setShowAuraTwin] = useState(false);
+  const [quickActionsOpen, setQuickActionsOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'dashboard' | 'game' | 'analytics' | 'budget' | 'stocks' | 'leaderboard'>('dashboard');
 
   useEffect(() => {
@@ -1277,6 +1278,8 @@ export default function FinQuest() {
               toast({ title: 'Expense Added', description: `₹${amount.toLocaleString('en-IN')} deducted from cash` });
             }}
             onInvest={() => setCurrentView('stocks')}
+            quickActionsOpen={quickActionsOpen}
+            onToggleQuickActions={() => setQuickActionsOpen(!quickActionsOpen)}
           />
         )}
 

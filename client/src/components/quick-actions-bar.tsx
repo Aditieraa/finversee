@@ -9,12 +9,16 @@ interface QuickActionsBarProps {
   onAddIncome?: (amount: number) => void;
   onAddExpense?: (amount: number) => void;
   onInvest?: () => void;
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
 export function QuickActionsBar({
   onAddIncome = () => {},
   onAddExpense = () => {},
   onInvest = () => {},
+  isOpen = true,
+  onToggle = () => {},
 }: QuickActionsBarProps) {
   const [incomeDialog, setIncomeDialog] = useState(false);
   const [expenseDialog, setExpenseDialog] = useState(false);
@@ -42,16 +46,30 @@ export function QuickActionsBar({
   return (
     <>
       {/* Fixed Floating Action Bar */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 flex gap-3 bg-blue-950/80 backdrop-blur-md border border-blue-400/30 rounded-full px-4 py-3 shadow-2xl animate-slideInUp">
+      {isOpen && (
+      <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-3 bg-blue-950/80 backdrop-blur-md border border-blue-400/30 rounded-lg px-4 py-4 shadow-2xl animate-slideInUp max-w-xs">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs font-semibold text-blue-300">Quick Actions</p>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-5 w-5 text-blue-300 hover:text-blue-100"
+            onClick={onToggle}
+            data-testid="button-close-actions"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+
         {/* Add Income Button */}
         <Button
           size="sm"
           variant="outline"
-          className="flex items-center gap-2 bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30 rounded-full px-4 transition-all hover:shadow-md"
+          className="w-full justify-start bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30 rounded-md px-3 transition-all hover:shadow-md"
           onClick={() => setIncomeDialog(true)}
           data-testid="button-add-income"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-4 w-4 mr-2" />
           <span className="text-xs font-semibold">Add Income</span>
         </Button>
 
@@ -59,25 +77,38 @@ export function QuickActionsBar({
         <Button
           size="sm"
           variant="outline"
-          className="flex items-center gap-2 bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30 rounded-full px-4 transition-all hover:shadow-md"
+          className="w-full justify-start bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30 rounded-md px-3 transition-all hover:shadow-md"
           onClick={() => setExpenseDialog(true)}
           data-testid="button-add-expense"
         >
-          <Minus className="h-4 w-4" />
+          <Minus className="h-4 w-4 mr-2" />
           <span className="text-xs font-semibold">Add Expense</span>
         </Button>
 
         {/* Invest Now Button */}
         <Button
           size="sm"
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 rounded-full px-4 transition-all hover:shadow-md"
+          className="w-full justify-start bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 rounded-md px-3 transition-all hover:shadow-md"
           onClick={onInvest}
           data-testid="button-invest-now"
         >
-          <TrendingUp className="h-4 w-4" />
+          <TrendingUp className="h-4 w-4 mr-2" />
           <span className="text-xs font-semibold">Invest Now</span>
         </Button>
       </div>
+      )}
+
+      {/* Toggle Button - always visible */}
+      {!isOpen && (
+        <Button
+          size="icon"
+          className="fixed bottom-6 left-6 z-40 h-10 w-10 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 rounded-full shadow-2xl"
+          onClick={onToggle}
+          data-testid="button-toggle-actions"
+        >
+          <Plus className="h-5 w-5" />
+        </Button>
+      )}
 
       {/* Income Dialog */}
       <Dialog open={incomeDialog} onOpenChange={setIncomeDialog}>
