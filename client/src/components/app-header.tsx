@@ -1,6 +1,8 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Trophy, Star, Sparkles, Zap, Settings, LayoutDashboard, TrendingUp, DollarSign, Users } from 'lucide-react';
+import { MonetizationNav } from './monetization-nav';
+import { useLocation } from 'wouter';
 
 // Format net worth with intelligent unit selection
 const formatNetWorth = (value: number): string => {
@@ -50,6 +52,8 @@ export function AppHeader({
 }: AppHeaderProps) {
   const xpForNextLevel = level * 1000;
   const xpProgress = (xp % xpForNextLevel) / xpForNextLevel * 100;
+  const [location] = useLocation();
+  const isGamePage = location === '/';
   
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-950/95 to-blue-900/90 backdrop-blur-md border-b border-blue-400/20 shadow-lg">
@@ -64,22 +68,28 @@ export function AppHeader({
           </h1>
         </div>
 
-        {/* Center-Left: Navigation Tabs */}
-        {tabs.length > 0 && (
-          <div className="hidden md:flex items-center gap-1">
-            {tabs.map((tab) => (
-              <Button
-                key={tab.id}
-                variant={tab.active ? 'default' : 'ghost'}
-                size="sm"
-                onClick={tab.onClick}
-                className="flex items-center gap-1.5 whitespace-nowrap text-xs px-2.5 py-1 h-7"
-                data-testid={`button-tab-${tab.id}`}
-              >
-                {tab.icon}
-                <span className="hidden sm:inline">{tab.label}</span>
-              </Button>
-            ))}
+        {/* Center-Left: Game Navigation Tabs or Monetization Nav */}
+        {isGamePage ? (
+          tabs.length > 0 && (
+            <div className="hidden md:flex items-center gap-1">
+              {tabs.map((tab) => (
+                <Button
+                  key={tab.id}
+                  variant={tab.active ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={tab.onClick}
+                  className="flex items-center gap-1.5 whitespace-nowrap text-xs px-2.5 py-1 h-7"
+                  data-testid={`button-tab-${tab.id}`}
+                >
+                  {tab.icon}
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </Button>
+              ))}
+            </div>
+          )
+        ) : (
+          <div className="hidden md:block">
+            <MonetizationNav />
           </div>
         )}
 
