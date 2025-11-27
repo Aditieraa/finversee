@@ -428,6 +428,11 @@ export default function FinQuest() {
           avatar: profileData.avatar as AvatarType,
         } : null;
 
+        // Calculate netWorth from loaded data
+        const portfolioTotal = Object.values(data.portfolio || {}).reduce((a: number, b: number) => a + b, 0);
+        const stockInvestmentTotal = stockHoldings.length > 0 ? stockHoldings.reduce((total: number, h: any) => total + (h.investmentAmount || 0), 0) : 0;
+        const calculatedNetWorth = data.cash_balance + portfolioTotal + stockInvestmentTotal;
+
         setGameState(prev => ({
           ...prev,
           userProfile: userProfile,
@@ -440,6 +445,8 @@ export default function FinQuest() {
           achievements: data.achievements,
           financialGoal: data.financial_goal,
           monthlyInvestments: data.monthly_investments,
+          monthlyExpensesThisMonth: userProfile?.expenses || 0,
+          netWorth: calculatedNetWorth,
           chatHistory: chatHistory.length > 0 ? chatHistory : prev.chatHistory,
           stockHoldings: stockHoldings.length > 0 ? stockHoldings : prev.stockHoldings,
         }));
