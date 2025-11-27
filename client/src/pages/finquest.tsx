@@ -204,7 +204,7 @@ export default function FinQuest() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [gameOver, setGameOver] = useState<'win' | 'loss' | null>(null);
   const [processingMonth, setProcessingMonth] = useState(false);
-  const [leaderboard, setLeaderboard] = useState<Array<{ name: string; score: number; level: number }>>([]);
+  const [leaderboard, setLeaderboard] = useState<Array<{ name: string; score: number; level: number; avatar?: string }>>([]);
   const [showAuraTwin, setShowAuraTwin] = useState(false);
   const [currentView, setCurrentView] = useState<'dashboard' | 'game' | 'analytics' | 'budget' | 'stocks' | 'leaderboard'>('dashboard');
 
@@ -405,31 +405,37 @@ export default function FinQuest() {
       if (savesError) throw savesError;
 
       if (savesData && savesData.length > 0) {
-        // Get user profiles for names
+        // Get user profiles for names and avatars
         const userIds = savesData.map((save: any) => save.user_id);
         const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, name')
+          .select('id, name, avatar')
           .in('id', userIds);
 
         if (profilesError) throw profilesError;
 
-        // Create a map of user IDs to names
-        const nameMap = (profilesData || []).reduce((acc: any, profile: any) => {
-          acc[profile.id] = profile.name;
+        // Create a map of user IDs to profiles with names and avatars
+        const profileMap = (profilesData || []).reduce((acc: any, profile: any) => {
+          acc[profile.id] = {
+            name: profile.name,
+            avatar: profile.avatar || 'female1'
+          };
           return acc;
         }, {});
 
-        // Map game saves to leaderboard format with names
+        // Map game saves to leaderboard format with names and avatars
         const leaderboardData = savesData
           .map((save: any) => {
             const portfolio = save.portfolio || {};
             const portfolioTotal = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
             const netWorth = (save.cash_balance || 0) + portfolioTotal;
+            const profile = profileMap[save.user_id];
+            const avatarPath = profile?.avatar ? avatarMap[profile.avatar] : avatar1;
             return {
-              name: nameMap[save.user_id] || 'Anonymous',
+              name: profile?.name || 'Anonymous',
               score: netWorth || 0,
               level: save.level || 1,
+              avatar: avatarPath,
             };
           })
           .filter((entry: any) => entry.name !== 'Anonymous');
@@ -1468,10 +1474,15 @@ export default function FinQuest() {
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <span className="text-lg font-bold text-primary">
-                                #{idx + 1}
-                              </span>
+                              {player.avatar && (
+                                <div className="w-8 h-10 rounded overflow-hidden border border-primary/50 flex-shrink-0">
+                                  <img src={player.avatar} alt={player.name} className="w-full h-full object-cover" />
+                                </div>
+                              )}
                               <div>
+                                <span className="text-lg font-bold text-primary mr-2">
+                                  #{idx + 1}
+                                </span>
                                 <p className="font-semibold text-sm text-foreground">{player.name}</p>
                                 <p className="text-xs text-foreground/60">Level {player.level}</p>
                               </div>
