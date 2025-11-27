@@ -367,9 +367,11 @@ export default function BreakTheRace({ userId: propUserId }: BreakTheRaceProps) 
       toast({ title: '🚀 You Escaped the Rat Race!', description: 'Welcome to the Fast Track! (10x multiplier on deals)' });
     }
 
-    // TEST: Winning condition triggers correctly - need only ₹4,000 more than expenses
+    // TEST: Winning condition triggers correctly
+    // Win when: Passive Income ≥ Monthly Expenses + ₹4,000 AND Cash in Hand ≥ ₹4,00,000 AND on Fast Track
     const dreamThreshold = checkState.totalExpenses + 4000;
-    if (checkState.passiveIncome >= dreamThreshold && checkState.onFastTrack) {
+    const cashThreshold = 400000;
+    if (checkState.passiveIncome >= dreamThreshold && checkState.onFastTrack && checkState.cash >= cashThreshold) {
       setCanBuyDream(true);
       toast({ title: '🏆 Dream Unlocked!', description: 'You can now Buy Your Dream and WIN!' });
     }
