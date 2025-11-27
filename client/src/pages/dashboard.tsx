@@ -243,10 +243,10 @@ export default function Dashboard({
         {/* Left: Secondary Charts */}
         <div className="lg:col-span-2 space-y-6">
           {/* Weekly Spending Pattern */}
-          <Card className="border-green-400/20 bg-green-950/40 backdrop-blur-sm p-6 shadow-card">
+          <Card className="border-green-400/20 bg-green-950/40 backdrop-blur-sm p-6 shadow-card h-full flex flex-col">
             <h3 className="text-xl font-bold text-white mb-1">Weekly Spending Pattern</h3>
             <p className="text-sm text-green-200/60 mb-4">Daily spending trends</p>
-            <ResponsiveContainer width="100%" height={280}>
+            <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={spendingData}>
                 <defs>
                   <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
