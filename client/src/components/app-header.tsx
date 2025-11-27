@@ -1,5 +1,4 @@
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Trophy, Zap, Star, Sparkles } from 'lucide-react';
 
 interface AppHeaderProps {
@@ -7,10 +6,9 @@ interface AppHeaderProps {
   xp: number;
   netWorth: number;
   userName?: string;
-  userAvatar?: string;
 }
 
-export function AppHeader({ level, xp, netWorth, userName, userAvatar }: AppHeaderProps) {
+export function AppHeader({ level, xp, netWorth, userName }: AppHeaderProps) {
   const xpForNextLevel = level * 1000;
   const xpProgress = (xp % xpForNextLevel) / xpForNextLevel * 100;
   
@@ -51,8 +49,8 @@ export function AppHeader({ level, xp, netWorth, userName, userAvatar }: AppHead
           </div>
         </div>
 
-        {/* Right: Net Worth Display + User Avatar */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        {/* Right: Net Worth Display (Gamified Status) */}
+        <div className="flex items-center gap-4 flex-shrink-0">
           <div className="text-right hidden sm:block">
             <p className="text-xs text-blue-200/70 font-semibold uppercase tracking-wide">Net Worth</p>
             <p className="text-xl font-black text-green-400 animate-countUp">
@@ -63,14 +61,6 @@ export function AppHeader({ level, xp, netWorth, userName, userAvatar }: AppHead
           <Badge className="bg-green-500/20 text-green-300 border-green-500/40 text-xs font-semibold px-2 py-1">
             {netWorth > 5000000 ? '🔥 Elite' : netWorth > 1000000 ? '⭐ Rising' : '📈 Growing'}
           </Badge>
-          
-          {/* User Avatar */}
-          <Avatar className="h-9 w-9 border border-blue-400/50" data-testid="avatar-user">
-            {userAvatar && <AvatarImage src={userAvatar} alt={userName} className="object-cover" />}
-            <AvatarFallback className="bg-blue-600/40 text-blue-200 text-xs font-bold">
-              {userName?.charAt(0).toUpperCase() || 'U'}
-            </AvatarFallback>
-          </Avatar>
         </div>
       </div>
     </header>

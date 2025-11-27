@@ -149,7 +149,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
 
           {/* Right side - Auth Form */}
           <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-            <Card className="border-blue-400/30 bg-gradient-to-br from-blue-950/60 via-blue-900/40 to-blue-950/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+            <Card className="border-blue-400/30 bg-gradient-to-br from-slate-900/60 via-blue-900/40 to-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
               {/* Gradient border effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
               
@@ -254,7 +254,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
                       <div className="w-full border-t border-blue-400/10" />
                     </div>
                     <div className="relative flex justify-center text-xs">
-                      <span className="px-2 bg-blue-950 text-blue-300/50">OR</span>
+                      <span className="px-2 bg-slate-900 text-blue-300/50">OR</span>
                     </div>
                   </div>
 

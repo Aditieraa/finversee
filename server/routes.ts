@@ -84,26 +84,5 @@ export async function registerRoutes(app: Express) {
     res.json({ message: "Cache clear endpoint (admin only)" });
   });
 
-  // ===== QUICK ACTIONS ROUTES =====
-  // Add Income
-  app.post("/api/actions/add-income", (req: Request, res: Response) => {
-    const { amount } = req.body;
-    if (!amount || amount <= 0) {
-      res.status(400).json({ error: "Valid amount required" });
-      return;
-    }
-    res.json({ success: true, message: `Income added: ₹${amount}` });
-  });
-
-  // Add Expense
-  app.post("/api/actions/add-expense", (req: Request, res: Response) => {
-    const { amount } = req.body;
-    if (!amount || amount <= 0) {
-      res.status(400).json({ error: "Valid amount required" });
-      return;
-    }
-    res.json({ success: true, message: `Expense added: ₹${amount}` });
-  });
-
   return server;
 }
