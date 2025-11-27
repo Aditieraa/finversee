@@ -43,25 +43,29 @@ export default function Leaderboard() {
     const fetchLeaderboard = async () => {
       try {
         setLoading(true);
-        // Query game_saves directly (BreakTheRace players) - all saves
-        const { data: gameSaves, error: gameSavesError } = await supabase
-          .from('game_saves')
-          .select('user_id, level, xp, cash_balance, passive_income, on_fast_track')
-          .order('passive_income', { ascending: false })
+        // Query leaderboard_view directly - it has all ranked data
+        const { data: leaderboardData, error: leaderboardError } = await supabase
+          .from('leaderboard_view')
+          .select('*')
+          .order('net_worth', { ascending: false })
           .limit(100);
 
-        if (gameSavesError) {
-          console.error('Game saves fetch error:', gameSavesError);
+        console.log('Leaderboard data:', leaderboardData, 'Error:', leaderboardError);
+
+        if (leaderboardError) {
+          console.error('Leaderboard view fetch error:', leaderboardError);
           return;
         }
 
-        if (gameSaves && gameSaves.length > 0) {
+        if (leaderboardData && leaderboardData.length > 0) {
           // Get user profiles for avatars and names
-          const userIds = gameSaves.map((save: any) => save.user_id);
+          const userIds = leaderboardData.map((entry: any) => entry.user_id);
           const { data: profilesData } = await supabase
             .from('profiles')
             .select('id, name, avatar')
             .in('id', userIds);
+
+          console.log('Profiles data:', profilesData);
 
           // Create profile map by user ID
           const profileMap = (profilesData || []).reduce((acc: any, profile: any) => {
@@ -69,29 +73,28 @@ export default function Leaderboard() {
             return acc;
           }, {});
 
-          // Create leaderboard entries - show all players with passive income > 0
-          const entries: LeaderboardEntry[] = gameSaves
-            .map((save: any, idx: number) => {
+          // Create leaderboard entries
+          const entries: LeaderboardEntry[] = leaderboardData
+            .map((entry: any, idx: number) => {
               // Get profile info
-              const profile = profileMap[save.user_id];
+              const profile = profileMap[entry.user_id];
               const avatarId = profile?.avatar || 'female1';
               const avatarPath = avatarMap[avatarId] || avatar1;
               
-              // Net worth = cash_balance + (passive_income represents holdings in BreakTheRace)
-              const netWorth = (save.cash_balance || 0) + ((save.passive_income || 0) * 1000);
-              
               return {
-                name: profile?.name || 'Anonymous',
-                level: save.level || 1,
-                netWorth,
+                name: profile?.name || `Player ${entry.user_id?.substring(0, 8) || idx + 1}`,
+                level: entry.level || 1,
+                netWorth: entry.net_worth || 0,
                 rank: idx + 1,
                 avatar: avatarPath,
               };
             })
-            .filter(entry => entry.level > 0) // Only show players with level > 0
             .slice(0, 10); // Top 10
 
+          console.log('Leaderboard entries:', entries);
           setPlayers(entries);
+        } else {
+          console.log('No leaderboard data found');
         }
       } catch (error) {
         console.error('Error fetching leaderboard:', error);
