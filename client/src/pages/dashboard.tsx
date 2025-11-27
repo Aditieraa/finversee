@@ -289,21 +289,23 @@ export default function Dashboard({
         {/* Right: Persistent Right-Hand Rail */}
         <div className="space-y-6">
           {/* Next Step Widget - Top Priority Recommendation */}
-          <NextStepWidget
-            financialHealth={financialHealth}
-            emergencyFundLevel={Math.min(emergencyFundLevel, 100)}
-            savingsRate={savingsRate}
-            portfolioPercentage={portfolioPercentage}
-            onTakeAction={() => {
-              if (emergencyFundLevel < 30) {
-                alert('Set up automatic savings for your emergency fund');
-              } else if (savingsRate < 20) {
-                alert('Create a savings goal');
-              } else {
-                onInvest();
-              }
-            }}
-          />
+          <div style={{ minHeight: '390px' }}>
+            <NextStepWidget
+              financialHealth={financialHealth}
+              emergencyFundLevel={Math.min(emergencyFundLevel, 100)}
+              savingsRate={savingsRate}
+              portfolioPercentage={portfolioPercentage}
+              onTakeAction={() => {
+                if (emergencyFundLevel < 30) {
+                  alert('Set up automatic savings for your emergency fund');
+                } else if (savingsRate < 20) {
+                  alert('Create a savings goal');
+                } else {
+                  onInvest();
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
 
