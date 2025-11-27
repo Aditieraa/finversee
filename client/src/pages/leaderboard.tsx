@@ -33,7 +33,11 @@ const avatarMap: Record<string, string> = {
   male3: avatar6,
 };
 
-const getAvatarUrl = (avatarId?: string) => avatarId ? avatarMap[avatarId] : avatar1;
+const getAvatarUrl = (avatarId?: string) => {
+  if (!avatarId) return avatar1;
+  const selectedAvatar = avatarMap[avatarId as keyof typeof avatarMap];
+  return selectedAvatar || avatar1;
+};
 
 export default function Leaderboard() {
   const [players, setPlayers] = useState<LeaderboardEntry[]>([]);

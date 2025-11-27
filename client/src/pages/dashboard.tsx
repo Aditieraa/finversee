@@ -15,6 +15,7 @@ interface DashboardProps {
   onAddIncome?: (amount: number) => void;
   onAddExpense?: (amount: number) => void;
   onInvest?: () => void;
+  onNavigateToStocks?: () => void;
 }
 
 const CHART_COLORS = {
@@ -34,6 +35,7 @@ export default function Dashboard({
   onAddIncome = () => {},
   onAddExpense = () => {},
   onInvest = () => {},
+  onNavigateToStocks = () => {},
 }: DashboardProps) {
   const [timeframe, setTimeframe] = useState<3 | 6 | 12>(6);
   const [hoveredSlice, setHoveredSlice] = useState<number | null>(null);
@@ -106,7 +108,7 @@ export default function Dashboard({
       <QuickActionsBar
         onAddIncome={onAddIncome}
         onAddExpense={onAddExpense}
-        onInvest={onInvest}
+        onInvest={onNavigateToStocks}
       />
       {/* SECTION 1: Financial Snapshot - Top */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -225,15 +227,37 @@ export default function Dashboard({
           </ResponsiveContainer>
         </Card>
 
-        {/* SECTION 3: Right-Hand Rail - Growth Rate Indicator */}
+        {/* SECTION 3: Right-Hand Rail - Growth Rate with Mini Chart */}
         <Card className="border-green-400/30 bg-gradient-to-br from-green-900/40 to-green-950/30 backdrop-blur-sm p-6 shadow-card">
-          <div className="h-full flex flex-col justify-between">
+          <div className="space-y-4">
             <div>
               <p className="text-xs text-green-200/70 mb-2 font-semibold">GROWTH RATE</p>
               <p className="text-3xl font-bold text-green-50 animate-countUp">{growthRate.toFixed(1)}%</p>
-              <p className="text-xs text-green-200/50 mt-2">Monthly growth</p>
+              <p className="text-xs text-green-200/50 mt-1">Monthly growth</p>
             </div>
-            <div className="mt-4 pt-4 border-t border-green-400/20">
+            
+            {/* Mini Growth Chart */}
+            <ResponsiveContainer width="100%" height={120}>
+              <AreaChart data={monthlyData.slice(-6)}>
+                <defs>
+                  <linearGradient id="growthGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#4CAF50" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#4CAF50" stopOpacity={0.01} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.1)" vertical={false} />
+                <Area 
+                  type="monotoneX" 
+                  dataKey="netWorth" 
+                  stroke="#66BB6A" 
+                  strokeWidth={2} 
+                  fillOpacity={1} 
+                  fill="url(#growthGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+            
+            <div className="pt-2 border-t border-green-400/20">
               <Badge className="bg-green-500/20 text-green-300 border-green-500/40 text-xs">
                 {growthRate > 10 ? 'Excellent' : growthRate > 5 ? 'Good' : growthRate > 0 ? 'Fair' : 'Needs Work'}
               </Badge>
@@ -289,8 +313,17 @@ export default function Dashboard({
 
           {/* Portfolio Breakdown Donut Chart */}
           {(() => {
-            const totalValue = categoryData.reduce((sum, item) => sum + item.value, 0);
-            const donutData = categoryData.filter(item => item.value > 0).map(item => ({
+            // Fetch real portfolio data from gameState
+            const realPortfolioData = [
+              { name: 'SIP', value: gameState.portfolio.sip || 0, color: '#4CAF50' },
+              { name: 'Stocks', value: gameState.portfolio.stocks || 0, color: '#42A5F5' },
+              { name: 'Gold', value: gameState.portfolio.gold || 0, color: '#FFD700' },
+              { name: 'Real Estate', value: gameState.portfolio.realEstate || 0, color: '#FF9800' },
+              { name: 'Savings', value: gameState.portfolio.savings || 0, color: '#8BC34A' },
+            ];
+            
+            const totalValue = realPortfolioData.reduce((sum, item) => sum + item.value, 0);
+            const donutData = realPortfolioData.filter(item => item.value > 0).map(item => ({
               ...item,
               percentage: totalValue > 0 ? ((item.value / totalValue) * 100).toFixed(1) : 0
             }));
@@ -298,7 +331,7 @@ export default function Dashboard({
             return (
               <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6 shadow-card">
                 <h3 className="text-lg font-bold text-white mb-1">Portfolio Breakdown</h3>
-                <p className="text-xs text-purple-200/60 mb-4">Asset allocation</p>
+                <p className="text-xs text-purple-200/60 mb-4">Real portfolio allocation</p>
                 
                 {donutData.length === 0 ? (
                   <div className="h-48 flex items-center justify-center">

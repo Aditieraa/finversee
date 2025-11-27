@@ -21,19 +21,41 @@ export function QuickActionsBar({
   const [incomeAmount, setIncomeAmount] = useState('');
   const [expenseAmount, setExpenseAmount] = useState('');
 
-  const handleAddIncome = () => {
-    if (incomeAmount) {
-      onAddIncome(parseFloat(incomeAmount));
-      setIncomeAmount('');
-      setIncomeDialog(false);
+  const handleAddIncome = async () => {
+    if (!incomeAmount) return;
+    const amount = parseFloat(incomeAmount);
+    try {
+      const res = await fetch('/api/actions/add-income', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount }),
+      });
+      if (res.ok) {
+        onAddIncome(amount);
+        setIncomeAmount('');
+        setIncomeDialog(false);
+      }
+    } catch (error) {
+      console.error('Income add error:', error);
     }
   };
 
-  const handleAddExpense = () => {
-    if (expenseAmount) {
-      onAddExpense(parseFloat(expenseAmount));
-      setExpenseAmount('');
-      setExpenseDialog(false);
+  const handleAddExpense = async () => {
+    if (!expenseAmount) return;
+    const amount = parseFloat(expenseAmount);
+    try {
+      const res = await fetch('/api/actions/add-expense', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount }),
+      });
+      if (res.ok) {
+        onAddExpense(amount);
+        setExpenseAmount('');
+        setExpenseDialog(false);
+      }
+    } catch (error) {
+      console.error('Expense add error:', error);
     }
   };
 

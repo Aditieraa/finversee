@@ -1195,6 +1195,7 @@ export default function FinQuest() {
         xp={gameState.xp}
         netWorth={gameState.netWorth}
         userName={gameState.userProfile?.name}
+        userAvatar={gameState.userProfile?.avatar ? getAvatarUrl(gameState.userProfile.avatar) : undefined}
       />
 
       {/* Legacy Header Navigation */}
@@ -1233,13 +1234,14 @@ export default function FinQuest() {
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex gap-2 flex-wrap">
+          {/* Navigation Tabs - Horizontal Scrollable */}
+          <div className="flex gap-2 overflow-x-auto pb-2 whitespace-nowrap scrollbar-hide">
             <Button
               variant={currentView === 'dashboard' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('dashboard')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-shrink-0"
+              data-testid="button-nav-dashboard"
             >
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
@@ -1248,7 +1250,8 @@ export default function FinQuest() {
               variant={currentView === 'game' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('game')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-shrink-0"
+              data-testid="button-nav-game"
             >
               <Zap className="h-4 w-4" />
               Game
@@ -1257,7 +1260,8 @@ export default function FinQuest() {
               variant={currentView === 'analytics' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('analytics')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-shrink-0"
+              data-testid="button-nav-analytics"
             >
               <TrendingUpIcon className="h-4 w-4" />
               Analytics
@@ -1266,7 +1270,8 @@ export default function FinQuest() {
               variant={currentView === 'budget' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('budget')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-shrink-0"
+              data-testid="button-nav-budget"
             >
               <DollarSign className="h-4 w-4" />
               Budget
@@ -1275,7 +1280,8 @@ export default function FinQuest() {
               variant={currentView === 'stocks' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('stocks')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-shrink-0"
+              data-testid="button-nav-stocks"
             >
               <TrendingUpIcon className="h-4 w-4" />
               Stocks
@@ -1284,7 +1290,8 @@ export default function FinQuest() {
               variant={currentView === 'leaderboard' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('leaderboard')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-shrink-0"
+              data-testid="button-nav-leaderboard"
             >
               <Trophy className="h-4 w-4" />
               Leaderboard
@@ -1297,7 +1304,25 @@ export default function FinQuest() {
       <div className="container mx-auto px-4 py-6">
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
-          <Dashboard gameState={gameState} monthlyDecisions={monthlyDecisions} />
+          <Dashboard 
+            gameState={gameState} 
+            monthlyDecisions={monthlyDecisions}
+            onAddIncome={(amount) => {
+              setGameState(prev => ({
+                ...prev,
+                cashBalance: prev.cashBalance + amount,
+                netWorth: prev.netWorth + amount,
+              }));
+            }}
+            onAddExpense={(amount) => {
+              setGameState(prev => ({
+                ...prev,
+                cashBalance: Math.max(0, prev.cashBalance - amount),
+                netWorth: Math.max(0, prev.netWorth - amount),
+              }));
+            }}
+            onNavigateToStocks={() => setCurrentView('stocks')}
+          />
         )}
 
         {/* Game View */}
