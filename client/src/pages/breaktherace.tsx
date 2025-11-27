@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import Auth from './auth';
-import { AppHeader } from '@/components/app-header';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -292,8 +291,6 @@ export default function BreakTheRace() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <AppHeader level={gameState.assets.length + 1} xp={Math.round(gameState.passiveIncome / 1000)} netWorth={gameState.cash} />
-
       {gameState.hasWon ? (
         <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
           <Card className="border-primary/30 glassmorphic p-12 text-center max-w-2xl">
