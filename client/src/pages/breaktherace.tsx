@@ -374,33 +374,57 @@ export default function BreakTheRace() {
       const saveData = {
         user_id: userId,
         career: state.userProfile?.career || '',
-        board_position: state.boardPosition,
-        dice: state.dice,
-        cash_balance: state.cash,
-        passive_income: state.passiveIncome,
-        total_expenses: state.totalExpenses,
-        assets: state.assets,
-        liabilities: state.liabilities,
-        on_fast_track: state.onFastTrack,
-        has_won: state.hasWon,
+        board_position: state.boardPosition || 0,
+        dice: state.dice || 0,
+        cash_balance: state.cash || 0,
+        passive_income: state.passiveIncome || 0,
+        total_expenses: state.totalExpenses || 0,
+        assets: JSON.stringify(state.assets || []),
+        liabilities: JSON.stringify(state.liabilities || []),
+        on_fast_track: state.onFastTrack || false,
+        has_won: state.hasWon || false,
         level: state.assets.length + 1,
-        xp: Math.round(state.passiveIncome / 1000),
+        xp: Math.round((state.passiveIncome || 0) / 1000),
         is_latest: true,
         updated_at: new Date().toISOString(),
       };
 
-      // Upsert: update if exists, insert if new
-      const { error } = await supabase
+      // Try upsert first
+      const { error: upsertError } = await supabase
         .from('game_saves')
-        .upsert(saveData, { onConflict: 'user_id' });
+        .upsert(saveData);
 
-      if (error) {
-        console.error('Save error:', error);
+      if (upsertError) {
+        // Fallback: Try insert, then update on duplicate
+        const { error: insertError } = await supabase
+          .from('game_saves')
+          .insert([saveData]);
+
+        if (insertError && insertError.code === '23505') {
+          // Duplicate key, do update instead
+          const { error: updateError } = await supabase
+            .from('game_saves')
+            .update(saveData)
+            .eq('user_id', userId);
+
+          if (updateError) {
+            console.error('📊 Update failed:', updateError);
+            toast({ title: 'Save Warning', description: 'Could not save game state. Your progress may be lost if you close the app.', variant: 'destructive' });
+          } else {
+            console.log('📊 Game updated: ' + (state.hasWon ? 'WON! 🏆' : 'In Progress'));
+          }
+        } else if (insertError) {
+          console.error('📊 Insert failed:', insertError);
+          toast({ title: 'Save Warning', description: 'Could not save game state. Your progress may be lost if you close the app.', variant: 'destructive' });
+        } else {
+          console.log('📊 Game saved: ' + (state.hasWon ? 'WON! 🏆' : 'In Progress'));
+        }
       } else {
         console.log('📊 Game saved: ' + (state.hasWon ? 'WON! 🏆' : 'In Progress'));
       }
     } catch (error) {
-      console.error('Save error:', error);
+      console.error('📊 Save error:', error);
+      toast({ title: 'Save Warning', description: 'Could not save game state. Your progress may be lost if you close the app.', variant: 'destructive' });
     }
   };
 
