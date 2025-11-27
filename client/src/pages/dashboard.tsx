@@ -150,9 +150,9 @@ export default function Dashboard({
             <div>
               <p className="text-xs text-blue-200/70 mb-2 font-semibold">CASH AVAILABLE</p>
               <p className="text-3xl font-bold text-blue-50">
-                ₹<NumberCounter value={Math.round(gameState.userCash)} />
+                ₹<NumberCounter value={Math.round(gameState.userProfile?.salary || 0)} />
               </p>
-              <p className="text-xs text-blue-200/50 mt-2">Your real cash balance</p>
+              <p className="text-xs text-blue-200/50 mt-2">Monthly salary</p>
             </div>
             <Coins className="h-8 w-8 text-blue-400/60" />
           </div>

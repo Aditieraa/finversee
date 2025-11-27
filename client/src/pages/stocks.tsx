@@ -121,8 +121,8 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     return history;
   };
 
-  // REAL cash available from user (for real investments)
-  const realCashAvailable = gameState.userCash || 0;
+  // REAL cash available from user (monthly salary for real investments)
+  const realCashAvailable = gameState.userProfile?.salary || 0;
   
   const selectedStockData = stocks.find(s => s.symbol === selectedStock);
   const filteredStocks = stocks.filter(s =>
@@ -197,13 +197,11 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       ? (holdings[existingIndex].investmentAmount + actualInvestment) / (holdings[existingIndex].shares + wholeShares)
       : buyPrice;
 
-    // Update REAL cash balance and portfolio with actual investment
-    const newCashBalance = Math.max(0, gameState.userCash - actualInvestment);
+    // Note: In real app, this would update a ledger. For now, just track holdings
     const newPortfolioStocks = gameState.portfolio.stocks + actualInvestment;
 
     setGameState({
       ...gameState,
-      userCash: newCashBalance,
       portfolio: { ...gameState.portfolio, stocks: newPortfolioStocks },
       stockHoldings: updatedHoldings,
     });
@@ -279,7 +277,6 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     
     setGameState({
       ...gameState,
-      userCash: gameState.userCash + currentValue,
       portfolio: { ...gameState.portfolio, stocks: gameState.portfolio.stocks - holding.investmentAmount },
       stockHoldings: updatedHoldings,
     });

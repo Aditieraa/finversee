@@ -115,7 +115,6 @@ interface GameState {
   currentYear: number;
   cashBalance: number;
   goldCoins: number;
-  userCash: number;
   netWorth: number;
   userProfile: UserProfile | null;
   portfolio: Portfolio;
@@ -170,7 +169,6 @@ export default function FinQuest() {
     currentYear: 2025,
     cashBalance: 0,
     goldCoins: 50000,
-    userCash: 0,
     netWorth: 0,
     userProfile: null,
     portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
@@ -193,7 +191,6 @@ export default function FinQuest() {
     career: '' as string,
     salary: '',
     expenses: '',
-    userCash: '',
     avatar: 'female1' as AvatarType,
   });
 
@@ -491,10 +488,10 @@ export default function FinQuest() {
   };
 
   const completeOnboarding = async () => {
-    if (!onboarding.name || !onboarding.career || !onboarding.salary || !onboarding.expenses || !onboarding.userCash) {
+    if (!onboarding.name || !onboarding.career || !onboarding.salary || !onboarding.expenses) {
       toast({
         title: 'Missing Information',
-        description: 'Please enter your name, profession, salary, expenses, and your current cash',
+        description: 'Please enter your name, profession, salary, and expenses',
         variant: 'destructive',
       });
       return;
@@ -502,12 +499,11 @@ export default function FinQuest() {
 
     const salary = parseInt(onboarding.salary) || 0;
     const expenses = parseInt(onboarding.expenses) || 0;
-    const userCash = parseInt(onboarding.userCash) || 0;
 
-    if (salary <= 0 || expenses < 0 || expenses > salary || userCash < 0) {
+    if (salary <= 0 || expenses < 0 || expenses > salary) {
       toast({
         title: 'Invalid Values',
-        description: 'Please enter valid salary, expenses, and cash amounts',
+        description: 'Please enter valid salary and expenses (expenses cannot exceed salary)',
         variant: 'destructive',
       });
       return;
@@ -521,7 +517,7 @@ export default function FinQuest() {
       avatar: onboarding.avatar,
     };
 
-    const initialCash = userCash;
+    const initialCash = salary;
 
     if (userId && userId !== 'guest') {
       try {
@@ -551,7 +547,6 @@ export default function FinQuest() {
       currentYear: 2025,
       cashBalance: 0,
       goldCoins: 50000,
-      userCash: initialCash,
       netWorth: initialCash,
       userProfile: profile,
       portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
@@ -559,7 +554,7 @@ export default function FinQuest() {
       chatHistory: [
         {
           role: 'ai' as const,
-          content: `🎮 Welcome to FinVerse, ${onboarding.name}! I'm Aura Twin, your AI financial mentor 🤖\n\n✨ You start with ₹${initialCash.toLocaleString('en-IN')} in real cash and 50,000 gold coins for the game!\n\n🏦 Real Budget: Your ₹${initialCash.toLocaleString('en-IN')} is tracked in Dashboard, Stocks, and Analytics. Invest it wisely!\n\n🎮 Game World: Use your 50,000 gold coins in FinQuest for gamified investing and learning!\n\nI'm here to guide you toward your financial freedom goal of ₹50,00,000.\n\nLet's build wealth together! 💪`,
+          content: `🎮 Welcome to FinVerse, ${onboarding.name}! I'm Aura Twin, your AI financial mentor 🤖\n\n✨ Your monthly salary is ₹${initialCash.toLocaleString('en-IN')} - that's your cash available for real investments!\n\n🏦 Real Budget: Your ₹${initialCash.toLocaleString('en-IN')} is tracked in Dashboard, Stocks, and Analytics. Invest it wisely!\n\n🎮 Game World: Use your 50,000 gold coins in FinQuest for gamified investing and learning!\n\nI'm here to guide you toward your financial freedom goal of ₹50,00,000.\n\nLet's build wealth together! 💪`,
           timestamp: Date.now(),
         },
       ],
@@ -573,7 +568,7 @@ export default function FinQuest() {
     };
 
     setGameState(newGameState);
-    setOnboarding({ active: false, step: 1, name: '', career: '', salary: '', expenses: '', userCash: '', avatar: 'female1' });
+    setOnboarding({ active: false, step: 1, name: '', career: '', salary: '', expenses: '', avatar: 'female1' });
 
     // Save game state immediately after onboarding to prevent data loss
     if (userId && userId !== 'guest') {

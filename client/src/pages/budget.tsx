@@ -80,35 +80,35 @@ export default function Budget({ gameState }: BudgetProps) {
 
     setBudgetCategories(updatedCategories);
 
-    // Initialize goals based on REAL user CASH data (from Dashboard)
-    const userCash = gameState.userCash || 0;
+    // Initialize goals based on REAL user salary data
+    const salary = userSalary || 0;
     const initialGoals: Goal[] = [
       {
         id: '1',
         name: 'Emergency Fund',
         targetAmount: userExpenses * 6,
-        currentAmount: userCash, // Real user cash from Dashboard
+        currentAmount: salary,
         deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
         priority: 'high',
-        status: userCash >= userExpenses * 6 ? 'completed' : 'active',
+        status: salary >= userExpenses * 6 ? 'completed' : 'active',
       },
       {
         id: '2',
         name: 'Save 3 Months',
         targetAmount: userExpenses * 3,
-        currentAmount: userCash,
+        currentAmount: salary,
         deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
         priority: 'high',
-        status: userCash >= userExpenses * 3 ? 'completed' : 'active',
+        status: salary >= userExpenses * 3 ? 'completed' : 'active',
       },
       {
         id: '3',
         name: 'Annual Savings Goal',
         targetAmount: userExpenses * 12,
-        currentAmount: userCash,
+        currentAmount: salary,
         deadline: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
         priority: 'medium',
-        status: userCash >= userExpenses * 12 ? 'completed' : 'active',
+        status: salary >= userExpenses * 12 ? 'completed' : 'active',
       },
     ];
 

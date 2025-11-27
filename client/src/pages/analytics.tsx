@@ -26,12 +26,13 @@ export default function Analytics({ gameState }: AnalyticsProps) {
     return trends;
   };
 
-  // Generate spending forecast based on REAL user cash data ONLY
+  // Generate spending forecast based on REAL user salary data
   const generateForecast = () => {
-    const userCash = gameState.userCash || 0;
+    const salary = gameState.userProfile?.salary || 0;
+    const monthlySavings = salary - (gameState.userProfile?.expenses || 0);
     return [
-      { period: 'Current Cash', forecast: '₹' + userCash.toLocaleString('en-IN'), accuracy: 'Your real balance' },
-      { period: 'Monthly Savings', forecast: '₹' + ((gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0)).toLocaleString('en-IN'), accuracy: 'From salary - expenses' },
+      { period: 'Monthly Salary', forecast: '₹' + salary.toLocaleString('en-IN'), accuracy: 'Your cash available' },
+      { period: 'Monthly Savings', forecast: '₹' + monthlySavings.toLocaleString('en-IN'), accuracy: 'Available to invest' },
     ];
   };
 
