@@ -89,47 +89,47 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
     <div className="space-y-6 pb-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-blue-400/20 bg-gradient-to-br from-blue-900/20 to-blue-800/10 backdrop-blur-sm p-6">
+        <Card className="border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-blue-200/60 mb-1">Total Savings</p>
-              <p className="text-2xl font-bold text-blue-100">₹{Math.round(gameState.cashBalance).toLocaleString('en-IN')}</p>
-              <p className="text-xs text-blue-200/40 mt-2">Cash available</p>
+              <p className="text-xs text-blue-200/70 mb-2 font-semibold">CASH AVAILABLE</p>
+              <p className="text-3xl font-bold text-blue-50 animate-countUp">₹{Math.round(gameState.cashBalance).toLocaleString('en-IN')}</p>
+              <p className="text-xs text-blue-200/50 mt-2">Total savings</p>
             </div>
-            <Coins className="h-8 w-8 text-blue-400/50" />
+            <Coins className="h-8 w-8 text-blue-400/60" />
           </div>
         </Card>
 
-        <Card className="border-purple-400/20 bg-gradient-to-br from-purple-900/20 to-purple-800/10 backdrop-blur-sm p-6">
+        <Card className="border-red-400/30 bg-gradient-to-br from-red-900/40 to-red-950/30 backdrop-blur-sm p-6 hover-elevate">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-purple-200/60 mb-1">Total Expenses</p>
-              <p className="text-2xl font-bold text-purple-100">₹{Math.round(gameState.userProfile?.expenses || 0).toLocaleString('en-IN')}</p>
-              <p className="text-xs text-purple-200/40 mt-2">Monthly spending</p>
+              <p className="text-xs text-red-200/70 mb-2 font-semibold">MONTHLY EXPENSES</p>
+              <p className="text-3xl font-bold text-red-50 animate-countUp">₹{Math.round(gameState.userProfile?.expenses || 0).toLocaleString('en-IN')}</p>
+              <p className="text-xs text-red-200/50 mt-2">Monthly spending</p>
             </div>
-            <TrendingDown className="h-8 w-8 text-purple-400/50" />
+            <TrendingDown className="h-8 w-8 text-red-400/60" />
           </div>
         </Card>
 
-        <Card className="border-cyan-400/20 bg-gradient-to-br from-cyan-900/20 to-cyan-800/10 backdrop-blur-sm p-6">
+        <Card className="border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-cyan-200/60 mb-1">Portfolio Value</p>
-              <p className="text-2xl font-bold text-cyan-100">₹{Math.round(totalPortfolio + calculateStockPortfolioValue()).toLocaleString('en-IN')}</p>
-              <p className="text-xs text-cyan-200/40 mt-2">Investments total (incl. stocks)</p>
+              <p className="text-xs text-blue-200/70 mb-2 font-semibold">PORTFOLIO VALUE</p>
+              <p className="text-3xl font-bold text-blue-50 animate-countUp">₹{Math.round(totalPortfolio + calculateStockPortfolioValue()).toLocaleString('en-IN')}</p>
+              <p className="text-xs text-blue-200/50 mt-2">All investments</p>
             </div>
-            <Target className="h-8 w-8 text-cyan-400/50" />
+            <Target className="h-8 w-8 text-blue-400/60" />
           </div>
         </Card>
 
-        <Card className="border-green-400/20 bg-gradient-to-br from-green-900/20 to-green-800/10 backdrop-blur-sm p-6">
+        <Card className="border-green-400/30 bg-gradient-to-br from-green-900/40 to-green-950/30 backdrop-blur-sm p-6 hover-elevate">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-green-200/60 mb-1">Growth Rate</p>
-              <p className="text-2xl font-bold text-green-100">{growthRate.toFixed(1)}%</p>
-              <p className="text-xs text-green-200/40 mt-2">Monthly growth</p>
+              <p className="text-xs text-green-200/70 mb-2 font-semibold">GROWTH RATE</p>
+              <p className="text-3xl font-bold text-green-50 animate-countUp">{growthRate.toFixed(1)}%</p>
+              <p className="text-xs text-green-200/50 mt-2">Monthly growth</p>
             </div>
-            <TrendingUp className="h-8 w-8 text-green-400/50" />
+            <TrendingUp className="h-8 w-8 text-green-400/60" />
           </div>
         </Card>
       </div>

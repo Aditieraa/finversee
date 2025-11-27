@@ -2,13 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-/* BLUE-BASED COLOR SCHEME */
+/* MODERN BLUE-WHITE COLOR SCHEME - Finverse 2026 */
 :root {
-  --button-outline: rgba(74, 144, 226, 0.15);
-  --badge-outline: rgba(74, 144, 226, 0.1);
+  --button-outline: rgba(66, 165, 245, 0.15);
+  --badge-outline: rgba(66, 165, 245, 0.1);
   --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(74, 144, 226, 0.05);
-  --elevate-2: rgba(74, 144, 226, 0.1);
+  --elevate-1: rgba(66, 165, 245, 0.05);
+  --elevate-2: rgba(66, 165, 245, 0.1);
+  
+  /* Light mode backgrounds */
   --background: 212 40% 97%;
   --foreground: 212 45% 15%;
   --border: 212 35% 88%;
@@ -18,35 +20,46 @@
   --sidebar: 212 38% 92%;
   --sidebar-foreground: 212 45% 15%;
   --sidebar-border: 212 35% 88%;
-  --sidebar-primary: 210 70% 55%;
+  
+  /* Primary colors */
+  --sidebar-primary: 207 89% 61%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 212 35% 88%;
   --sidebar-accent-foreground: 212 45% 15%;
-  --sidebar-ring: 210 70% 55%;
+  --sidebar-ring: 207 89% 61%;
   --popover: 212 38% 96%;
   --popover-foreground: 212 45% 15%;
   --popover-border: 212 35% 90%;
-  --primary: 210 70% 55%;
+  --primary: 207 89% 61%;
   --primary-foreground: 0 0% 100%;
   --secondary: 212 35% 85%;
   --secondary-foreground: 212 45% 15%;
   --muted: 212 35% 88%;
   --muted-foreground: 212 45% 40%;
-  --accent: 210 70% 55%;
+  --accent: 207 89% 61%;
   --accent-foreground: 0 0% 100%;
-  --destructive: 0 72% 51%;
+  
+  /* Semantic colors */
+  --destructive: 354 84% 58%;
   --destructive-foreground: 0 0% 100%;
+  --success: 122 39% 49%;
+  --warning: 45 100% 50%;
+  
   --input: 212 35% 90%;
-  --ring: 210 70% 55%;
-  --chart-1: 210 70% 55%;
-  --chart-2: 212 75% 60%;
-  --chart-3: 207 65% 50%;
-  --chart-4: 215 80% 58%;
-  --chart-5: 205 75% 52%;
-  --font-sans: 'Space Grotesk', sans-serif;
+  --ring: 207 89% 61%;
+  
+  /* Chart colors */
+  --chart-1: 207 89% 61%;
+  --chart-2: 221 60% 40%;
+  --chart-3: 208 85% 55%;
+  --chart-4: 210 75% 50%;
+  --chart-5: 215 80% 58%;
+  
+  --font-sans: 'Inter', 'Rubik', sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
-  --radius: .5rem;
+  --radius: 0.75rem;
+  
   --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
   --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
   --shadow-sm: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 1px 2px -1px hsl(0 0% 0% / 0.00);
@@ -58,110 +71,82 @@
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
-/* Fallback for older browsers */
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
 .dark {
-  --button-outline: rgba(163, 193, 225, 0.2);
-  --badge-outline: rgba(163, 193, 225, 0.15);
+  --button-outline: rgba(66, 165, 245, 0.2);
+  --badge-outline: rgba(66, 165, 245, 0.15);
   --opaque-button-border-intensity: 9;
-  --elevate-1: rgba(163, 193, 225, 0.08);
-  --elevate-2: rgba(163, 193, 225, 0.15);
-  --background: 214 55% 10%;
-  --foreground: 214 35% 92%;
-  --border: 214 45% 18%;
-  --card: 214 50% 14%;
-  --card-foreground: 214 35% 92%;
-  --card-border: 214 45% 20%;
-  --sidebar: 214 50% 16%;
-  --sidebar-foreground: 214 35% 92%;
-  --sidebar-border: 214 45% 22%;
-  --sidebar-primary: 210 70% 55%;
-  --sidebar-primary-foreground: 214 55% 10%;
-  --sidebar-accent: 214 45% 24%;
-  --sidebar-accent-foreground: 214 35% 92%;
-  --sidebar-ring: 210 70% 55%;
-  --popover: 214 50% 16%;
-  --popover-foreground: 214 35% 92%;
-  --popover-border: 214 45% 24%;
-  --primary: 210 70% 55%;
-  --primary-foreground: 214 55% 10%;
-  --secondary: 214 45% 26%;
-  --secondary-foreground: 214 35% 92%;
-  --muted: 214 45% 24%;
-  --muted-foreground: 214 35% 72%;
-  --accent: 210 70% 55%;
-  --accent-foreground: 214 55% 10%;
-  --destructive: 0 72% 51%;
+  --elevate-1: rgba(66, 165, 245, 0.08);
+  --elevate-2: rgba(66, 165, 245, 0.15);
+  
+  /* Dark mode - Navy/Indigo base */
+  --background: 220 50% 10%;
+  --foreground: 216 30% 93%;
+  --border: 220 50% 18%;
+  --card: 221 60% 20%;
+  --card-foreground: 216 30% 93%;
+  --card-border: 220 50% 25%;
+  --sidebar: 221 60% 22%;
+  --sidebar-foreground: 216 30% 93%;
+  --sidebar-border: 220 50% 28%;
+  
+  /* Primary colors - modern blue */
+  --sidebar-primary: 207 89% 61%;
+  --sidebar-primary-foreground: 220 50% 10%;
+  --sidebar-accent: 220 50% 30%;
+  --sidebar-accent-foreground: 216 30% 93%;
+  --sidebar-ring: 207 89% 61%;
+  --popover: 221 60% 22%;
+  --popover-foreground: 216 30% 93%;
+  --popover-border: 220 50% 30%;
+  --primary: 207 89% 61%;
+  --primary-foreground: 220 50% 10%;
+  --secondary: 220 50% 32%;
+  --secondary-foreground: 216 30% 93%;
+  --muted: 220 50% 30%;
+  --muted-foreground: 216 30% 73%;
+  --accent: 207 89% 61%;
+  --accent-foreground: 220 50% 10%;
+  
+  /* Semantic colors */
+  --destructive: 354 84% 58%;
   --destructive-foreground: 0 0% 100%;
-  --input: 214 45% 26%;
-  --ring: 210 70% 55%;
-  --chart-1: 210 70% 55%;
-  --chart-2: 212 75% 60%;
-  --chart-3: 207 65% 50%;
-  --chart-4: 215 80% 58%;
-  --chart-5: 205 75% 52%;
-  --shadow-2xs: 0px 2px 0px 0px hsl(187 100% 50% / 0.00);
-  --shadow-xs: 0px 2px 0px 0px hsl(187 100% 50% / 0.00);
-  --shadow-sm: 0px 2px 0px 0px hsl(187 100% 50% / 0.00), 0px 1px 2px -1px hsl(187 100% 50% / 0.00);
-  --shadow: 0px 2px 0px 0px hsl(187 100% 50% / 0.00), 0px 1px 2px -1px hsl(187 100% 50% / 0.00);
-  --shadow-md: 0px 2px 0px 0px hsl(187 100% 50% / 0.00), 0px 2px 4px -1px hsl(187 100% 50% / 0.00);
-  --shadow-lg: 0px 2px 0px 0px hsl(187 100% 50% / 0.00), 0px 4px 6px -1px hsl(187 100% 50% / 0.00);
-  --shadow-xl: 0px 2px 0px 0px hsl(187 100% 50% / 0.00), 0px 8px 10px -1px hsl(187 100% 50% / 0.00);
-  --shadow-2xl: 0px 2px 0px 0px hsl(187 100% 50% / 0.00);
+  --success: 122 39% 49%;
+  --warning: 45 100% 50%;
+  
+  --input: 220 50% 32%;
+  --ring: 207 89% 61%;
+  
+  /* Chart colors */
+  --chart-1: 207 89% 61%;
+  --chart-2: 122 39% 49%;
+  --chart-3: 354 84% 58%;
+  --chart-4: 45 100% 50%;
+  --chart-5: 198 100% 50%;
+  
+  --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.1);
+  --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.1);
+  --shadow-sm: 0px 2px 0px 0px hsl(0 0% 0% / 0.1), 0px 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow: 0px 2px 0px 0px hsl(0 0% 0% / 0.1), 0px 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md: 0px 2px 0px 0px hsl(0 0% 0% / 0.1), 0px 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0px 2px 0px 0px hsl(0 0% 0% / 0.1), 0px 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.1), 0px 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-2xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.1);
 
-/* Fallback for older browsers */
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
   --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
@@ -175,76 +160,38 @@
   }
 }
 
-/**
- * Using the elevate system.
- * Automatic contrast adjustment.
- *
- * <element className="hover-elevate" />
- * <element className="active-elevate-2" />
- *
- * // Using the tailwind utility when a data attribute is "on"
- * <element className="toggle-elevate data-[state=on]:toggle-elevated" />
- * // Or manually controlling the toggle state
- * <element className="toggle-elevate toggle-elevated" />
- *
- * Elevation systems have to handle many states.
- * - not-hovered, vs. hovered vs. active  (three mutually exclusive states)
- * - toggled or not
- * - focused or not (this is not handled with these utilities)
- *
- * Even without handling focused or not, this is six possible combinations that
- * need to be distinguished from eachother visually.
- */
 @layer utilities {
-
-  /* Hide ugly search cancel button in Chrome until we can style it properly */
   input[type="search"]::-webkit-search-cancel-button {
     @apply hidden;
   }
 
-  /* Placeholder styling for contentEditable div */
   [contenteditable][data-placeholder]:empty::before {
     content: attr(data-placeholder);
     color: hsl(var(--muted-foreground));
     pointer-events: none;
   }
 
-  /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
-   * buttons/badges can remove the automatic brightness adjustment on interactions
-   * and program their own. */
   .no-default-hover-elevate {}
-
   .no-default-active-elevate {}
 
-
-  /**
-   * Toggleable backgrounds go behind the content. Hoverable/active goes on top.
-   * This way they can stack/compound. Both will overlap the parent's borders!
-   * So borders will be automatically adjusted both on toggle, and hover/active,
-   * and they will be compounded.
-   */
   .toggle-elevate::before,
   .toggle-elevate-2::before {
     content: "";
     pointer-events: none;
     position: absolute;
     inset: 0px;
-    /*border-radius: inherit;   match rounded corners */
     border-radius: inherit;
     z-index: -1;
-    /* sits behind content but above backdrop */
   }
 
   .toggle-elevate.toggle-elevated::before {
     background-color: var(--elevate-2);
   }
 
-  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
   .border.toggle-elevate::before {
     inset: -1px;
   }
 
-  /* Does not work on elements with overflow:hidden! */
   .hover-elevate:not(.no-default-hover-elevate),
   .active-elevate:not(.no-default-active-elevate),
   .hover-elevate-2:not(.no-default-hover-elevate),
@@ -261,10 +208,8 @@
     pointer-events: none;
     position: absolute;
     inset: 0px;
-    /*border-radius: inherit;   match rounded corners */
     border-radius: inherit;
     z-index: 999;
-    /* sits in front of content */
   }
 
   .hover-elevate:hover:not(.no-default-hover-elevate)::after,
@@ -277,19 +222,22 @@
     background-color: var(--elevate-2);
   }
 
-  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
   .border.active-elevate:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
-  .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
-  .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after {
     inset: -1px;
   }
 
-  /* Beautiful animations */
-  @keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+  /* Modern Animations */
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
   }
 
   @keyframes fadeInUp {
@@ -304,19 +252,60 @@
   }
 
   @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+
+  @keyframes slideUpModal {
     from {
       opacity: 0;
+      transform: translateY(40px) scale(0.95);
     }
     to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes achievementPop {
+    0% {
+      transform: scale(0.8) rotate(-10deg);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.1) rotate(5deg);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
       opacity: 1;
     }
   }
 
-  @keyframes blob {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(20px, -50px) scale(1.1); }
-    50% { transform: translate(-20px, 20px) scale(0.9); }
-    75% { transform: translate(50px, 50px) scale(1.05); }
+  @keyframes confetti-fall {
+    to {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* Animation utilities */
+  .animate-countUp {
+    animation: countUp 0.6s ease-out;
+  }
+
+  .animate-slideIn {
+    animation: slideIn 0.4s ease-out;
   }
 
   .animate-fadeInUp {
@@ -328,202 +317,51 @@
     opacity: 0;
   }
 
-  .animate-blob {
-    animation: blob 7s infinite;
-  }
-
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-
-  .animation-delay-4000 {
-    animation-delay: 4s;
-  }
-
-  .animate-bounce {
-    animation: bounce 1s infinite;
-  }
-
   .animate-pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-  }
-
-  @keyframes glow {
-    0%, 100% { filter: drop-shadow(0 0 20px rgba(74, 144, 226, 0.4)); }
-    50% { filter: drop-shadow(0 0 30px rgba(74, 144, 226, 0.6)); }
-  }
-
-  /* Neon glow border animation */
-  @keyframes neonGlow {
-    0%, 100% { 
-      box-shadow: 0 0 10px rgba(74, 144, 226, 0.3), inset 0 0 10px rgba(74, 144, 226, 0.1);
-      border-color: rgba(74, 144, 226, 0.5);
-    }
-    50% { 
-      box-shadow: 0 0 20px rgba(74, 144, 226, 0.6), inset 0 0 15px rgba(74, 144, 226, 0.2);
-      border-color: rgba(74, 144, 226, 0.8);
-    }
-  }
-
-  /* Progress bar fill animation */
-  @keyframes progressFill {
-    0% { width: 0%; }
-  }
-
-  /* Hover glow effect */
-  @keyframes hoverGlow {
-    0%, 100% { box-shadow: 0 0 15px rgba(74, 144, 226, 0.3); }
-    50% { box-shadow: 0 0 25px rgba(74, 144, 226, 0.6); }
-  }
-
-  /* Shimmer animation for badges */
-  @keyframes shimmer {
-    0% { background-position: -1000px 0; }
-    100% { background-position: 1000px 0; }
-  }
-
-  /* Subtle particle float */
-  @keyframes floatParticle {
-    0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); opacity: 0.5; }
-    50% { transform: translateY(-20px) translateX(10px) rotate(180deg); opacity: 1; }
-  }
-
-  /* Slide up modal */
-  @keyframes slideUpModal {
-    from { 
-      opacity: 0; 
-      transform: translateY(40px);
-    }
-    to { 
-      opacity: 1; 
-      transform: translateY(0);
-    }
-  }
-
-  /* Achievement unlock pop */
-  @keyframes achievementPop {
-    0% { 
-      transform: scale(0.8) rotate(-10deg);
-      opacity: 0;
-    }
-    50% { 
-      transform: scale(1.1) rotate(5deg);
-      opacity: 1;
-    }
-    100% { 
-      transform: scale(1) rotate(0deg);
-      opacity: 1;
-    }
-  }
-
-  /* Glassmorphism cards */
-  .glassmorphic {
-    background: rgba(163, 193, 225, 0.1) !important;
-    backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(74, 144, 226, 0.2) !important;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15) !important;
-  }
-
-  .dark .glassmorphic {
-    background: rgba(74, 144, 226, 0.08) !important;
-    border: 1px solid rgba(163, 193, 225, 0.15) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-  }
-
-  /* Neon glow button */
-  .neon-glow {
-    animation: neonGlow 3s ease-in-out infinite;
-  }
-
-  /* Progress bar animation */
-  .progress-fill {
-    animation: progressFill 1.5s ease-out forwards;
-  }
-
-  /* Hover glow effect */
-  .hover-glow:hover {
-    animation: hoverGlow 1.5s ease-in-out infinite;
-  }
-
-  /* Shimmer effect */
   .shimmer {
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
   }
 
-  /* Floating particles */
-  .float-particle {
-    animation: floatParticle 3s ease-in-out infinite;
-  }
-
-  /* Modal slide animation */
   .modal-slide {
     animation: slideUpModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  /* Achievement pop animation */
   .achievement-pop {
     animation: achievementPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  /* Interactive hover state */
   .interactive-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .interactive-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(74, 144, 226, 0.15);
-  }
-
-  /* Tooltip styling */
-  .tooltip {
-    position: relative;
-    display: inline-block;
-  }
-
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    width: max-content;
-    background-color: rgba(214, 55, 10, 0.9);
-    color: #fff;
-    text-align: center;
-    padding: 8px 12px;
-    border-radius: 6px;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 12px;
-  }
-
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-  }
-
-  /* Confetti particles */
-  @keyframes confetti-fall {
-    to {
-      transform: translateY(100vh) rotate(360deg);
-      opacity: 0;
-    }
+    box-shadow: 0 12px 24px rgba(66, 165, 245, 0.15);
   }
 
   .confetti-particle {
     animation: confetti-fall 3s ease-in forwards;
   }
 
-  /* Smooth transitions */
+  /* Glassmorphism cards */
+  .glassmorphic {
+    background: rgba(66, 165, 245, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(66, 165, 245, 0.2) !important;
+    box-shadow: 0 8px 32px rgba(14, 20, 47, 0.15) !important;
+  }
+
+  .dark .glassmorphic {
+    background: rgba(66, 165, 245, 0.08) !important;
+    border: 1px solid rgba(66, 165, 245, 0.15) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  }
+
   * {
     scroll-behavior: smooth;
   }
