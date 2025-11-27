@@ -266,15 +266,17 @@ export default function FinQuest() {
   // Update netWorth whenever cash or portfolio change
   useEffect(() => {
     const portfolioTotal = Object.values(gameState.portfolio).reduce((a: number, b: number) => a + b, 0);
-    const calculatedNetWorth = gameState.cashBalance + portfolioTotal;
+    const stockInvestmentValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
+      ? gameState.stockHoldings.reduce((total: number, holding: any) => total + (holding.investmentAmount || 0), 0)
+      : 0;
+    const totalInvestedValue = portfolioTotal + stockInvestmentValue;
+    const calculatedNetWorth = gameState.cashBalance + totalInvestedValue;
     
-    if (calculatedNetWorth !== gameState.netWorth) {
-      setGameState(prev => ({
-        ...prev,
-        netWorth: calculatedNetWorth
-      }));
-    }
-  }, [gameState.cashBalance, gameState.portfolio]);
+    setGameState(prev => ({
+      ...prev,
+      netWorth: calculatedNetWorth
+    }));
+  }, [gameState.cashBalance, gameState.portfolio, gameState.stockHoldings]);
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
