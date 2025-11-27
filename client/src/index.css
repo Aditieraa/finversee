@@ -272,6 +272,87 @@
     50% { filter: drop-shadow(0 0 8px rgba(66, 165, 245, 0.6)); }
   }
 
+  @keyframes waveProgress {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes numberCount {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes tabSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes levelUpPop {
+    0% {
+      opacity: 0;
+      transform: scale(0.5) translateY(50px) rotate(-15deg);
+    }
+    50% {
+      transform: scale(1.15) translateY(-10px) rotate(5deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0) rotate(0deg);
+    }
+  }
+
+  @keyframes celebratoryGlow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), 0 0 40px rgba(74, 222, 128, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(74, 222, 128, 0.8), 0 0 80px rgba(74, 222, 128, 0.4);
+    }
+  }
+
+  @keyframes notificationSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(400px) translateY(0);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+  }
+
+  @keyframes notificationSlideOut {
+    from {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(400px) translateY(20px);
+    }
+  }
+
+  @keyframes cardLift {
+    from {
+      transform: translateY(0);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    to {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(66, 165, 245, 0.2);
+    }
+  }
+
   @keyframes fadeInUp {
     from {
       opacity: 0;
@@ -369,10 +450,50 @@
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
+  .animate-waveProgress {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    background-size: 200% 100%;
+    animation: waveProgress 1.5s ease-in-out forwards;
+  }
+
+  .animate-numberCount {
+    animation: numberCount 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .animate-tabSlideIn {
+    animation: tabSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .animate-levelUpPop {
+    animation: levelUpPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .animate-celebratory {
+    animation: celebratoryGlow 1s ease-in-out infinite;
+  }
+
+  .animate-notificationSlideIn {
+    animation: notificationSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .animate-notificationSlideOut {
+    animation: notificationSlideOut 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
   .shimmer {
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
+  }
+
+  /* Smooth card hover transitions */
+  .card-interactive {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(66, 165, 245, 0.2);
   }
 
   .modal-slide {

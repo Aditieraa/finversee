@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Coins, Target, AlertCircle, CheckCircle, Calendar } from 'lucide-react';
+import { NumberCounter } from '@/components/number-counter';
 
 interface DashboardProps {
   gameState: any;
@@ -81,11 +82,13 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
       {/* SECTION 1: Financial Snapshot - Top */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Cash Available */}
-        <Card className="border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card">
+        <Card className="border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card card-interactive">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs text-blue-200/70 mb-2 font-semibold">CASH AVAILABLE</p>
-              <p className="text-3xl font-bold text-blue-50 animate-countUp">₹{Math.round(gameState.cashBalance).toLocaleString('en-IN')}</p>
+              <p className="text-3xl font-bold text-blue-50">
+                ₹<NumberCounter value={Math.round(gameState.cashBalance)} />
+              </p>
               <p className="text-xs text-blue-200/50 mt-2">Total savings</p>
             </div>
             <Coins className="h-8 w-8 text-blue-400/60" />
@@ -93,11 +96,13 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
         </Card>
 
         {/* Monthly Expenses */}
-        <Card className="border-red-400/30 bg-gradient-to-br from-red-900/40 to-red-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card">
+        <Card className="border-red-400/30 bg-gradient-to-br from-red-900/40 to-red-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card card-interactive">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs text-red-200/70 mb-2 font-semibold">MONTHLY EXPENSES</p>
-              <p className="text-3xl font-bold text-red-50 animate-countUp">₹{Math.round(gameState.userProfile?.expenses || 0).toLocaleString('en-IN')}</p>
+              <p className="text-3xl font-bold text-red-50">
+                ₹<NumberCounter value={Math.round(gameState.userProfile?.expenses || 0)} />
+              </p>
               <p className="text-xs text-red-200/50 mt-2">Monthly spending</p>
             </div>
             <TrendingDown className="h-8 w-8 text-red-400/60" />
@@ -105,11 +110,13 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
         </Card>
 
         {/* Portfolio Value - LARGER (spans 2 cols on medium+) */}
-        <Card className="border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card md:col-span-2">
+        <Card className="border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-blue-950/30 backdrop-blur-sm p-6 hover-elevate shadow-card md:col-span-2 card-interactive">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs text-blue-200/70 mb-2 font-semibold">PORTFOLIO VALUE</p>
-              <p className="text-4xl font-bold text-blue-50 animate-countUp">₹{Math.round(totalPortfolio + stockPortfolioValue).toLocaleString('en-IN')}</p>
+              <p className="text-4xl font-bold text-blue-50">
+                ₹<NumberCounter value={Math.round(totalPortfolio + stockPortfolioValue)} />
+              </p>
               <p className="text-xs text-blue-200/50 mt-2">All investments (stocks + holdings)</p>
             </div>
             <Target className="h-8 w-8 text-blue-400/60" />
@@ -119,7 +126,7 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
 
       {/* SECTION 2: Monthly Cash Flow - PRIMARY CENTRAL WIDGET */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="border-blue-400/20 bg-blue-950/40 backdrop-blur-sm p-6 shadow-card lg:col-span-2">
+        <Card className="border-blue-400/20 bg-blue-950/40 backdrop-blur-sm p-6 shadow-card lg:col-span-2 card-interactive animate-tabSlideIn">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-xl font-bold text-white">Monthly Cash Flow</h3>
@@ -133,7 +140,7 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
                   size="sm"
                   variant={timeframe === months ? 'default' : 'outline'}
                   onClick={() => setTimeframe(months as 3 | 6 | 12)}
-                  className="text-xs h-8"
+                  className="text-xs h-8 transition-all hover:shadow-md"
                   data-testid={`button-timeframe-${months}`}
                 >
                   {months}M
