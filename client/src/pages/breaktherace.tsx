@@ -408,12 +408,21 @@ export default function BreakTheRace() {
 
       if (error) {
         console.error('📊 Save error:', error);
-        // Silent failure - don't show warning repeatedly
+        toast({ 
+          title: 'Save Warning', 
+          description: `Could not save game state: ${error.message}. Your progress may be lost if you close the app.`, 
+          variant: 'destructive' 
+        });
       } else {
         console.log('📊 Game saved: ' + (state.hasWon ? 'WON! 🏆' : 'In Progress'));
       }
     } catch (error) {
       console.error('📊 Save exception:', error);
+      toast({ 
+        title: 'Save Error', 
+        description: 'Unexpected error while saving. Your progress may be lost if you close the app.', 
+        variant: 'destructive' 
+      });
     }
   };
 
