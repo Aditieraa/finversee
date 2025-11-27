@@ -926,6 +926,8 @@ export default function FinQuest() {
       const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
       const projectedFinalNetWorth = gameState.netWorth + (monthlyAvailable * (12 - gameState.currentMonth));
 
+      console.log('🤖 Sending AI chat request:', { message: userMessage.substring(0, 50), context: gameState.userProfile?.career });
+
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -948,10 +950,21 @@ export default function FinQuest() {
         }),
       });
 
-      if (!response.ok) throw new Error('AI response failed');
+      console.log('📨 AI response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('❌ API error response:', errorData);
+        throw new Error(`API error: ${response.status} - ${errorData.error}`);
+      }
 
       const data = await response.json();
-      let aiMessage = data.response;
+      console.log('✅ AI response received:', data.response?.substring(0, 50));
+      let aiMessage = data.response || '';
+      
+      if (!aiMessage) {
+        throw new Error('Empty response from AI API');
+      }
       
       if (userMessage.toLowerCase().includes('gold') || userMessage.toLowerCase().includes('coin')) {
         aiMessage += '\n\n💰 Pro tip: Gold coins can be converted to real investments! Ask me how to use them wisely.';
@@ -964,6 +977,8 @@ export default function FinQuest() {
           { role: 'ai', content: aiMessage, timestamp: Date.now() },
         ],
       }));
+
+      setAiLoading(false);
 
       // Save AI message to database
       if (userId && userId !== 'guest') {
@@ -985,7 +1000,7 @@ export default function FinQuest() {
         }
       }
     } catch (error) {
-      console.error('AI chat error:', error);
+      console.error('❌ AI chat error:', error);
       
       const fallbackMsg = `I'm here to support you, even when I'm thinking! 🤔\n\n${
         userMessage.includes('invest') 
@@ -1002,6 +1017,8 @@ export default function FinQuest() {
           { role: 'ai', content: fallbackMsg, timestamp: Date.now() },
         ],
       }));
+
+      setAiLoading(false);
 
       // Save fallback message
       if (userId && userId !== 'guest') {
