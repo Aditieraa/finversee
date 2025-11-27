@@ -133,7 +133,7 @@ export default function Dashboard({
             <div>
               <p className="text-xs text-red-200/70 mb-2 font-semibold">MONTHLY EXPENSES</p>
               <p className="text-3xl font-bold text-red-50">
-                ₹<NumberCounter value={Math.round(gameState.userProfile?.expenses || 0)} />
+                ₹<NumberCounter value={Math.round(gameState.monthlyExpensesThisMonth || gameState.userProfile?.expenses || 0)} />
               </p>
               <p className="text-xs text-red-200/50 mt-2">Monthly spending</p>
             </div>
