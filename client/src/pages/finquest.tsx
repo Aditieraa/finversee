@@ -242,32 +242,6 @@ export default function FinQuest() {
     if (userId) {
       loadLeaderboard();
     }
-    // Auto-complete guest onboarding
-    if (userId === 'guest' && onboarding.active) {
-      const profile: UserProfile = {
-        name: 'Guest',
-        career: 'Engineer',
-        salary: 80000,
-        expenses: 35000,
-        avatar: 'female1',
-      };
-      const cashAvailable = 80000 - 35000;
-      setGameState(prev => ({
-        ...prev,
-        userProfile: profile,
-        cashBalance: cashAvailable,
-        netWorth: cashAvailable,
-        monthlyExpensesThisMonth: 35000,
-        chatHistory: [
-          {
-            role: 'ai' as const,
-            content: `🎮 Welcome to FinVerse, Guest! I'm Aura Twin, your AI financial mentor 🤖\n\n✨ You're playing with default settings: ₹80,000 salary and ₹35,000 expenses\n\n💰 Cash Available: ₹45,000 (tracked in Dashboard, Stocks, and Analytics)\n\n🎮 Game World: Use your 50,000 gold coins in BreakTheRace for gamified investing and learning!\n\nI'm here to guide you toward financial freedom. Let's build wealth together! 💪`,
-            timestamp: Date.now(),
-          },
-        ],
-      }));
-      setOnboarding({ active: false, step: 1, name: '', career: '', salary: '', expenses: '', avatar: 'female1' });
-    }
   }, [userId]);
 
   useEffect(() => {
