@@ -140,20 +140,24 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     }
 
     const amount = parseInt(investmentAmount);
-    const shares = amount / buyPrice;
-
-    // Validate shares
-    if (isNaN(shares) || !isFinite(shares) || shares <= 0) {
-      alert('Invalid investment calculation. Please try again.');
+    // Calculate only whole shares
+    const wholeShares = Math.floor(amount / buyPrice);
+    
+    // Validate whole shares
+    if (wholeShares <= 0) {
+      alert('Amount is too low to buy even 1 share. Please increase the investment amount.');
       return;
     }
 
-    // Create holding with correct buyPrice (NEVER store 0)
+    // Recalculate actual investment based on whole shares
+    const actualInvestment = wholeShares * buyPrice;
+
+    // Create holding with whole shares only
     const newHolding: StockHolding = {
       symbol: selectedStockData.symbol,
-      shares: shares,
+      shares: wholeShares,
       buyPrice: buyPrice,  // Store actual dummy/real price, never 0
-      investmentAmount: amount,
+      investmentAmount: actualInvestment,
       purchaseDate: new Date().toISOString(),
     };
 
@@ -187,9 +191,9 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       ? (holdings[existingIndex].investmentAmount + amount) / (holdings[existingIndex].shares + shares)
       : buyPrice;
 
-    // Update cash balance and portfolio
-    const newCashBalance = Math.max(0, gameState.cashBalance - amount);
-    const newPortfolioStocks = gameState.portfolio.stocks + amount;
+    // Update cash balance and portfolio with actual investment
+    const newCashBalance = Math.max(0, gameState.cashBalance - actualInvestment);
+    const newPortfolioStocks = gameState.portfolio.stocks + actualInvestment;
 
     setGameState({
       ...gameState,
@@ -233,11 +237,11 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
           game_save_id: latestSave.id,
           symbol: selectedStockData.symbol,
           company_name: selectedStockData.symbol,
-          quantity: shares,
+          quantity: wholeShares,
           buy_price: buyPrice,
           current_price: buyPrice,
-          total_invested: amount,
-          current_value: amount,
+          total_invested: actualInvestment,
+          current_value: actualInvestment,
           purchase_date: new Date().toISOString(),
         })
         .select();
@@ -252,7 +256,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       console.error('❌ Unexpected error saving stock to database:', error);
     }
 
-    setSuccessMessage(`✓ Invested ₹${amount} in ${selectedStockData.symbol}! You now own ${shares.toFixed(2)} shares @ ₹${buyPrice.toFixed(2)}`);
+    setSuccessMessage(`✓ Invested ₹${actualInvestment.toFixed(0)} in ${selectedStockData.symbol}! You now own ${wholeShares} shares @ ₹${buyPrice.toFixed(2)}`);
     setInvestmentAmount('');
     
     setTimeout(() => setSuccessMessage(''), 3000);
@@ -275,7 +279,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     });
 
     const profitOrLoss = profitLoss >= 0 ? `Profit: ₹${profitLoss.toFixed(0)}` : `Loss: ₹${Math.abs(profitLoss).toFixed(0)}`;
-    setSuccessMessage(`✓ Sold ${holding.shares.toFixed(2)} shares of ${holding.symbol}. ${profitOrLoss}`);
+    setSuccessMessage(`✓ Sold ${Math.floor(holding.shares)} shares of ${holding.symbol}. ${profitOrLoss}`);
     
     setTimeout(() => setSuccessMessage(''), 3000);
   };
@@ -563,7 +567,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                   <div className="flex-1">
                     <h4 className="font-bold text-white">{holding.symbol}</h4>
                     <p className="text-xs text-indigo-200/60 mt-1">
-                      {holding.shares.toFixed(2)} shares @ ₹{holding.buyPrice.toFixed(2)}
+                      {Math.floor(holding.shares)} shares @ ₹{holding.buyPrice.toFixed(2)}
                     </p>
                   </div>
                   <div className="text-right flex-1">
