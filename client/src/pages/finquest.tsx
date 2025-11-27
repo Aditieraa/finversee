@@ -1392,7 +1392,7 @@ export default function FinQuest() {
           {
             id: 'budget',
             label: 'Budget',
-            icon: <DollarSign className="h-3.5 w-3.5" />,
+            icon: <span className="text-base font-bold">₹</span>,
             active: currentView === 'budget',
             onClick: () => setCurrentView('budget'),
           },
