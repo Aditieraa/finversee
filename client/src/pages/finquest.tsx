@@ -263,20 +263,14 @@ export default function FinQuest() {
     }
   }, [userId, gameState]);
 
-  // Update netWorth whenever cash or portfolio change
-  useEffect(() => {
+  // Calculate netWorth from current gameState
+  const calculateNetWorth = () => {
     const portfolioTotal = Object.values(gameState.portfolio).reduce((a: number, b: number) => a + b, 0);
     const stockInvestmentValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
       ? gameState.stockHoldings.reduce((total: number, holding: any) => total + (holding.investmentAmount || 0), 0)
       : 0;
-    const totalInvestedValue = portfolioTotal + stockInvestmentValue;
-    const calculatedNetWorth = gameState.cashBalance + totalInvestedValue;
-    
-    setGameState(prev => ({
-      ...prev,
-      netWorth: calculatedNetWorth
-    }));
-  }, [gameState.cashBalance, gameState.portfolio, gameState.stockHoldings]);
+    return gameState.cashBalance + portfolioTotal + stockInvestmentValue;
+  };
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -1418,20 +1412,30 @@ export default function FinQuest() {
             gameState={gameState} 
             monthlyDecisions={monthlyDecisions}
             onAddIncome={async (amount) => {
-              setGameState(prev => ({
-                ...prev,
-                userProfile: prev.userProfile ? { ...prev.userProfile, salary: prev.userProfile.salary + amount } : prev.userProfile,
-                cashBalance: prev.cashBalance + amount,
-              }));
+              setGameState(prev => {
+                const newState = {
+                  ...prev,
+                  userProfile: prev.userProfile ? { ...prev.userProfile, salary: prev.userProfile.salary + amount } : prev.userProfile,
+                  cashBalance: prev.cashBalance + amount,
+                };
+                newState.netWorth = newState.cashBalance + Object.values(newState.portfolio).reduce((a: number, b: number) => a + b, 0) + (newState.stockHoldings && newState.stockHoldings.length > 0 ? newState.stockHoldings.reduce((total: number, h: any) => total + (h.investmentAmount || 0), 0) : 0);
+                return newState;
+              });
               toast({ title: '💰 Income Added', description: `₹${amount.toLocaleString('en-IN')} added to monthly income` });
               setTimeout(() => saveGameState(true), 100);
             }}
             onAddExpense={async (amount) => {
-              setGameState(prev => ({
-                ...prev,
-                monthlyExpensesThisMonth: (prev.monthlyExpensesThisMonth || prev.userProfile?.expenses || 0) + amount,
-                cashBalance: Math.max(0, (prev.userProfile?.salary || 0) - ((prev.monthlyExpensesThisMonth || prev.userProfile?.expenses || 0) + amount)),
-              }));
+              setGameState(prev => {
+                const newExpense = (prev.monthlyExpensesThisMonth || prev.userProfile?.expenses || 0) + amount;
+                const newCash = Math.max(0, (prev.userProfile?.salary || 0) - newExpense);
+                const newState = {
+                  ...prev,
+                  monthlyExpensesThisMonth: newExpense,
+                  cashBalance: newCash,
+                };
+                newState.netWorth = newState.cashBalance + Object.values(newState.portfolio).reduce((a: number, b: number) => a + b, 0) + (newState.stockHoldings && newState.stockHoldings.length > 0 ? newState.stockHoldings.reduce((total: number, h: any) => total + (h.investmentAmount || 0), 0) : 0);
+                return newState;
+              });
               toast({ title: '💸 Expense Added', description: `₹${amount.toLocaleString('en-IN')} added to monthly expenses` });
               setTimeout(() => saveGameState(true), 100);
             }}
