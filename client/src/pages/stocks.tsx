@@ -121,17 +121,15 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     return history;
   };
 
-  // REAL portfolio calculation for Stocks page (matches Dashboard)
-  const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
-  const monthsSaved = Math.max((gameState.currentMonth || 1) - 1, 0);
-  const realStocksPortfolio = monthlyAvailable * 0.25 * monthsSaved; // 25% allocated to stocks
+  // REAL cash available from user (for real investments)
+  const realCashAvailable = gameState.userCash || 0;
   
   const selectedStockData = stocks.find(s => s.symbol === selectedStock);
   const filteredStocks = stocks.filter(s =>
     s.symbol.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Handle investment
+  // Handle investment from REAL cash
   const handleInvest = async () => {
     if (!investmentAmount || parseInt(investmentAmount) <= 0 || !selectedStockData) {
       alert('Please enter a valid investment amount');
@@ -199,13 +197,13 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       ? (holdings[existingIndex].investmentAmount + actualInvestment) / (holdings[existingIndex].shares + wholeShares)
       : buyPrice;
 
-    // Update cash balance and portfolio with actual investment
-    const newCashBalance = Math.max(0, gameState.cashBalance - actualInvestment);
+    // Update REAL cash balance and portfolio with actual investment
+    const newCashBalance = Math.max(0, gameState.userCash - actualInvestment);
     const newPortfolioStocks = gameState.portfolio.stocks + actualInvestment;
 
     setGameState({
       ...gameState,
-      cashBalance: newCashBalance,
+      userCash: newCashBalance,
       portfolio: { ...gameState.portfolio, stocks: newPortfolioStocks },
       stockHoldings: updatedHoldings,
     });
@@ -281,7 +279,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     
     setGameState({
       ...gameState,
-      cashBalance: gameState.cashBalance + currentValue,
+      userCash: gameState.userCash + currentValue,
       portfolio: { ...gameState.portfolio, stocks: gameState.portfolio.stocks - holding.investmentAmount },
       stockHoldings: updatedHoldings,
     });
@@ -338,11 +336,11 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
         </div>
       </div>
 
-      {/* Real Portfolio Allocation */}
+      {/* Real Cash Available */}
       <Card className="border-amber-400/20 bg-amber-950/40 backdrop-blur-sm p-4">
-        <p className="text-amber-200/60 text-xs mb-1">Real Portfolio - Stocks Allocation (25% of savings)</p>
-        <p className="text-2xl font-bold text-amber-100">₹{realStocksPortfolio.toFixed(0)}</p>
-        <p className="text-xs text-amber-200/40 mt-1">Based on ₹{monthlyAvailable.toLocaleString('en-IN')}/month × {monthsSaved} months saved</p>
+        <p className="text-amber-200/60 text-xs mb-1">Cash Available (Real Budget)</p>
+        <p className="text-2xl font-bold text-amber-100">₹{realCashAvailable.toFixed(0)}</p>
+        <p className="text-xs text-amber-200/40 mt-1">Use this to invest in real stocks</p>
       </Card>
 
       {/* Portfolio Summary */}

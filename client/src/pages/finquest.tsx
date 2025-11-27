@@ -115,6 +115,7 @@ interface GameState {
   currentYear: number;
   cashBalance: number;
   goldCoins: number;
+  userCash: number;
   netWorth: number;
   userProfile: UserProfile | null;
   portfolio: Portfolio;
@@ -169,6 +170,7 @@ export default function FinQuest() {
     currentYear: 2025,
     cashBalance: 0,
     goldCoins: 50000,
+    userCash: 0,
     netWorth: 0,
     userProfile: null,
     portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
@@ -191,6 +193,7 @@ export default function FinQuest() {
     career: '' as string,
     salary: '',
     expenses: '',
+    userCash: '',
     avatar: 'female1' as AvatarType,
   });
 
@@ -488,10 +491,10 @@ export default function FinQuest() {
   };
 
   const completeOnboarding = async () => {
-    if (!onboarding.name || !onboarding.career || !onboarding.salary || !onboarding.expenses) {
+    if (!onboarding.name || !onboarding.career || !onboarding.salary || !onboarding.expenses || !onboarding.userCash) {
       toast({
         title: 'Missing Information',
-        description: 'Please enter your name, profession, salary, and expenses',
+        description: 'Please enter your name, profession, salary, expenses, and your current cash',
         variant: 'destructive',
       });
       return;
@@ -499,11 +502,12 @@ export default function FinQuest() {
 
     const salary = parseInt(onboarding.salary) || 0;
     const expenses = parseInt(onboarding.expenses) || 0;
+    const userCash = parseInt(onboarding.userCash) || 0;
 
-    if (salary <= 0 || expenses < 0 || expenses > salary) {
+    if (salary <= 0 || expenses < 0 || expenses > salary || userCash < 0) {
       toast({
         title: 'Invalid Values',
-        description: 'Please enter valid salary and expenses (expenses cannot exceed salary)',
+        description: 'Please enter valid salary, expenses, and cash amounts',
         variant: 'destructive',
       });
       return;
@@ -517,7 +521,7 @@ export default function FinQuest() {
       avatar: onboarding.avatar,
     };
 
-    const initialCash = salary - expenses;
+    const initialCash = userCash;
 
     if (userId && userId !== 'guest') {
       try {
@@ -545,15 +549,17 @@ export default function FinQuest() {
     const newGameState = {
       currentMonth: 1,
       currentYear: 2025,
-      cashBalance: initialCash,
+      cashBalance: 0,
       goldCoins: 50000,
+      userCash: initialCash,
       netWorth: initialCash,
       userProfile: profile,
       portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
+      stockHoldings: [],
       chatHistory: [
         {
           role: 'ai' as const,
-          content: `🎮 Welcome to FinVerse, ${onboarding.name}! I'm Aura Twin, your AI financial mentor 🤖\n\nI see you're a ${onboarding.career} with a monthly salary of ₹${salary.toLocaleString('en-IN')}. After covering ₹${expenses.toLocaleString('en-IN')} in expenses, you have ₹${initialCash.toLocaleString('en-IN')} available to invest each month.\n\n✨ You start with 50,000 gold coins to use for special investments and bonuses! I'm here to guide you toward your financial freedom goal of ₹50,00,000.\n\nLet's build wealth together! What would you like to invest in this month? 💪`,
+          content: `🎮 Welcome to FinVerse, ${onboarding.name}! I'm Aura Twin, your AI financial mentor 🤖\n\n✨ You start with ₹${initialCash.toLocaleString('en-IN')} in real cash and 50,000 gold coins for the game!\n\n🏦 Real Budget: Your ₹${initialCash.toLocaleString('en-IN')} is tracked in Dashboard, Stocks, and Analytics. Invest it wisely!\n\n🎮 Game World: Use your 50,000 gold coins in FinQuest for gamified investing and learning!\n\nI'm here to guide you toward your financial freedom goal of ₹50,00,000.\n\nLet's build wealth together! 💪`,
           timestamp: Date.now(),
         },
       ],
@@ -567,7 +573,7 @@ export default function FinQuest() {
     };
 
     setGameState(newGameState);
-    setOnboarding({ active: false, step: 1, name: '', career: '', salary: '', expenses: '', avatar: 'female1' });
+    setOnboarding({ active: false, step: 1, name: '', career: '', salary: '', expenses: '', userCash: '', avatar: 'female1' });
 
     // Save game state immediately after onboarding to prevent data loss
     if (userId && userId !== 'guest') {
@@ -686,10 +692,10 @@ export default function FinQuest() {
       return;
     }
     
-    if (totalInvestment > gameState.cashBalance) {
+    if (totalInvestment > gameState.goldCoins) {
       toast({
-        title: 'Insufficient Funds',
-        description: `You only have ₹${Math.round(gameState.cashBalance).toLocaleString('en-IN')} available. Total investment: ₹${totalInvestment.toLocaleString('en-IN')}`,
+        title: 'Insufficient Gold Coins',
+        description: `You only have ${Math.round(gameState.goldCoins).toLocaleString('en-IN')} gold coins. Total investment: ${totalInvestment.toLocaleString('en-IN')}`,
         variant: 'destructive',
       });
       return;
@@ -707,7 +713,7 @@ export default function FinQuest() {
     setProcessingMonth(true);
 
     setGameState(prev => {
-      const newCash = prev.cashBalance - totalInvestment;
+      const newGoldCoins = prev.goldCoins - totalInvestment;
       const updatedPortfolio = {
         sip: prev.portfolio.sip + monthlyDecisions.sip,
         stocks: prev.portfolio.stocks + monthlyDecisions.stocks,
@@ -718,7 +724,7 @@ export default function FinQuest() {
 
       return {
         ...prev,
-        cashBalance: newCash,
+        goldCoins: newGoldCoins,
         portfolio: updatedPortfolio,
         monthlyInvestments: monthlyDecisions,
       };

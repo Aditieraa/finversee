@@ -80,35 +80,35 @@ export default function Budget({ gameState }: BudgetProps) {
 
     setBudgetCategories(updatedCategories);
 
-    // Initialize goals based on REAL user data ONLY (not game portfolio)
-    const monthlyAvailable = userSalary - userExpenses;
+    // Initialize goals based on REAL user CASH data (from Dashboard)
+    const userCash = gameState.userCash || 0;
     const initialGoals: Goal[] = [
       {
         id: '1',
         name: 'Emergency Fund',
         targetAmount: userExpenses * 6,
-        currentAmount: monthlyAvailable * 3, // Simulated - user's available cash
+        currentAmount: userCash, // Real user cash from Dashboard
         deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
         priority: 'high',
-        status: (monthlyAvailable * 3) >= userExpenses * 6 ? 'completed' : 'active',
+        status: userCash >= userExpenses * 6 ? 'completed' : 'active',
       },
       {
         id: '2',
         name: 'Save 3 Months',
         targetAmount: userExpenses * 3,
-        currentAmount: monthlyAvailable * 2,
+        currentAmount: userCash,
         deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
         priority: 'high',
-        status: (monthlyAvailable * 2) >= userExpenses * 3 ? 'completed' : 'active',
+        status: userCash >= userExpenses * 3 ? 'completed' : 'active',
       },
       {
         id: '3',
         name: 'Annual Savings Goal',
-        targetAmount: monthlyAvailable * 12,
-        currentAmount: monthlyAvailable * 6,
+        targetAmount: userExpenses * 12,
+        currentAmount: userCash,
         deadline: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN'),
         priority: 'medium',
-        status: (monthlyAvailable * 6) >= (monthlyAvailable * 12) ? 'completed' : 'active',
+        status: userCash >= userExpenses * 12 ? 'completed' : 'active',
       },
     ];
 
