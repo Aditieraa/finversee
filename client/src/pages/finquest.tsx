@@ -1129,7 +1129,7 @@ export default function FinQuest() {
                   placeholder="Enter your name"
                   className="mt-2 interactive-hover text-slate-900 h-12"
                   style={{
-                    backgroundColor: '#E8F4FF',
+                    backgroundColor: '#F0FAFF',
                     color: '#1a1a1a',
                   }}
                 />
@@ -1145,7 +1145,7 @@ export default function FinQuest() {
                   placeholder="e.g., Software Engineer, Doctor, Teacher"
                   className="mt-2 interactive-hover text-slate-900 h-12"
                   style={{
-                    backgroundColor: '#E8F4FF',
+                    backgroundColor: '#F0FAFF',
                     color: '#1a1a1a',
                   }}
                 />
@@ -1162,7 +1162,7 @@ export default function FinQuest() {
                   placeholder="Enter your monthly salary"
                   className="mt-2 interactive-hover text-slate-900 h-12"
                   style={{
-                    backgroundColor: '#E8F4FF',
+                    backgroundColor: '#F0FAFF',
                     color: '#1a1a1a',
                   }}
                 />
@@ -1179,7 +1179,7 @@ export default function FinQuest() {
                   placeholder="Enter your monthly expenses"
                   className="mt-2 interactive-hover text-slate-900 h-12"
                   style={{
-                    backgroundColor: '#E8F4FF',
+                    backgroundColor: '#F0FAFF',
                     color: '#1a1a1a',
                   }}
                 />
