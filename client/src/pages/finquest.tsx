@@ -255,15 +255,27 @@ export default function FinQuest() {
     if (!userId || userId === 'guest' || !gameState.userProfile) return;
 
     try {
+      const portfolioTotal = Object.values(gameState.portfolio).reduce((a: number, b: number) => a + b, 0);
+      const netWorth = gameState.cashBalance + portfolioTotal;
+      
       const { error } = await supabase
         .from('game_saves')
-        .upsert({
-          user_id: userId,
-          game_state: gameState,
-          chat_history: gameState.chatHistory,
-          achievements: gameState.achievements,
-          leaderboard_score: gameState.netWorth,
-        });
+        .upsert(
+          {
+            user_id: userId,
+            level: gameState.level,
+            xp: gameState.xp,
+            current_month: gameState.currentMonth,
+            cash_balance: gameState.cashBalance,
+            portfolio: gameState.portfolio,
+            achievements: gameState.achievements,
+            financial_goal: gameState.financialGoal || 5000000,
+            goal_progress: gameState.financialGoal ? (netWorth / gameState.financialGoal) * 100 : 0,
+            monthly_investments: gameState.monthlyInvestments,
+            is_latest: true,
+          },
+          { onConflict: 'user_id' }
+        );
 
       if (error) {
         console.error('❌ Save error details:', {
@@ -306,12 +318,23 @@ export default function FinQuest() {
         .from('game_saves')
         .select('*')
         .eq('user_id', userId)
+        .eq('is_latest', true)
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
 
       if (data) {
-        setGameState(data.game_state);
+        setGameState(prev => ({
+          ...prev,
+          level: data.level,
+          xp: data.xp,
+          currentMonth: data.current_month,
+          cashBalance: data.cash_balance,
+          portfolio: data.portfolio,
+          achievements: data.achievements,
+          financialGoal: data.financial_goal,
+          monthlyInvestments: data.monthly_investments,
+        }));
         toast({
           title: '✨ Progress Loaded',
           description: 'Welcome back! Your game has been restored.',
@@ -326,20 +349,26 @@ export default function FinQuest() {
     try {
       const { data, error } = await supabase
         .from('game_saves')
-        .select('game_state, leaderboard_score')
-        .order('leaderboard_score', { ascending: false })
+        .select('gs:game_saves(level, xp, cash_balance, portfolio), p:profiles(name)')
+        .eq('is_latest', true)
+        .order('cash_balance', { ascending: false })
         .limit(10);
 
       if (error) throw error;
 
       if (data) {
         const leaderboardData = data
-          .filter(entry => entry.game_state?.userProfile?.name)
-          .map(entry => ({
-            name: entry.game_state.userProfile.name,
-            score: entry.leaderboard_score || 0,
-            level: entry.game_state.level || 1,
-          }));
+          .filter((entry: any) => entry.p?.name)
+          .map((entry: any) => {
+            const portfolio = entry.gs?.portfolio || {};
+            const portfolioTotal = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
+            const netWorth = (entry.gs?.cash_balance || 0) + portfolioTotal;
+            return {
+              name: entry.p.name,
+              score: netWorth || 0,
+              level: entry.gs?.level || 1,
+            };
+          });
 
         setLeaderboard(leaderboardData);
       }
