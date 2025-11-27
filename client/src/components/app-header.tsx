@@ -109,11 +109,14 @@ export function AppHeader({
         {/* Right: Net Worth Display + Buttons + Avatar */}
         <div className="flex items-center gap-2 flex-shrink-0">
           {/* Net Worth (hidden on mobile) */}
-          <div className="text-right hidden md:block">
+          <div className="text-right hidden md:block group relative">
             <p className="text-xs text-blue-200/70 font-semibold uppercase tracking-wide">NET WORTH</p>
-            <p className="text-sm font-black text-green-400 animate-countUp">
+            <p className="text-sm font-black text-green-400 animate-countUp cursor-help">
               {formatNetWorth(netWorth)}
             </p>
+            <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-blue-900/95 text-blue-100 text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-blue-400/30">
+              Cash + Investments
+            </div>
           </div>
 
           {/* Status Badge */}
