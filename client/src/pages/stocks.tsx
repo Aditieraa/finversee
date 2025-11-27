@@ -171,8 +171,8 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     if (existingIndex >= 0) {
       // Update existing holding - calculate new average buy price
       const existingHolding = holdings[existingIndex];
-      const totalInvested = existingHolding.investmentAmount + amount;
-      const totalShares = existingHolding.shares + shares;
+      const totalInvested = existingHolding.investmentAmount + actualInvestment;
+      const totalShares = existingHolding.shares + wholeShares;
       const avgBuyPrice = totalInvested / totalShares;
 
       updatedHoldings = [...holdings];
@@ -188,7 +188,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
 
     // Calculate final average buy price for database
     const finalAvgBuyPrice = existingIndex >= 0 
-      ? (holdings[existingIndex].investmentAmount + amount) / (holdings[existingIndex].shares + shares)
+      ? (holdings[existingIndex].investmentAmount + actualInvestment) / (holdings[existingIndex].shares + wholeShares)
       : buyPrice;
 
     // Update cash balance and portfolio with actual investment
@@ -525,7 +525,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                       <p className="text-green-200/70 text-sm">
                         You will get{' '}
                         <span className="font-bold text-green-300">
-                          {(parseInt(investmentAmount || '0') / getDisplayPrice(selectedStockData.price, selectedStockData.symbol)).toFixed(2)} shares
+                          {Math.floor(parseInt(investmentAmount || '0') / getDisplayPrice(selectedStockData.price, selectedStockData.symbol))} shares
                         </span>
                       </p>
                     </div>
