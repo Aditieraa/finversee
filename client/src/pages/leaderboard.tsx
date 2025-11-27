@@ -64,12 +64,16 @@ export default function Leaderboard() {
               const netWorth = (save.cash_balance || 0) + portfolioTotal;
               
               const profile = Array.isArray(save.profiles) ? save.profiles[0] : save.profiles;
+              // Map avatar ID to actual avatar image
+              const avatarId = profile?.avatar || 'female1';
+              const avatarPath = avatarId ? avatarMap[avatarId] : avatar1;
+              
               return {
                 name: profile?.name || 'Anonymous',
                 level: save.level || 1,
                 netWorth,
                 rank: idx + 1,
-                avatar: profile?.avatar,
+                avatar: avatarPath,  // Use actual avatar image path
               };
             })
             .filter(entry => entry.level > 0 && entry.netWorth > 0) // Only show players with progress
@@ -155,7 +159,7 @@ export default function Leaderboard() {
                   <div className="flex items-center gap-4">
                     {player.avatar && (
                       <div className="w-12 h-14 rounded overflow-hidden border border-primary/50 flex-shrink-0">
-                        <img src={getAvatarUrl(player.avatar)} alt={player.name} className="w-full h-full object-cover" />
+                        <img src={player.avatar} alt={player.name} className="w-full h-full object-cover" />
                       </div>
                     )}
                     <div className={`text-2xl font-bold ${textClass} w-8 text-center`}>

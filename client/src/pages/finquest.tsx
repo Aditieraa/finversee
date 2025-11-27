@@ -1233,13 +1233,13 @@ export default function FinQuest() {
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex gap-2 flex-wrap">
+          {/* Navigation Tabs - Horizontal Scrollable */}
+          <div className="flex gap-2 overflow-x-auto pb-2 mt-3 -mx-4 px-4">
             <Button
               variant={currentView === 'dashboard' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('dashboard')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 whitespace-nowrap"
             >
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
@@ -1248,7 +1248,7 @@ export default function FinQuest() {
               variant={currentView === 'game' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('game')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 whitespace-nowrap"
             >
               <Zap className="h-4 w-4" />
               Game
@@ -1257,7 +1257,7 @@ export default function FinQuest() {
               variant={currentView === 'analytics' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('analytics')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 whitespace-nowrap"
             >
               <TrendingUpIcon className="h-4 w-4" />
               Analytics
@@ -1266,7 +1266,7 @@ export default function FinQuest() {
               variant={currentView === 'budget' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('budget')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 whitespace-nowrap"
             >
               <DollarSign className="h-4 w-4" />
               Budget
@@ -1275,7 +1275,7 @@ export default function FinQuest() {
               variant={currentView === 'stocks' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('stocks')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 whitespace-nowrap"
             >
               <TrendingUpIcon className="h-4 w-4" />
               Stocks
@@ -1284,7 +1284,7 @@ export default function FinQuest() {
               variant={currentView === 'leaderboard' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentView('leaderboard')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 whitespace-nowrap"
             >
               <Trophy className="h-4 w-4" />
               Leaderboard

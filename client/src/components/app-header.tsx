@@ -6,9 +6,10 @@ interface AppHeaderProps {
   xp: number;
   netWorth: number;
   userName?: string;
+  userAvatar?: string;
 }
 
-export function AppHeader({ level, xp, netWorth, userName }: AppHeaderProps) {
+export function AppHeader({ level, xp, netWorth, userName, userAvatar }: AppHeaderProps) {
   const xpForNextLevel = level * 1000;
   const xpProgress = (xp % xpForNextLevel) / xpForNextLevel * 100;
   
@@ -49,7 +50,7 @@ export function AppHeader({ level, xp, netWorth, userName }: AppHeaderProps) {
           </div>
         </div>
 
-        {/* Right: Net Worth Display (Gamified Status) */}
+        {/* Right: Net Worth Display (Gamified Status) + Avatar */}
         <div className="flex items-center gap-4 flex-shrink-0">
           <div className="text-right hidden sm:block">
             <p className="text-xs text-blue-200/70 font-semibold uppercase tracking-wide">Net Worth</p>
@@ -61,6 +62,11 @@ export function AppHeader({ level, xp, netWorth, userName }: AppHeaderProps) {
           <Badge className="bg-green-500/20 text-green-300 border-green-500/40 text-xs font-semibold px-2 py-1">
             {netWorth > 5000000 ? '🔥 Elite' : netWorth > 1000000 ? '⭐ Rising' : '📈 Growing'}
           </Badge>
+          {userAvatar && (
+            <div className="w-9 h-11 rounded-md overflow-hidden border border-blue-400/40 flex-shrink-0">
+              <img src={userAvatar} alt="User" className="w-full h-full object-cover" />
+            </div>
+          )}
         </div>
       </div>
     </header>

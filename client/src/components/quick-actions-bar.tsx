@@ -22,16 +22,18 @@ export function QuickActionsBar({
   const [expenseAmount, setExpenseAmount] = useState('');
 
   const handleAddIncome = () => {
-    if (incomeAmount) {
-      onAddIncome(parseFloat(incomeAmount));
+    const amount = parseFloat(incomeAmount);
+    if (amount > 0) {
+      onAddIncome(amount);
       setIncomeAmount('');
       setIncomeDialog(false);
     }
   };
 
   const handleAddExpense = () => {
-    if (expenseAmount) {
-      onAddExpense(parseFloat(expenseAmount));
+    const amount = parseFloat(expenseAmount);
+    if (amount > 0) {
+      onAddExpense(amount);
       setExpenseAmount('');
       setExpenseDialog(false);
     }
