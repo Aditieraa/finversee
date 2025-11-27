@@ -391,8 +391,8 @@ export default function BreakTheRace() {
         cash_balance: state.cash || 0,
         passive_income: state.passiveIncome || 0,
         total_expenses: state.totalExpenses || 0,
-        assets: JSON.stringify(state.assets || []),
-        liabilities: JSON.stringify(state.liabilities || []),
+        assets: state.assets || [],
+        liabilities: state.liabilities || [],
         on_fast_track: state.onFastTrack || false,
         has_won: state.hasWon || false,
         level: state.assets.length + 1,
@@ -401,42 +401,19 @@ export default function BreakTheRace() {
         updated_at: new Date().toISOString(),
       };
 
-      // Try upsert first
-      const { error: upsertError } = await supabase
+      // Simple upsert operation
+      const { error } = await supabase
         .from('game_saves')
-        .upsert(saveData);
+        .upsert(saveData, { onConflict: 'user_id' });
 
-      if (upsertError) {
-        // Fallback: Try insert, then update on duplicate
-        const { error: insertError } = await supabase
-          .from('game_saves')
-          .insert([saveData]);
-
-        if (insertError && insertError.code === '23505') {
-          // Duplicate key, do update instead
-          const { error: updateError } = await supabase
-            .from('game_saves')
-            .update(saveData)
-            .eq('user_id', userId);
-
-          if (updateError) {
-            console.error('📊 Update failed:', updateError);
-            toast({ title: 'Save Warning', description: 'Could not save game state. Your progress may be lost if you close the app.', variant: 'destructive' });
-          } else {
-            console.log('📊 Game updated: ' + (state.hasWon ? 'WON! 🏆' : 'In Progress'));
-          }
-        } else if (insertError) {
-          console.error('📊 Insert failed:', insertError);
-          toast({ title: 'Save Warning', description: 'Could not save game state. Your progress may be lost if you close the app.', variant: 'destructive' });
-        } else {
-          console.log('📊 Game saved: ' + (state.hasWon ? 'WON! 🏆' : 'In Progress'));
-        }
+      if (error) {
+        console.error('📊 Save error:', error);
+        // Silent failure - don't show warning repeatedly
       } else {
         console.log('📊 Game saved: ' + (state.hasWon ? 'WON! 🏆' : 'In Progress'));
       }
     } catch (error) {
-      console.error('📊 Save error:', error);
-      toast({ title: 'Save Warning', description: 'Could not save game state. Your progress may be lost if you close the app.', variant: 'destructive' });
+      console.error('📊 Save exception:', error);
     }
   };
 
