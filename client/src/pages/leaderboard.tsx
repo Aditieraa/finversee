@@ -43,11 +43,12 @@ export default function Leaderboard() {
     const fetchLeaderboard = async () => {
       try {
         setLoading(true);
+        // Query game_saves with profile data and order by level
         const { data, error } = await supabase
           .from('game_saves')
-          .select('game_state')
-          .order('game_state->>netWorth', { ascending: false })
-          .limit(10);
+          .select('level, cash_balance, portfolio, user_id, profiles(name, avatar)')
+          .order('level', { ascending: false })
+          .limit(100);
 
         if (error) {
           console.error('Leaderboard fetch error:', error);
@@ -57,16 +58,22 @@ export default function Leaderboard() {
         if (data) {
           const entries: LeaderboardEntry[] = data
             .map((save: any, idx: number) => {
-              const gameState = save.game_state;
+              // Calculate net worth from cash_balance and portfolio
+              const portfolio = save.portfolio || {};
+              const portfolioTotal = Object.values(portfolio).reduce((sum: number, val: any) => sum + (val || 0), 0);
+              const netWorth = (save.cash_balance || 0) + portfolioTotal;
+              
+              const profile = Array.isArray(save.profiles) ? save.profiles[0] : save.profiles;
               return {
-                name: gameState?.userProfile?.name || 'Anonymous',
-                level: gameState?.level || 1,
-                netWorth: gameState?.netWorth || 0,
+                name: profile?.name || 'Anonymous',
+                level: save.level || 1,
+                netWorth,
                 rank: idx + 1,
-                avatar: gameState?.userProfile?.avatar,
+                avatar: profile?.avatar,
               };
             })
-            .filter(entry => entry.netWorth > 0);
+            .filter(entry => entry.level > 0 && entry.netWorth > 0) // Only show players with progress
+            .slice(0, 10); // Top 10
 
           setPlayers(entries);
         }
