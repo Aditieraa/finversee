@@ -46,8 +46,9 @@ export default function Leaderboard() {
         // Query game_saves with profile data and order by level
         const { data, error } = await supabase
           .from('game_saves')
-          .select('level, cash_balance, portfolio, user_id, profiles(name, avatar)')
-          .order('level', { ascending: false })
+          .select('level, cash_balance, portfolio, user_id')
+          .eq('is_latest', true)
+          .order('cash_balance', { ascending: false })
           .limit(100);
 
         if (error) {
@@ -55,7 +56,21 @@ export default function Leaderboard() {
           return;
         }
 
-        if (data) {
+        if (data && data.length > 0) {
+          // Get user profiles for avatars and names
+          const userIds = data.map((save: any) => save.user_id);
+          const { data: profilesData } = await supabase
+            .from('profiles')
+            .select('id, name, avatar')
+            .in('id', userIds);
+
+          // Create profile map by user ID
+          const profileMap = (profilesData || []).reduce((acc: any, profile: any) => {
+            acc[profile.id] = profile;
+            return acc;
+          }, {});
+
+          // Create leaderboard entries
           const entries: LeaderboardEntry[] = data
             .map((save: any, idx: number) => {
               // Calculate net worth from cash_balance and portfolio
@@ -63,10 +78,10 @@ export default function Leaderboard() {
               const portfolioTotal = Object.values(portfolio).reduce((sum: number, val: any) => sum + (val || 0), 0);
               const netWorth = (save.cash_balance || 0) + portfolioTotal;
               
-              const profile = Array.isArray(save.profiles) ? save.profiles[0] : save.profiles;
-              // Map avatar ID to actual avatar image
+              // Get profile info
+              const profile = profileMap[save.user_id];
               const avatarId = profile?.avatar || 'female1';
-              const avatarPath = avatarId ? avatarMap[avatarId] : avatar1;
+              const avatarPath = avatarMap[avatarId] || avatar1;
               
               return {
                 name: profile?.name || 'Anonymous',

@@ -407,19 +407,14 @@ export default function FinQuest() {
       if (savesData && savesData.length > 0) {
         // Get user profiles for names and avatars
         const userIds = savesData.map((save: any) => save.user_id);
-        const { data: profilesData, error: profilesError } = await supabase
+        const { data: profilesData } = await supabase
           .from('profiles')
           .select('id, name, avatar')
           .in('id', userIds);
 
-        if (profilesError) throw profilesError;
-
-        // Create a map of user IDs to profiles with names and avatars
+        // Create a map of user IDs to profiles
         const profileMap = (profilesData || []).reduce((acc: any, profile: any) => {
-          acc[profile.id] = {
-            name: profile.name,
-            avatar: profile.avatar || 'female1'
-          };
+          acc[profile.id] = profile;
           return acc;
         }, {});
 
@@ -430,7 +425,8 @@ export default function FinQuest() {
             const portfolioTotal = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
             const netWorth = (save.cash_balance || 0) + portfolioTotal;
             const profile = profileMap[save.user_id];
-            const avatarPath = profile?.avatar ? avatarMap[profile.avatar] : avatar1;
+            const avatarId = profile?.avatar || 'female1';
+            const avatarPath = avatarMap[avatarId] || avatar1;
             return {
               name: profile?.name || 'Anonymous',
               score: netWorth || 0,
