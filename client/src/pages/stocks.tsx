@@ -203,61 +203,53 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       const { supabase } = await import('@/lib/supabase');
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
+      console.log('📊 Stock Investment - User ID:', userId);
 
-      if (userId) {
-        const { data: latestSave } = await supabase
-          .from('game_saves')
-          .select('id')
-          .eq('user_id', userId)
-          .eq('is_latest', true)
-          .single();
+      if (!userId) {
+        console.error('❌ No user ID found - user may not be authenticated');
+        return;
+      }
 
-        if (latestSave?.id) {
-          // Check if stock already exists for this user
-          const { data: existingStock } = await supabase
-            .from('stocks')
-            .select('id, quantity, buy_price, total_invested')
-            .eq('user_id', userId)
-            .eq('symbol', selectedStockData.symbol)
-            .single();
+      // Get latest game save
+      const { data: latestSave, error: saveError } = await supabase
+        .from('game_saves')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('is_latest', true)
+        .single();
 
-          if (existingStock) {
-            // Update existing stock
-            const newQuantity = existingStock.quantity + shares;
-            const newTotalInvested = existingStock.total_invested + amount;
-            const newAvgPrice = newTotalInvested / newQuantity;
-            const newCurrentValue = newQuantity * buyPrice;
+      console.log('📝 Latest Save:', latestSave, 'Error:', saveError);
 
-            await supabase
-              .from('stocks')
-              .update({
-                quantity: newQuantity,
-                buy_price: newAvgPrice,
-                total_invested: newTotalInvested,
-                current_price: buyPrice,
-                current_value: newCurrentValue,
-                last_updated: new Date().toISOString(),
-              })
-              .eq('id', existingStock.id);
-          } else {
-            // Insert new stock
-            await supabase.from('stocks').insert({
-              user_id: userId,
-              game_save_id: latestSave.id,
-              symbol: selectedStockData.symbol,
-              company_name: selectedStockData.symbol,
-              quantity: shares,
-              buy_price: buyPrice,
-              current_price: buyPrice,
-              total_invested: amount,
-              current_value: amount,
-              purchase_date: new Date().toISOString(),
-            });
-          }
-        }
+      if (!latestSave?.id) {
+        console.error('❌ No game save found for user');
+        return;
+      }
+
+      // Try to insert new stock
+      const { data, error: insertError } = await supabase
+        .from('stocks')
+        .insert({
+          user_id: userId,
+          game_save_id: latestSave.id,
+          symbol: selectedStockData.symbol,
+          company_name: selectedStockData.symbol,
+          quantity: shares,
+          buy_price: buyPrice,
+          current_price: buyPrice,
+          total_invested: amount,
+          current_value: amount,
+          purchase_date: new Date().toISOString(),
+        })
+        .select();
+
+      console.log('✅ Insert Result:', data, 'Error:', insertError);
+
+      if (insertError) {
+        console.error('❌ Stock insert failed:', insertError.message, insertError.details);
+        alert(`Error saving to database: ${insertError.message}`);
       }
     } catch (error) {
-      console.error('Error saving stock to database:', error);
+      console.error('❌ Unexpected error saving stock to database:', error);
     }
 
     setSuccessMessage(`✓ Invested ₹${amount} in ${selectedStockData.symbol}! You now own ${shares.toFixed(2)} shares @ ₹${buyPrice.toFixed(2)}`);
