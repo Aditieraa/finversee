@@ -114,6 +114,25 @@ const OPPORTUNITIES = [
   { name: 'Found Money', effect: 10000, description: 'Money found on the street!' },
 ];
 
+// Sound Effects Manager (placeholder for audio system)
+const playSound = (type: 'dice' | 'card' | 'cash' | 'deal' | 'win') => {
+  try {
+    // Audio system ready for integration
+    // Can be extended with actual audio files
+    const soundMap: Record<string, string> = {
+      dice: 'dice-roll',
+      card: 'card-flip',
+      cash: 'cash-pop',
+      deal: 'deal-success',
+      win: 'victory'
+    };
+    // Sound effect triggered - logs for debugging
+    console.log(`🔊 Sound: ${soundMap[type]}`);
+  } catch (e) {
+    console.log('Sound system ready');
+  }
+};
+
 export default function BreakTheRace() {
   const { toast } = useToast();
   const [userId, setUserId] = useState<string | null>(null);
@@ -124,6 +143,7 @@ export default function BreakTheRace() {
   const [showCardModal, setShowCardModal] = useState(false);
   const [cardData, setCardData] = useState<any>(null);
   const [selectedAssetToSell, setSelectedAssetToSell] = useState<number | null>(null);
+  const [animatingValue, setAnimatingValue] = useState<string | null>(null);
 
   const [gameState, setGameState] = useState<GameState>({
     career: null,
@@ -140,6 +160,14 @@ export default function BreakTheRace() {
   });
 
   const [canBuyDream, setCanBuyDream] = useState(false);
+
+  // Reset animation after 600ms for smooth single animation per action
+  useEffect(() => {
+    if (animatingValue) {
+      const timer = setTimeout(() => setAnimatingValue(null), 600);
+      return () => clearTimeout(timer);
+    }
+  }, [animatingValue]);
 
   useEffect(() => {
     checkAuth();
@@ -184,6 +212,7 @@ export default function BreakTheRace() {
 
   const rollDice = async () => {
     setDiceRolling(true);
+    playSound('dice'); // TEST: Dice sound effect
     await new Promise(r => setTimeout(r, 1000));
     const roll = Math.floor(Math.random() * 6) + 1;
     setDiceRolling(false);
@@ -198,13 +227,17 @@ export default function BreakTheRace() {
     const space = BOARD_SPACES[position];
     
     if (space === 'payday') {
+      // TEST: Salaries add correctly
       const salary = gameState.userProfile ? CAREERS[gameState.userProfile.career].salary : 0;
       const tax = Math.round(salary * 0.1);
       const totalIncome = salary + gameState.passiveIncome - gameState.totalExpenses - tax;
+      setAnimatingValue('cash');
+      playSound('cash');
       setGameState(prev => ({ ...prev, cash: prev.cash + totalIncome }));
       toast({ title: '💰 Payday!', description: `Salary: ₹${salary.toLocaleString('en-IN')} | Tax: -₹${tax.toLocaleString('en-IN')} | Net: +₹${totalIncome.toLocaleString('en-IN')}` });
     } else if (space === 'smalldeal') {
       const deal = SMALL_DEALS[Math.floor(Math.random() * SMALL_DEALS.length)];
+      playSound('card');
       setCardData({ type: 'deal', ...deal });
       setShowCardModal(true);
     } else if (space === 'bigdeal') {
@@ -213,6 +246,7 @@ export default function BreakTheRace() {
         return;
       }
       const deal = BIG_DEALS[Math.floor(Math.random() * BIG_DEALS.length)];
+      playSound('card');
       setCardData({ type: 'bigdeal', ...deal });
       setShowCardModal(true);
     } else if (space === 'doodad') {
@@ -226,7 +260,10 @@ export default function BreakTheRace() {
       setGameState(prev => ({ ...prev, cash: Math.max(0, prev.cash - doodad.cost) }));
       toast({ title: '⚠️ Oops!', description: `${doodad.name}: -₹${doodad.cost.toLocaleString('en-IN')}`, variant: 'destructive' });
     } else if (space === 'market') {
+      // TEST: Market cards can modify assets
       const card = MARKET_CARDS[Math.floor(Math.random() * MARKET_CARDS.length)];
+      playSound('card');
+      setAnimatingValue('cash');
       setGameState(prev => ({ ...prev, cash: prev.cash + card.effect }));
       toast({ title: '📊 Market Event', description: `${card.name}: ${card.effect > 0 ? '+' : ''}₹${card.effect.toLocaleString('en-IN')}` });
     } else if (space === 'charity') {
@@ -258,6 +295,9 @@ export default function BreakTheRace() {
     const newAsset: Asset = { type: 'realestate', name, cost: adjustedCost, passiveIncome: adjustedIncome, value: adjustedCost };
     const newPassiveIncome = gameState.passiveIncome + adjustedIncome;
 
+    playSound('deal');
+    setAnimatingValue('passive');
+    
     setGameState(prev => ({
       ...prev,
       cash: prev.cash - adjustedCost,
@@ -266,6 +306,7 @@ export default function BreakTheRace() {
     }));
 
     setShowCardModal(false);
+    // TEST: Passive income updates after buying an asset
     const multiplierText = isFastTrack ? ' (🚀 Fast Track 10x!)' : '';
     toast({ title: '✅ Purchased!', description: `${name}${multiplierText} - Passive income: ₹${adjustedIncome.toLocaleString('en-IN')}/month` });
 
@@ -275,12 +316,15 @@ export default function BreakTheRace() {
   };
 
   const checkEscapeRatRace = () => {
+    // TEST: Rat race → fast track switch
     if (gameState.passiveIncome >= gameState.totalExpenses && !gameState.onFastTrack) {
       setGameState(prev => ({ ...prev, onFastTrack: true }));
+      playSound('deal');
       confetti();
       toast({ title: '🚀 You Escaped the Rat Race!', description: 'Welcome to the Fast Track! (10x multiplier on deals)' });
     }
 
+    // TEST: Winning condition triggers correctly
     const dreamThreshold = gameState.totalExpenses + 400000;
     if (gameState.passiveIncome >= dreamThreshold && gameState.onFastTrack) {
       setCanBuyDream(true);
@@ -289,6 +333,7 @@ export default function BreakTheRace() {
   };
 
   const buyYourDream = async () => {
+    playSound('win');
     setGameState(prev => ({ ...prev, hasWon: true }));
     confetti();
     await saveGameState({ ...gameState, hasWon: true });
@@ -422,11 +467,11 @@ export default function BreakTheRace() {
         <div className="container mx-auto p-4 pb-24">
           {/* Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <Card className="border-primary/30 glassmorphic p-4">
+            <Card className={`border-primary/30 glassmorphic p-4 ${animatingValue === 'cash' ? 'animate-pulse-scale' : ''}`}>
               <div className="text-sm text-foreground/70">Cash on Hand</div>
               <div className="text-2xl font-bold text-primary">₹{gameState.cash.toLocaleString('en-IN')}</div>
             </Card>
-            <Card className="border-primary/30 glassmorphic p-4">
+            <Card className={`border-primary/30 glassmorphic p-4 ${animatingValue === 'passive' ? 'animate-pulse-scale' : ''}`}>
               <div className="text-sm text-foreground/70">Passive Income</div>
               <div className="text-2xl font-bold text-green-400">₹{gameState.passiveIncome.toLocaleString('en-IN')}</div>
             </Card>
