@@ -6,9 +6,9 @@ export default {
   theme: {
     extend: {
       borderRadius: {
-        lg: ".5625rem", /* 9px */
-        md: ".375rem", /* 6px */
-        sm: ".1875rem", /* 3px */
+        lg: ".75rem", /* 12px - modern rounded */
+        md: ".625rem", /* 10px - subtle rounded */
+        sm: ".375rem", /* 6px - light rounded */
       },
       colors: {
         // Flat / base colors (regular buttons)
@@ -117,6 +117,9 @@ export default {
         "slide-in": "slide-in 0.3s ease-out",
       },
       boxShadow: {
+        'subtle': '0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)',
+        'card': '0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)',
+        'card-hover': '0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.08)',
         'neon-cyan': '0 0 20px rgba(0, 229, 255, 0.5), 0 0 40px rgba(0, 229, 255, 0.2)',
         'neon-purple': '0 0 20px rgba(157, 75, 255, 0.5), 0 0 40px rgba(157, 75, 255, 0.2)',
         'neon-pink': '0 0 20px rgba(255, 45, 174, 0.5), 0 0 40px rgba(255, 45, 174, 0.2)',

@@ -10,14 +10,14 @@ interface DashboardProps {
 }
 
 const CHART_COLORS = {
-  sip: '#A5D6A7',
-  stocks: '#FFD54F',
-  gold: '#FFAB91',
-  realEstate: '#CE93D8',
-  savings: '#80DEEA',
-  income: '#BA68C8',
-  expenses: '#FF8C42',
-  net: '#64B5F6',
+  sip: '#4CAF50',      /* Vibrant Green */
+  stocks: '#42A5F5',   /* Accent Blue */
+  gold: '#FFB74D',     /* Warm Amber */
+  realEstate: '#CE93D8', /* Modern Purple */
+  savings: '#29B6F6',  /* Sky Blue */
+  income: '#66BB6A',   /* Green */
+  expenses: '#E53935', /* Warning Red */
+  net: '#42A5F5',      /* Accent Blue */
 };
 
 export default function Dashboard({ gameState, monthlyDecisions }: DashboardProps) {
@@ -136,38 +136,54 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Money Flow Chart */}
-        <Card className="border-blue-400/20 bg-blue-950/40 backdrop-blur-sm p-6">
-          <h3 className="text-lg font-bold text-white mb-4">Monthly Cash Flow</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={monthlyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
-              <XAxis stroke="rgba(149, 165, 166, 0.6)" />
-              <YAxis stroke="rgba(149, 165, 166, 0.6)" />
-              <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(52, 152, 219, 0.3)' }} />
-              <Legend />
-              <Line type="monotone" dataKey="income" stroke="#BA68C8" strokeWidth={2.5} />
-              <Line type="monotone" dataKey="expenses" stroke="#FF8C42" strokeWidth={2.5} />
-              <Line type="monotone" dataKey="net" stroke="#64B5F6" strokeWidth={2.5} />
-            </LineChart>
+        {/* Money Flow Chart - Area Chart with Gradient */}
+        <Card className="border-blue-400/20 bg-blue-950/40 backdrop-blur-sm p-6 shadow-card">
+          <h3 className="text-xl font-bold text-white mb-1">Monthly Cash Flow</h3>
+          <p className="text-sm text-blue-200/60 mb-4">Income, Expenses & Net Savings</p>
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={monthlyData}>
+              <defs>
+                <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#66BB6A" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#66BB6A" stopOpacity={0.01} />
+                </linearGradient>
+                <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#E53935" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#E53935" stopOpacity={0.01} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.15)" vertical={false} />
+              <XAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
+              <YAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
+              <Tooltip contentStyle={{ backgroundColor: '#1A237E', border: '1px solid rgba(66, 165, 245, 0.3)', borderRadius: '8px' }} />
+              <Area type="monotoneX" dataKey="income" stroke="#66BB6A" strokeWidth={2} fillOpacity={1} fill="url(#colorIncome)" />
+              <Area type="monotoneX" dataKey="expenses" stroke="#E53935" strokeWidth={2} fillOpacity={1} fill="url(#colorExpenses)" />
+            </AreaChart>
           </ResponsiveContainer>
         </Card>
 
-        {/* Portfolio Breakdown Bar */}
-        <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6">
-          <h3 className="text-lg font-bold text-white mb-4">Portfolio Breakdown</h3>
+        {/* Portfolio Breakdown Bar - Gradient Bars */}
+        <Card className="border-purple-400/20 bg-purple-950/40 backdrop-blur-sm p-6 shadow-card">
+          <h3 className="text-xl font-bold text-white mb-1">Portfolio Breakdown</h3>
+          <p className="text-sm text-purple-200/60 mb-4">Asset allocation across categories</p>
           {categoryData.every(item => item.value === 0) ? (
-            <div className="h-64 flex items-center justify-center">
+            <div className="h-72 flex items-center justify-center">
               <p className="text-purple-300/60 text-center">No investments yet. Start investing to see your portfolio breakdown!</p>
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={280}>
               <BarChart data={categoryData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
-                <XAxis type="number" stroke="rgba(149, 165, 166, 0.6)" />
-                <YAxis dataKey="name" type="category" stroke="rgba(149, 165, 166, 0.6)" width={80} />
-                <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(155, 89, 182, 0.3)' }} formatter={(value) => `₹${value.toLocaleString('en-IN')}`} />
-                <Bar dataKey="value" fill="#3498DB" radius={[0, 8, 8, 0]}>
+                <defs>
+                  <linearGradient id="gradient1" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#4CAF50" stopOpacity={0.8} />
+                    <stop offset="100%" stopColor="#66BB6A" stopOpacity={1} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.15)" horizontal={false} />
+                <XAxis type="number" stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
+                <YAxis dataKey="name" type="category" stroke="rgba(160, 180, 204, 0.4)" width={80} style={{ fontSize: '12px' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#1A237E', border: '1px solid rgba(66, 165, 245, 0.3)', borderRadius: '8px' }} formatter={(value) => `₹${value.toLocaleString('en-IN')}`} />
+                <Bar dataKey="value" fill="#42A5F5" radius={[0, 10, 10, 0]}>
                   {categoryData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -178,8 +194,9 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
         </Card>
 
         {/* Trend Analysis */}
-        <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-6">
-          <h3 className="text-lg font-bold text-white mb-4">Financial Trends</h3>
+        <Card className="border-cyan-400/20 bg-cyan-950/40 backdrop-blur-sm p-6 shadow-card">
+          <h3 className="text-xl font-bold text-white mb-1">Financial Trends</h3>
+          <p className="text-sm text-cyan-200/60 mb-4">Performance metrics & indicators</p>
           <div className="space-y-4 mb-4">
             <div>
               <div className="flex justify-between mb-2">
@@ -205,16 +222,23 @@ export default function Dashboard({ gameState, monthlyDecisions }: DashboardProp
           </div>
         </Card>
 
-        {/* Spending Pattern */}
-        <Card className="border-green-400/20 bg-green-950/40 backdrop-blur-sm p-6">
-          <h3 className="text-lg font-bold text-white mb-4">Weekly Spending Pattern</h3>
-          <ResponsiveContainer width="100%" height={250}>
+        {/* Spending Pattern - Gradient Area Chart */}
+        <Card className="border-green-400/20 bg-green-950/40 backdrop-blur-sm p-6 shadow-card">
+          <h3 className="text-xl font-bold text-white mb-1">Weekly Spending Pattern</h3>
+          <p className="text-sm text-green-200/60 mb-4">Daily spending trends</p>
+          <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={spendingData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(149, 165, 166, 0.2)" />
-              <XAxis stroke="rgba(149, 165, 166, 0.6)" />
-              <YAxis stroke="rgba(149, 165, 166, 0.6)" />
-              <Tooltip contentStyle={{ backgroundColor: '#1F2937', border: '1px solid rgba(46, 204, 113, 0.3)' }} />
-              <Area type="monotone" dataKey="spending" stroke="#BA68C8" fill="rgba(186, 104, 200, 0.15)" />
+              <defs>
+                <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#FFC107" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#FFC107" stopOpacity={0.01} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 150, 200, 0.15)" vertical={false} />
+              <XAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
+              <YAxis stroke="rgba(160, 180, 204, 0.4)" style={{ fontSize: '12px' }} />
+              <Tooltip contentStyle={{ backgroundColor: '#1A237E', border: '1px solid rgba(66, 165, 245, 0.3)', borderRadius: '8px' }} />
+              <Area type="monotoneX" dataKey="spending" stroke="#FFB74D" strokeWidth={2} fillOpacity={1} fill="url(#colorSpending)" />
             </AreaChart>
           </ResponsiveContainer>
         </Card>
