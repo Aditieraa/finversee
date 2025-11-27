@@ -72,11 +72,12 @@ export default function Dashboard({
     }
     
     const total = gameState.stockHoldings.reduce((sum: number, h: any) => sum + (h.investmentAmount || 0), 0);
+    const colors = Object.values(CHART_COLORS);
     return gameState.stockHoldings.map((holding: any, idx: number) => ({
       name: holding.symbol,
       value: holding.investmentAmount || 0,
       percentage: total > 0 ? (((holding.investmentAmount || 0) / total) * 100).toFixed(1) : 0,
-      color: CHART_COLORS[idx % 8] || '#42A5F5',
+      color: colors[idx % colors.length],
     }));
   };
 
@@ -394,7 +395,7 @@ export default function Dashboard({
                   </div>
                   
                   <div className="space-y-2">
-                    {donutData.map((item, idx) => (
+                    {donutData.map((item: any, idx: number) => (
                       <div 
                         key={idx} 
                         className="flex items-center gap-2 p-2 rounded-lg bg-purple-900/20 hover-elevate cursor-pointer transition-all text-xs"

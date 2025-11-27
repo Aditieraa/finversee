@@ -43,12 +43,11 @@ export default function Leaderboard() {
     const fetchLeaderboard = async () => {
       try {
         setLoading(true);
-        // Query game_saves with profile data and order by level
+        // Query leaderboard_view (properly ranked data) ordered by XP descending
         const { data, error } = await supabase
-          .from('game_saves')
-          .select('level, cash_balance, portfolio, user_id')
-          .eq('is_latest', true)
-          .order('cash_balance', { ascending: false })
+          .from('leaderboard_view')
+          .select('user_id, level, xp, cash_balance, net_worth')
+          .order('xp', { ascending: false })
           .limit(100);
 
         if (error) {
@@ -58,7 +57,7 @@ export default function Leaderboard() {
 
         if (data && data.length > 0) {
           // Get user profiles for avatars and names
-          const userIds = data.map((save: any) => save.user_id);
+          const userIds = data.map((entry: any) => entry.user_id);
           const { data: profilesData } = await supabase
             .from('profiles')
             .select('id, name, avatar')
@@ -72,26 +71,21 @@ export default function Leaderboard() {
 
           // Create leaderboard entries
           const entries: LeaderboardEntry[] = data
-            .map((save: any, idx: number) => {
-              // Calculate net worth from cash_balance and portfolio
-              const portfolio = save.portfolio || {};
-              const portfolioTotal = Object.values(portfolio).reduce((sum: number, val: any) => sum + (val || 0), 0);
-              const netWorth = (save.cash_balance || 0) + portfolioTotal;
-              
+            .map((entry: any, idx: number) => {
               // Get profile info
-              const profile = profileMap[save.user_id];
+              const profile = profileMap[entry.user_id];
               const avatarId = profile?.avatar || 'female1';
               const avatarPath = avatarMap[avatarId] || avatar1;
               
               return {
                 name: profile?.name || 'Anonymous',
-                level: save.level || 1,
-                netWorth,
+                level: entry.level || 1,
+                netWorth: entry.net_worth || 0,
                 rank: idx + 1,
-                avatar: avatarPath,  // Use actual avatar image path
+                avatar: avatarPath,
               };
             })
-            .filter(entry => entry.level > 0 && entry.netWorth > 0) // Only show players with progress
+            .filter(entry => entry.level > 0) // Show all players with any level
             .slice(0, 10); // Top 10
 
           setPlayers(entries);
