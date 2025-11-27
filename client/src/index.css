@@ -177,6 +177,26 @@
     @apply hidden;
   }
 
+  input::placeholder {
+    color: #3a4556 !important;
+    opacity: 0.9 !important;
+  }
+
+  input::-webkit-input-placeholder {
+    color: #3a4556 !important;
+    opacity: 0.9 !important;
+  }
+
+  input:-moz-placeholder {
+    color: #3a4556 !important;
+    opacity: 0.9 !important;
+  }
+
+  input::-moz-placeholder {
+    color: #3a4556 !important;
+    opacity: 0.9 !important;
+  }
+
   [contenteditable][data-placeholder]:empty::before {
     content: attr(data-placeholder);
     color: hsl(var(--muted-foreground));
