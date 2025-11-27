@@ -262,6 +262,25 @@ export default function Dashboard({
               </AreaChart>
             </ResponsiveContainer>
           </Card>
+
+          {/* Toggle Button - Toggle Switch Style */}
+          {!quickActionsOpen && (
+            <div className="flex justify-start">
+              <button
+                onClick={onToggleQuickActions}
+                className="relative inline-flex h-8 w-20 items-center rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 shadow-lg hover:shadow-2xl transition-all hover:scale-105 border border-purple-300/50 overflow-hidden group"
+                data-testid="button-toggle-actions"
+              >
+                {/* Star decoration */}
+                <span className="absolute left-1 top-0.5 w-1 h-1 rounded-full bg-purple-200/40 group-hover:bg-purple-200/60 transition-colors" />
+                <span className="absolute left-8 -top-0.5 w-0.5 h-0.5 rounded-full bg-pink-200/40 group-hover:bg-pink-200/60 transition-colors" />
+                <span className="absolute left-4 bottom-1 w-0.5 h-0.5 rounded-full bg-purple-200/30 group-hover:bg-purple-200/50 transition-colors" />
+                
+                {/* White circle - toggle indicator */}
+                <span className="inline-flex h-7 w-7 transform rounded-full bg-white shadow-lg transition-transform duration-300 group-hover:shadow-xl ml-0.5 flex-shrink-0" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right: Persistent Right-Hand Rail */}

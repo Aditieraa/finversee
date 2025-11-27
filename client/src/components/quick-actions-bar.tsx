@@ -98,17 +98,6 @@ export function QuickActionsBar({
       </div>
       )}
 
-      {/* Toggle Button - always visible */}
-      {!isOpen && (
-        <Button
-          size="icon"
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 h-16 w-16 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 hover:from-blue-500 hover:via-blue-600 hover:to-blue-700 rounded-full shadow-2xl transition-all hover:scale-110 flex items-center justify-center border border-blue-300/50"
-          onClick={onToggle}
-          data-testid="button-toggle-actions"
-        >
-          <Plus className="h-7 w-7 text-white" />
-        </Button>
-      )}
 
       {/* Income Dialog */}
       <Dialog open={incomeDialog} onOpenChange={setIncomeDialog}>
