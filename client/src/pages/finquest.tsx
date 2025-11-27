@@ -123,6 +123,7 @@ interface GameState {
   lastLoginDate: string;
   consecutiveLogins: number;
   monthlyInvestments: { sip: number; stocks: number; gold: number; realEstate: number; savings: number };
+  monthlyExpensesThisMonth?: number;
 }
 
 const CAREER_DATA: Record<Career, { salary: number; expenses: number }> = {
@@ -174,6 +175,7 @@ export default function FinQuest() {
     lastLoginDate: new Date().toISOString().split('T')[0],
     consecutiveLogins: 1,
     monthlyInvestments: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
+    monthlyExpensesThisMonth: 0,
   });
 
   const [onboarding, setOnboarding] = useState({
@@ -809,6 +811,7 @@ export default function FinQuest() {
         ],
         xp: newXP,
         level: newLevel,
+        monthlyExpensesThisMonth: 0,
       };
     });
 
