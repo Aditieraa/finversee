@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import breakTheRaceLogoUrl from '@assets/image_1764247647876.png';
 import {
   Dices,
   Trophy,
@@ -387,7 +388,10 @@ export default function BreakTheRace() {
           </Card>
         </div>
       ) : !gameState.career ? (
-        <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-4">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-4">
+          <div className="mb-8">
+            <img src={breakTheRaceLogoUrl} alt="Break The Race" className="w-48 h-48 object-contain" />
+          </div>
           <Card className="border-primary/30 glassmorphic p-8 max-w-4xl w-full">
             <h1 className="text-3xl font-bold text-primary mb-2 text-center">Choose Your Career</h1>
             <p className="text-foreground/70 text-center mb-8">Select a career to start your journey to financial freedom</p>
@@ -409,6 +413,11 @@ export default function BreakTheRace() {
         </div>
       ) : (
         <div className="container mx-auto p-4 pb-8">
+          {/* Game Logo Header */}
+          <div className="flex justify-center mb-8">
+            <img src={breakTheRaceLogoUrl} alt="Break The Race" className="w-32 h-32 object-contain" />
+          </div>
+
           {/* Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <Card className="border-primary/30 glassmorphic p-4">
