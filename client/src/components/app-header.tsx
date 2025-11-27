@@ -10,9 +10,12 @@ const formatNetWorth = (value: number): string => {
   } else if (value >= 100000) {
     // Lakhs (1 L = 100,000)
     return `₹${(value / 100000).toFixed(1)}L`;
+  } else if (value >= 1000) {
+    // Thousands (K)
+    return `₹${(value / 1000).toFixed(1)}K`;
   } else {
-    // Regular format with commas
-    return `₹${Math.round(value).toLocaleString('en-IN')}`;
+    // Regular format for hundreds and below
+    return `₹${Math.round(value)}`;
   }
 };
 
