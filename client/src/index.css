@@ -4,51 +4,29 @@
 
 @layer base {
   :root {
-    --primary: 26 27 126;
-    --primary-foreground: 255 255 255;
-    --secondary: 66 165 245;
+    /* Light Theme - Original Colors */
+    --primary: 176 190 197;
+    --primary-foreground: 26 26 26;
+    --secondary: 100 150 200;
     --secondary-foreground: 255 255 255;
     --destructive: 229 57 53;
     --destructive-foreground: 255 255 255;
-    --muted: 160 180 204;
-    --muted-foreground: 160 180 204;
-    --accent: 66 165 245;
-    --accent-foreground: 255 255 255;
-    --background: 14 20 47;
-    --foreground: 230 241 255;
-    --card: 26 35 126;
-    --card-foreground: 230 241 255;
-    --popover: 26 35 126;
-    --popover-foreground: 230 241 255;
-    --input: 26 35 126;
-    --input-foreground: 230 241 255;
-    --border: 42 165 245;
-    --ring: 66 165 245;
+    --muted: 180 180 180;
+    --muted-foreground: 80 80 80;
+    --accent: 0 229 255;
+    --accent-foreground: 26 26 26;
+    --background: 197 217 232;
+    --foreground: 26 26 26;
+    --card: 220 230 240;
+    --card-foreground: 26 26 26;
+    --popover: 240 245 250;
+    --popover-foreground: 26 26 26;
+    --input: 160 130 109;
+    --input-foreground: 255 255 255;
+    --border: 176 190 197;
+    --ring: 0 229 255;
 
-    color-scheme: dark;
-  }
-
-  .dark {
-    --primary: 26 27 126;
-    --primary-foreground: 255 255 255;
-    --secondary: 66 165 245;
-    --secondary-foreground: 255 255 255;
-    --destructive: 229 57 53;
-    --destructive-foreground: 255 255 255;
-    --muted: 160 180 204;
-    --muted-foreground: 160 180 204;
-    --accent: 66 165 245;
-    --accent-foreground: 255 255 255;
-    --background: 14 20 47;
-    --foreground: 230 241 255;
-    --card: 26 35 126;
-    --card-foreground: 230 241 255;
-    --popover: 26 35 126;
-    --popover-foreground: 230 241 255;
-    --input: 26 35 126;
-    --input-foreground: 230 241 255;
-    --border: 42 165 245;
-    --ring: 66 165 245;
+    color-scheme: light;
   }
 
   html {
@@ -62,7 +40,7 @@
 
 @layer components {
   .glassmorphic {
-    @apply bg-gradient-to-br from-blue-950/40 to-blue-900/20 backdrop-blur-md border border-blue-600/30;
+    @apply bg-white/60 backdrop-blur-md border border-white/40;
   }
 
   .card-interactive {
@@ -70,19 +48,19 @@
   }
 
   .hover-elevate {
-    @apply transition-all hover:shadow-lg hover:shadow-blue-500/20;
+    @apply transition-all hover:shadow-lg hover:shadow-blue-300/30;
   }
 
   .active-elevate-2 {
-    @apply active:shadow-2xl active:shadow-blue-600/30;
+    @apply active:shadow-2xl active:shadow-blue-400/40;
   }
 
   .neon-glow {
-    @apply shadow-lg shadow-blue-500/50;
+    @apply shadow-lg shadow-blue-300/50;
   }
 
   .interactive-hover {
-    @apply hover:bg-blue-600/30 transition-colors;
+    @apply hover:bg-blue-200/30 transition-colors;
   }
 
   .achievement-pop {
@@ -94,7 +72,7 @@
   }
 
   .shadow-card {
-    @apply shadow-lg shadow-black/30;
+    @apply shadow-lg shadow-black/10;
   }
 
   .scrollbar-hide {
@@ -119,7 +97,7 @@
   }
 
   .toggle-elevated {
-    @apply shadow-lg shadow-blue-400/40 bg-blue-500/20;
+    @apply shadow-lg shadow-cyan-400/40 bg-cyan-400/20;
   }
 }
 
@@ -138,11 +116,11 @@
   @keyframes glow {
     0%, 100% {
       opacity: 1;
-      text-shadow: 0 0 10px rgba(66, 165, 245, 0.5);
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
     }
     50% {
       opacity: 0.8;
-      text-shadow: 0 0 20px rgba(66, 165, 245, 0.8);
+      text-shadow: 0 0 20px rgba(0, 229, 255, 0.8);
     }
   }
 
@@ -211,11 +189,11 @@
   @keyframes cardLift {
     from {
       transform: translateY(0);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     }
     to {
       transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(66, 165, 245, 0.2);
+      box-shadow: 0 12px 32px rgba(0, 229, 255, 0.1);
     }
   }
 
