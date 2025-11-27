@@ -182,6 +182,11 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       updatedHoldings = [...holdings, newHolding];
     }
 
+    // Calculate final average buy price for database
+    const finalAvgBuyPrice = existingIndex >= 0 
+      ? (holdings[existingIndex].investmentAmount + amount) / (holdings[existingIndex].shares + shares)
+      : buyPrice;
+
     // Update cash balance and portfolio
     const newCashBalance = Math.max(0, gameState.cashBalance - amount);
     const newPortfolioStocks = gameState.portfolio.stocks + amount;
@@ -218,14 +223,19 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
 
           if (existingStock) {
             // Update existing stock
+            const newQuantity = existingStock.quantity + shares;
+            const newTotalInvested = existingStock.total_invested + amount;
+            const newAvgPrice = newTotalInvested / newQuantity;
+            const newCurrentValue = newQuantity * buyPrice;
+
             await supabase
               .from('stocks')
               .update({
-                quantity: existingStock.quantity + shares,
-                buy_price: avgBuyPrice,
-                total_invested: existingStock.total_invested + amount,
+                quantity: newQuantity,
+                buy_price: newAvgPrice,
+                total_invested: newTotalInvested,
                 current_price: buyPrice,
-                current_value: (existingStock.quantity + shares) * buyPrice,
+                current_value: newCurrentValue,
                 last_updated: new Date().toISOString(),
               })
               .eq('id', existingStock.id);

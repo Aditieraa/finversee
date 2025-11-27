@@ -974,7 +974,7 @@ export default function FinQuest() {
       monthlyInvestments: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
     });
 
-    setOnboarding({ active: true, step: 1, name: '', career: '' });
+    setOnboarding({ active: true, step: 1, name: '', career: '', salary: '', expenses: '', avatar: 'female1' });
     setGameOver(null);
 
     if (userId && userId !== 'guest') {
