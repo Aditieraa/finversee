@@ -289,28 +289,21 @@ export default function FinQuest() {
         xp: gameState.xp,
         current_month: gameState.currentMonth,
         cash_balance: gameState.cashBalance,
-        gold_coins: gameState.goldCoins,
         portfolio: gameState.portfolio,
         achievements: gameState.achievements,
         financial_goal: gameState.financialGoal || 5000000,
         goal_progress: gameState.financialGoal ? (netWorth / gameState.financialGoal) * 100 : 0,
         monthly_investments: gameState.monthlyInvestments,
         is_latest: true,
+        updated_at: new Date().toISOString(),
       };
 
       console.log('💾 Attempting to save game state:', { userId, ...saveData });
 
-      // First mark old saves as not latest
-      await supabase
-        .from('game_saves')
-        .update({ is_latest: false })
-        .eq('user_id', userId)
-        .eq('is_latest', true);
-
-      // Then insert new save
+      // Upsert: update if exists, insert if new
       const { data, error } = await supabase
         .from('game_saves')
-        .insert([saveData]);
+        .upsert(saveData, { onConflict: 'user_id' });
 
       if (error) {
         console.error('❌ Save failed:', {
@@ -433,7 +426,7 @@ export default function FinQuest() {
           xp: data.xp,
           currentMonth: data.current_month,
           cashBalance: data.cash_balance,
-          goldCoins: data.gold_coins || 50000,
+          goldCoins: 50000,
           portfolio: data.portfolio,
           achievements: data.achievements,
           financialGoal: data.financial_goal,
@@ -630,7 +623,6 @@ export default function FinQuest() {
             xp: newGameState.xp,
             current_month: newGameState.currentMonth,
             cash_balance: newGameState.cashBalance,
-            gold_coins: newGameState.goldCoins,
             portfolio: newGameState.portfolio,
             achievements: newGameState.achievements,
             financial_goal: 5000000,

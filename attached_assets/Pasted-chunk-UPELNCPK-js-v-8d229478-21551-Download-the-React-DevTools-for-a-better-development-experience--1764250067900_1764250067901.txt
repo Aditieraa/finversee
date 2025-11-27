@@ -1,0 +1,27 @@
+chunk-UPELNCPK.js?v=8d229478:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+(index):1 Uncaught (in promise) ObjectUnderstand this error
+content.js:10 Mapify:warn Element not found for selector: 'mapify-window'
+log @ content.js:10Understand this warning
+jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves?select=*&user_id=eq.3d22cade-6976-4f0f-bc8f-6f409ec5a99a&is_latest=eq.true:1  Failed to load resource: the server responded with a status of 406 ()Understand this error
+jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves:1  Failed to load resource: the server responded with a status of 400 ()Understand this error
+finquest.tsx:643 Error saving game state after onboarding: Object
+completeOnboarding @ finquest.tsx:643Understand this error
+finquest.tsx:301 💾 Attempting to save game state: {userId: '3d22cade-6976-4f0f-bc8f-6f409ec5a99a', user_id: '3d22cade-6976-4f0f-bc8f-6f409ec5a99a', level: 1, xp: 0, current_month: 1, …}achievements: (6) [{…}, {…}, {…}, {…}, {…}, {…}]cash_balance: 0current_month: 1financial_goal: 5000000goal_progress: 0gold_coins: 50000is_latest: truelevel: 1monthly_investments: {sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0}portfolio: {sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0}userId: "3d22cade-6976-4f0f-bc8f-6f409ec5a99a"user_id: "3d22cade-6976-4f0f-bc8f-6f409ec5a99a"xp: 0[[Prototype]]: Object
+@supabase_supabase-js.js?v=8d229478:6859  POST https://jswgmgqfksskqhmsinvs.supabase.co/rest/v1/game_saves?columns=%22user_id%22%2C%22level%22%2C%22xp%22%2C%22current_month%22%2C%22cash_balance%22%2C%22gold_coins%22%2C%22portfolio%22%2C%22achievements%22%2C%22financial_goal%22%2C%22goal_progress%22%2C%22monthly_investments%22%2C%22is_latest%22 400 (Bad Request)
+(anonymous) @ @supabase_supabase-js.js?v=8d229478:6859
+(anonymous) @ @supabase_supabase-js.js?v=8d229478:6877
+await in (anonymous)
+then @ @supabase_supabase-js.js?v=8d229478:111Understand this error
+finquest.tsx:316 ❌ Save failed: {code: 'PGRST204', message: "Could not find the 'gold_coins' column of 'game_saves' in the schema cache", details: null, hint: null, userId: '3d22cade-6976-4f0f-bc8f-6f409ec5a99a'}
+saveGameState @ finquest.tsx:316
+await in saveGameState
+(anonymous) @ finquest.tsx:251Understand this error
+finquest.tsx:352 ❌ Final Save error: {code: 'PGRST204', details: null, hint: null, message: "Could not find the 'gold_coins' column of 'game_saves' in the schema cache"}
+saveGameState @ finquest.tsx:352
+await in saveGameState
+(anonymous) @ finquest.tsx:251Understand this error
+finquest.tsx:353 Error message: Could not find the 'gold_coins' column of 'game_saves' in the schema cache
+saveGameState @ finquest.tsx:353
+await in saveGameState
+(anonymous) @ finquest.tsx:251Understand this error
+finquest.tsx:354 Error details:
