@@ -46,18 +46,23 @@ export default function Dashboard({
   // Generate chart data from game state
   const generateMonthlyData = (months: number) => {
     const data = [];
-    const displayMonths = Math.min(months, gameState.currentMonth, 12);
-    for (let i = 1; i <= displayMonths; i++) {
+    // Always show requested months for better visualization (not limited by currentMonth)
+    for (let i = 1; i <= months; i++) {
       // Show actual monthly expenses (tracked from Quick Actions) or profile expenses if no tracked expenses
-      const monthlyExpenses = i === displayMonths ? (gameState.monthlyExpensesThisMonth || gameState.userProfile?.expenses || 0) : (gameState.userProfile?.expenses || 0);
+      const monthlyExpenses = i === gameState.currentMonth ? (gameState.monthlyExpensesThisMonth || gameState.userProfile?.expenses || 0) : (gameState.userProfile?.expenses || 0);
+      const salary = gameState.userProfile?.salary || 0;
       data.push({
         month: `M${i}`,
-        income: gameState.userProfile?.salary || 0,
+        income: salary,
         expenses: monthlyExpenses,
-        net: (gameState.userProfile?.salary || 0) - monthlyExpenses,
+        net: salary - monthlyExpenses,
       });
     }
-    return data;
+    return data.length > 0 ? data : [
+      { month: 'M1', income: 0, expenses: 0, net: 0 },
+      { month: 'M2', income: 0, expenses: 0, net: 0 },
+      { month: 'M3', income: 0, expenses: 0, net: 0 },
+    ];
   };
 
   const generateCategoryData = () => {
