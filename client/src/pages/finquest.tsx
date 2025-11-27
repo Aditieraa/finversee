@@ -614,19 +614,21 @@ export default function FinQuest() {
       }
     }
 
+    const cashAvailable = salary - expenses;
+    
     const newGameState = {
       currentMonth: 1,
       currentYear: 2025,
-      cashBalance: 0,
+      cashBalance: cashAvailable,
       goldCoins: 50000,
-      netWorth: initialCash,
+      netWorth: cashAvailable,
       userProfile: profile,
       portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
       stockHoldings: [],
       chatHistory: [
         {
           role: 'ai' as const,
-          content: `🎮 Welcome to FinVerse, ${onboarding.name}! I'm Aura Twin, your AI financial mentor 🤖\n\n✨ Your monthly salary is ₹${initialCash.toLocaleString('en-IN')} - that's your cash available for real investments!\n\n🏦 Real Budget: Your ₹${initialCash.toLocaleString('en-IN')} is tracked in Dashboard, Stocks, and Analytics. Invest it wisely!\n\n🎮 Game World: Use your 50,000 gold coins in FinQuest for gamified investing and learning!\n\nI'm here to guide you toward your financial freedom goal of ₹50,00,000.\n\nLet's build wealth together! 💪`,
+          content: `🎮 Welcome to FinVerse, ${onboarding.name}! I'm Aura Twin, your AI financial mentor 🤖\n\n✨ Your monthly salary is ₹${salary.toLocaleString('en-IN')} and expenses are ₹${expenses.toLocaleString('en-IN')}\n\n💰 Cash Available: ₹${cashAvailable.toLocaleString('en-IN')} (tracked in Dashboard, Stocks, and Analytics)\n\n🎮 Game World: Use your 50,000 gold coins in BreakTheRace for gamified investing and learning!\n\nI'm here to guide you toward your financial freedom goal of ₹50,00,000.\n\nLet's build wealth together! 💪`,
           timestamp: Date.now(),
         },
       ],
@@ -636,6 +638,7 @@ export default function FinQuest() {
       lastLoginDate: new Date().toISOString().split('T')[0],
       consecutiveLogins: 1,
       monthlyInvestments: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
+      monthlyExpensesThisMonth: expenses,
       financialGoal: 5000000,
     };
 
@@ -1417,20 +1420,17 @@ export default function FinQuest() {
                 ...prev,
                 userProfile: prev.userProfile ? { ...prev.userProfile, salary: prev.userProfile.salary + amount } : prev.userProfile,
                 cashBalance: prev.cashBalance + amount,
-                netWorth: prev.netWorth + amount,
               }));
-              toast({ title: 'Income Added', description: `₹${amount.toLocaleString('en-IN')} added to salary` });
+              toast({ title: '💰 Income Added', description: `₹${amount.toLocaleString('en-IN')} added to monthly income` });
               setTimeout(() => saveGameState(true), 100);
             }}
             onAddExpense={async (amount) => {
               setGameState(prev => ({
                 ...prev,
-                userProfile: prev.userProfile ? { ...prev.userProfile, expenses: prev.userProfile.expenses + amount } : prev.userProfile,
-                cashBalance: Math.max(0, prev.cashBalance - amount),
-                netWorth: Math.max(0, prev.netWorth - amount),
-                monthlyExpensesThisMonth: (prev.monthlyExpensesThisMonth || 0) + amount,
+                monthlyExpensesThisMonth: (prev.monthlyExpensesThisMonth || prev.userProfile?.expenses || 0) + amount,
+                cashBalance: Math.max(0, (prev.userProfile?.salary || 0) - ((prev.monthlyExpensesThisMonth || prev.userProfile?.expenses || 0) + amount)),
               }));
-              toast({ title: 'Expense Added', description: `₹${amount.toLocaleString('en-IN')} added to expenses` });
+              toast({ title: '💸 Expense Added', description: `₹${amount.toLocaleString('en-IN')} added to monthly expenses` });
               setTimeout(() => saveGameState(true), 100);
             }}
             onInvest={() => setCurrentView('stocks')}

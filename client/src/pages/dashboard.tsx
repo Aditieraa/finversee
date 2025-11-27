@@ -102,7 +102,9 @@ export default function Dashboard({
   const stockPortfolioValue = calculateStockPortfolioValue();
 
   // ACTUAL PORTFOLIO - from gameState only
-  const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
+  const userSalary = gameState.userProfile?.salary || 0;
+  const totalMonthlyExpenses = gameState.monthlyExpensesThisMonth || gameState.userProfile?.expenses || 0;
+  const monthlyAvailable = userSalary - totalMonthlyExpenses;
   
   // Portfolio value = only actual stock investments (investmentAmount)
   const stockInvestmentValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
@@ -110,8 +112,8 @@ export default function Dashboard({
     : 0;
   const totalInvestedValue = stockInvestmentValue;
   
-  // Cash available = actual cash balance from FinQuest gameState
-  const cashBalance = gameState.cashBalance || 0;
+  // Cash available = monthly savings (salary - expenses)
+  const cashBalance = monthlyAvailable;
   
   const growthRate = monthlyAvailable > 0 ? (totalInvestedValue / monthlyAvailable / Math.max(gameState.currentMonth - 1, 1) * 100) : 0;
   const financialHealth = Math.min(Math.max((growthRate / 50 * 100), 0), 100);
