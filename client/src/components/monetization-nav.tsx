@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
-import { ShoppingCart, BookOpen, CreditCard, Zap, Home, BarChart3 } from 'lucide-react';
+import { ShoppingCart, BookOpen, CreditCard, Zap, Home } from 'lucide-react';
 
 export function MonetizationNav() {
   const [location, navigate] = useLocation();
@@ -11,7 +11,6 @@ export function MonetizationNav() {
     { path: '/store', label: 'Store', icon: ShoppingCart },
     { path: '/courses', label: 'Courses', icon: BookOpen },
     { path: '/subscription', label: 'Subscription', icon: CreditCard },
-    { path: '/business', label: 'Business', icon: BarChart3 },
   ];
 
   return (
