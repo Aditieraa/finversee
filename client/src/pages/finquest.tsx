@@ -274,35 +274,27 @@ export default function FinQuest() {
 
       console.log('💾 Attempting to save game state:', { userId, ...saveData });
 
-      // First try to upsert
+      // First mark old saves as not latest
+      await supabase
+        .from('game_saves')
+        .update({ is_latest: false })
+        .eq('user_id', userId)
+        .eq('is_latest', true);
+
+      // Then insert new save
       const { data, error } = await supabase
         .from('game_saves')
-        .upsert([saveData]);
+        .insert([saveData]);
 
       if (error) {
-        console.error('❌ Upsert failed, trying insert instead:', {
+        console.error('❌ Save failed:', {
           code: error.code,
           message: error.message,
           details: error.details,
           hint: error.hint,
           userId,
         });
-
-        // If upsert fails, try a simple insert
-        const { error: insertError } = await supabase
-          .from('game_saves')
-          .insert([saveData]);
-
-        if (insertError) {
-          console.error('❌ Insert also failed:', {
-            code: insertError.code,
-            message: insertError.message,
-            details: insertError.details,
-            hint: insertError.hint,
-            userId,
-          });
-          throw insertError;
-        }
+        throw error;
       }
 
       console.log('✅ Game state saved successfully');
@@ -476,18 +468,25 @@ export default function FinQuest() {
 
     if (userId && userId !== 'guest') {
       try {
-        // First try to upsert (insert or update) the profile - don't include undefined email
-        const { error: upsertError } = await supabase
+        // Get user email from auth session
+        const { data: { session } } = await supabase.auth.getSession();
+        const userEmail = session?.user?.email || 'user@example.com';
+
+        // Update the profile with email (required field)
+        const { error: updateError } = await supabase
           .from('profiles')
-          .upsert({
-            id: userId,
+          .update({
             name: onboarding.name,
             career: onboarding.career,
+            avatar: onboarding.avatar,
+            monthly_salary: salary,
+            monthly_expenses: expenses,
             updated_at: new Date().toISOString(),
-          });
+          })
+          .eq('id', userId);
         
-        if (upsertError) {
-          console.error('Error upserting profile:', upsertError);
+        if (updateError) {
+          console.error('Error updating profile:', updateError);
         }
       } catch (error) {
         console.error('Error updating profile:', error);
@@ -524,7 +523,7 @@ export default function FinQuest() {
       try {
         const { error } = await supabase
           .from('game_saves')
-          .upsert([{
+          .insert({
             user_id: userId,
             level: newGameState.level,
             xp: newGameState.xp,
@@ -536,7 +535,7 @@ export default function FinQuest() {
             goal_progress: 0,
             monthly_investments: newGameState.monthlyInvestments,
             is_latest: true,
-          }]);
+          });
 
         if (error) {
           console.error('Error saving game state after onboarding:', error);
