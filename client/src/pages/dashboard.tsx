@@ -112,8 +112,8 @@ export default function Dashboard({
     : 0;
   const totalInvestedValue = stockInvestmentValue;
   
-  // Cash available = monthly savings (salary - expenses)
-  const cashBalance = monthlyAvailable;
+  // Cash available = actual cash balance from gameState (not monthly calculation)
+  const cashBalance = gameState.cashBalance || 0;
   
   const growthRate = monthlyAvailable > 0 ? (totalInvestedValue / monthlyAvailable / Math.max(gameState.currentMonth - 1, 1) * 100) : 0;
   const financialHealth = Math.min(Math.max((growthRate / 50 * 100), 0), 100);
