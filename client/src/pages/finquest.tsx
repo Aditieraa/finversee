@@ -1393,19 +1393,21 @@ export default function FinQuest() {
             onAddIncome={(amount) => {
               setGameState(prev => ({
                 ...prev,
+                userProfile: prev.userProfile ? { ...prev.userProfile, salary: prev.userProfile.salary + amount } : prev.userProfile,
                 cashBalance: prev.cashBalance + amount,
                 netWorth: prev.netWorth + amount,
               }));
-              toast({ title: 'Income Added', description: `₹${amount.toLocaleString('en-IN')} added to cash` });
+              toast({ title: 'Income Added', description: `₹${amount.toLocaleString('en-IN')} added to salary` });
             }}
             onAddExpense={(amount) => {
               setGameState(prev => ({
                 ...prev,
+                userProfile: prev.userProfile ? { ...prev.userProfile, expenses: prev.userProfile.expenses + amount } : prev.userProfile,
                 cashBalance: Math.max(0, prev.cashBalance - amount),
                 netWorth: Math.max(0, prev.netWorth - amount),
                 monthlyExpensesThisMonth: (prev.monthlyExpensesThisMonth || 0) + amount,
               }));
-              toast({ title: 'Expense Added', description: `₹${amount.toLocaleString('en-IN')} deducted from cash` });
+              toast({ title: 'Expense Added', description: `₹${amount.toLocaleString('en-IN')} added to expenses` });
             }}
             onInvest={() => setCurrentView('stocks')}
             quickActionsOpen={quickActionsOpen}
