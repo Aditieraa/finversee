@@ -515,7 +515,7 @@ export default function BreakTheRace() {
         </div>
       ) : (
         <>
-        <div className="container mx-auto p-4 pb-32">
+        <div className="container mx-auto p-4 pb-6">
           {/* Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <Card className={`border-primary/30 glassmorphic p-4 ${animatingValue === 'cash' ? 'animate-pulse-scale' : ''}`}>
@@ -645,11 +645,8 @@ export default function BreakTheRace() {
             </Card>
           )}
 
-        </div>
-
-        {/* Action Buttons - Fixed Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 via-slate-900 to-slate-900/80 pt-3 pb-4 border-t border-primary/20 z-50">
-          <div className="container mx-auto px-4 flex gap-3 justify-center">
+          {/* Action Buttons */}
+          <div className="flex gap-3 justify-center mb-6">
             <Button 
               variant="outline" 
               size="default" 
@@ -671,6 +668,7 @@ export default function BreakTheRace() {
               Start New Game
             </Button>
           </div>
+
         </div>
         </>
       )}
