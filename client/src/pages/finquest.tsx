@@ -450,13 +450,11 @@ export default function FinQuest() {
 
   const loadLeaderboard = async () => {
     try {
-      // Query game_saves table directly and calculate scores locally
+      // Query game_saves table for both FinQuest and BreakTheRace players
       const { data: savesData, error: savesError } = await supabase
         .from('game_saves')
-        .select('user_id, level, cash_balance, portfolio')
-        .eq('is_latest', true)
-        .order('cash_balance', { ascending: false })
-        .limit(10);
+        .select('user_id, level, xp, cash_balance, passive_income, career, portfolio')
+        .eq('is_latest', true);
 
       if (savesError) throw savesError;
 
@@ -477,22 +475,41 @@ export default function FinQuest() {
         // Map game saves to leaderboard format with names and avatars
         const leaderboardData = savesData
           .map((save: any) => {
-            const portfolio = save.portfolio || {};
-            const portfolioTotal = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
-            const netWorth = (save.cash_balance || 0) + portfolioTotal;
             const profile = profileMap[save.user_id];
             const avatarId = profile?.avatar || 'female1';
             const avatarPath = avatarMap[avatarId] || avatar1;
+            
+            // Calculate score based on available data
+            // For BreakTheRace: use XP (passive_income / 1000)
+            // For FinQuest: use cash_balance + portfolio
+            let score = save.xp || 0; // Primary: XP from BreakTheRace
+            
+            if (save.portfolio) {
+              const portfolio = save.portfolio || {};
+              const portfolioTotal = Object.values(portfolio).reduce((a: number, b: number) => a + b, 0);
+              const netWorth = (save.cash_balance || 0) + portfolioTotal;
+              // If has portfolio data, use net worth (FinQuest)
+              if (Object.keys(portfolio).some((k: string) => portfolio[k] > 0)) {
+                score = Math.max(score, netWorth);
+              }
+            }
+            
             return {
-              name: profile?.name || 'Anonymous',
-              score: netWorth || 0,
+              name: profile?.name || 'Player',
+              score: score || 0,
               level: save.level || 1,
               avatar: avatarPath,
+              xp: save.xp || 0,
+              career: save.career || '',
             };
           })
-          .filter((entry: any) => entry.name !== 'Anonymous' && entry.level > 0 && entry.score > 0);
+          // Only filter out entries with no name, don't filter by score
+          .filter((entry: any) => entry.name && entry.name !== 'Player')
+          // Sort by score/XP descending
+          .sort((a: any, b: any) => (b.score || 0) - (a.score || 0))
+          .slice(0, 10); // Top 10
 
-        console.log('📊 Leaderboard updated with', leaderboardData.length, 'real players');
+        console.log('📊 Leaderboard updated with', leaderboardData.length, 'real players:', leaderboardData);
         setLeaderboard(leaderboardData);
       }
     } catch (error: any) {
