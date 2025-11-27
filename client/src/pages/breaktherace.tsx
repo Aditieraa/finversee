@@ -515,7 +515,7 @@ export default function BreakTheRace() {
         </div>
       ) : (
         <>
-        <div className="container mx-auto p-4 pb-24">
+        <div className="container mx-auto p-4 pb-32">
           {/* Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <Card className={`border-primary/30 glassmorphic p-4 ${animatingValue === 'cash' ? 'animate-pulse-scale' : ''}`}>
