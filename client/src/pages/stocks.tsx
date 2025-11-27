@@ -124,7 +124,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
   );
 
   // Handle investment
-  const handleInvest = () => {
+  const handleInvest = async () => {
     if (!investmentAmount || parseInt(investmentAmount) <= 0 || !selectedStockData) {
       alert('Please enter a valid investment amount');
       return;
@@ -192,6 +192,63 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
       portfolio: { ...gameState.portfolio, stocks: newPortfolioStocks },
       stockHoldings: updatedHoldings,
     });
+
+    // Save stock to database
+    try {
+      const { supabase } = await import('@/lib/supabase');
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+
+      if (userId) {
+        const { data: latestSave } = await supabase
+          .from('game_saves')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('is_latest', true)
+          .single();
+
+        if (latestSave?.id) {
+          // Check if stock already exists for this user
+          const { data: existingStock } = await supabase
+            .from('stocks')
+            .select('id, quantity, buy_price, total_invested')
+            .eq('user_id', userId)
+            .eq('symbol', selectedStockData.symbol)
+            .single();
+
+          if (existingStock) {
+            // Update existing stock
+            await supabase
+              .from('stocks')
+              .update({
+                quantity: existingStock.quantity + shares,
+                buy_price: avgBuyPrice,
+                total_invested: existingStock.total_invested + amount,
+                current_price: buyPrice,
+                current_value: (existingStock.quantity + shares) * buyPrice,
+                last_updated: new Date().toISOString(),
+              })
+              .eq('id', existingStock.id);
+          } else {
+            // Insert new stock
+            await supabase.from('stocks').insert({
+              user_id: userId,
+              game_save_id: latestSave.id,
+              symbol: selectedStockData.symbol,
+              company_name: selectedStockData.symbol,
+              quantity: shares,
+              buy_price: buyPrice,
+              current_price: buyPrice,
+              total_invested: amount,
+              current_value: amount,
+              purchase_date: new Date().toISOString(),
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error saving stock to database:', error);
+    }
 
     setSuccessMessage(`✓ Invested ₹${amount} in ${selectedStockData.symbol}! You now own ${shares.toFixed(2)} shares @ ₹${buyPrice.toFixed(2)}`);
     setInvestmentAmount('');

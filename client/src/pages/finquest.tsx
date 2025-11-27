@@ -335,6 +335,35 @@ export default function FinQuest() {
       if (error && error.code !== 'PGRST116') throw error;
 
       if (data) {
+        // Load chat messages from database
+        const { data: chatMessages } = await supabase
+          .from('chat_messages')
+          .select('*')
+          .eq('game_save_id', data.id)
+          .order('created_at', { ascending: true });
+
+        // Load stock holdings from database
+        const { data: stocks } = await supabase
+          .from('stocks')
+          .select('*')
+          .eq('game_save_id', data.id);
+
+        // Convert chat messages to game format
+        const chatHistory = (chatMessages || []).map((msg: any) => ({
+          role: msg.role as 'user' | 'ai',
+          content: msg.content,
+          timestamp: new Date(msg.created_at).getTime(),
+        }));
+
+        // Convert stocks to stockHoldings format
+        const stockHoldings = (stocks || []).map((stock: any) => ({
+          symbol: stock.symbol,
+          shares: stock.quantity,
+          buyPrice: stock.buy_price,
+          investmentAmount: stock.total_invested,
+          purchaseDate: stock.purchase_date,
+        }));
+
         setGameState(prev => ({
           ...prev,
           level: data.level,
@@ -345,6 +374,8 @@ export default function FinQuest() {
           achievements: data.achievements,
           financialGoal: data.financial_goal,
           monthlyInvestments: data.monthly_investments,
+          chatHistory: chatHistory.length > 0 ? chatHistory : prev.chatHistory,
+          stockHoldings: stockHoldings.length > 0 ? stockHoldings : prev.stockHoldings,
         }));
         toast({
           title: '✨ Progress Loaded',
@@ -796,6 +827,26 @@ export default function FinQuest() {
     setAiLoading(true);
 
     try {
+      // Save user message to database
+      if (userId && userId !== 'guest') {
+        const { data: latestSave } = await supabase
+          .from('game_saves')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('is_latest', true)
+          .single();
+
+        if (latestSave?.id) {
+          await supabase.from('chat_messages').insert({
+            user_id: userId,
+            game_save_id: latestSave.id,
+            role: 'user',
+            content: userMessage,
+            message_type: 'text',
+          });
+        }
+      }
+
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -813,21 +864,42 @@ export default function FinQuest() {
       if (!response.ok) throw new Error('AI response failed');
 
       const data = await response.json();
+      const aiMessage = data.response;
 
       setGameState(prev => ({
         ...prev,
         chatHistory: [
           ...prev.chatHistory,
-          { role: 'ai', content: data.response, timestamp: Date.now() },
+          { role: 'ai', content: aiMessage, timestamp: Date.now() },
         ],
       }));
+
+      // Save AI message to database
+      if (userId && userId !== 'guest') {
+        const { data: latestSave } = await supabase
+          .from('game_saves')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('is_latest', true)
+          .single();
+
+        if (latestSave?.id) {
+          await supabase.from('chat_messages').insert({
+            user_id: userId,
+            game_save_id: latestSave.id,
+            role: 'ai',
+            content: aiMessage,
+            message_type: 'advice',
+          });
+        }
+      }
     } catch (error) {
       console.error('AI chat error:', error);
       
       const fallbackMsg = `I'm having trouble connecting right now, but I'm here to support you! ${
         userMessage.includes('invest') 
-          ? "Remember: Diversification is key to managing risk. Keep building your portfolio steadily! 💪" 
-          : "Keep making smart financial decisions. Your future self will thank you! 🌟"
+          ? "Remember: Diversification is key to managing risk. Keep building your portfolio steadily!" 
+          : "Keep making smart financial decisions. Your future self will thank you!"
       }`;
       
       setGameState(prev => ({
@@ -837,6 +909,26 @@ export default function FinQuest() {
           { role: 'ai', content: fallbackMsg, timestamp: Date.now() },
         ],
       }));
+
+      // Save fallback message
+      if (userId && userId !== 'guest') {
+        const { data: latestSave } = await supabase
+          .from('game_saves')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('is_latest', true)
+          .single();
+
+        if (latestSave?.id) {
+          await supabase.from('chat_messages').insert({
+            user_id: userId,
+            game_save_id: latestSave.id,
+            role: 'ai',
+            content: fallbackMsg,
+            message_type: 'advice',
+          });
+        }
+      }
     } finally {
       setAiLoading(false);
     }
