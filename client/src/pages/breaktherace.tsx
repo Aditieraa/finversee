@@ -137,10 +137,14 @@ const playSound = (type: 'dice' | 'card' | 'cash' | 'deal' | 'win') => {
   }
 };
 
-export default function BreakTheRace() {
+interface BreakTheRaceProps {
+  userId?: string | null;
+}
+
+export default function BreakTheRace({ userId: propUserId }: BreakTheRaceProps) {
   const { toast } = useToast();
-  const [userId, setUserId] = useState<string | null>(null);
-  const [authChecked, setAuthChecked] = useState(false);
+  const [userId, setUserId] = useState<string | null>(propUserId || null);
+  const [authChecked, setAuthChecked] = useState(!!propUserId);
   const [showCareerSelect, setShowCareerSelect] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [diceRolling, setDiceRolling] = useState(false);
@@ -174,8 +178,10 @@ export default function BreakTheRace() {
   }, [animatingValue]);
 
   useEffect(() => {
-    checkAuth();
-  }, []);
+    if (!propUserId) {
+      checkAuth();
+    }
+  }, [propUserId]);
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -465,7 +471,6 @@ export default function BreakTheRace() {
   };
 
   if (!authChecked) return <div>Loading...</div>;
-  if (!userId) return <Auth onAuthSuccess={(uid) => setUserId(uid)} />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
