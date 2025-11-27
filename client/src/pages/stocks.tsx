@@ -121,8 +121,8 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     return history;
   };
 
-  // REAL cash available from user (monthly salary for real investments)
-  const realCashAvailable = gameState.userProfile?.salary || 0;
+  // REAL cash available from user = Monthly Savings (salary - expenses)
+  const realCashAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
   
   const selectedStockData = stocks.find(s => s.symbol === selectedStock);
   const filteredStocks = stocks.filter(s =>
@@ -284,19 +284,10 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
-  // Calculate portfolio values with PROPER validation
+  // Calculate portfolio values - ACTUAL INVESTED AMOUNT (not current market value)
   const portfolioValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
     ? gameState.stockHoldings.reduce((total, holding) => {
-        // Ensure buyPrice is valid
-        const buyPrice = isNaN(holding.buyPrice) || holding.buyPrice <= 0 ? getDummyPrice(holding.symbol) : holding.buyPrice;
-        
-        // Get current price
-        const currentStock = stocks.find(s => s.symbol === holding.symbol);
-        const currentPrice = currentStock ? getDisplayPrice(currentStock.price, holding.symbol) : getDummyPrice(holding.symbol);
-        
-        // Calculate value
-        const value = holding.shares * currentPrice;
-        return total + (isNaN(value) || !isFinite(value) ? 0 : value);
+        return total + (holding.investmentAmount || 0);
       }, 0)
     : 0;
 
@@ -548,7 +539,7 @@ export default function Stocks({ gameState, setGameState }: StocksProps) {
                   </Button>
 
                   <p className="text-xs text-green-200/50 text-center">
-                    Cash available: ₹{gameState.cashBalance.toFixed(0)}
+                    Cash available to invest: ₹{realCashAvailable.toFixed(0)}
                   </p>
                 </div>
               </Card>

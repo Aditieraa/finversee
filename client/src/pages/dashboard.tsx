@@ -61,28 +61,24 @@ export default function Dashboard({
   };
 
   const generateCategoryData = () => {
-    // Use ACTUAL portfolio values from gameState (not theoretical)
-    const actualPortfolio = {
-      sip: gameState.portfolio?.sip || 0,
-      stocks: gameState.portfolio?.stocks || 0,
-      gold: gameState.portfolio?.gold || 0,
-      realEstate: gameState.portfolio?.realEstate || 0,
-      savings: gameState.portfolio?.savings || 0,
-    };
+    // Portfolio breakdown = stock holdings only (breakdown by stock)
+    if (!gameState.stockHoldings || gameState.stockHoldings.length === 0) {
+      return [];
+    }
     
-    const total = Object.values(actualPortfolio).reduce((a: number, b: number) => a + b, 0);
-    return Object.entries(actualPortfolio).map(([name, value]: [string, any]) => ({
-      name: name === 'realEstate' ? 'Real Estate' : name.charAt(0).toUpperCase() + name.slice(1),
-      value: value,
-      percentage: total > 0 ? ((value / total) * 100).toFixed(1) : 0,
-      color: CHART_COLORS[name as keyof typeof CHART_COLORS],
+    const total = gameState.stockHoldings.reduce((sum: number, h: any) => sum + (h.investmentAmount || 0), 0);
+    return gameState.stockHoldings.map((holding: any, idx: number) => ({
+      name: holding.symbol,
+      value: holding.investmentAmount || 0,
+      percentage: total > 0 ? (((holding.investmentAmount || 0) / total) * 100).toFixed(1) : 0,
+      color: CHART_COLORS[idx % 8] || '#42A5F5',
     }));
   };
 
   const calculateStockPortfolioValue = () => {
     if (!gameState.stockHoldings || gameState.stockHoldings.length === 0) return 0;
-    return gameState.stockHoldings.reduce((total, holding) => {
-      return total + (holding.shares * holding.buyPrice);
+    return gameState.stockHoldings.reduce((total: number, holding: any) => {
+      return total + (holding.investmentAmount || 0);
     }, 0);
   };
 
@@ -99,13 +95,17 @@ export default function Dashboard({
   const spendingData = generateSpendingPattern();
   const stockPortfolioValue = calculateStockPortfolioValue();
 
-  // ACTUAL PORTFOLIO - from gameState, not calculated
+  // ACTUAL PORTFOLIO - from gameState only
   const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
-  const actualPortfolioTotal = Object.values(gameState.portfolio || {}).reduce((a: number, b: number) => a + b, 0);
-  const totalInvestedValue = actualPortfolioTotal + stockPortfolioValue;
   
-  // Actual cash balance from gameState
-  const cashBalance = gameState.cashBalance || 0;
+  // Portfolio value = only actual stock investments (investmentAmount)
+  const stockInvestmentValue = gameState.stockHoldings && gameState.stockHoldings.length > 0
+    ? gameState.stockHoldings.reduce((total: number, holding: any) => total + (holding.investmentAmount || 0), 0)
+    : 0;
+  const totalInvestedValue = stockInvestmentValue;
+  
+  // Cash available to invest = Monthly savings capacity (salary - expenses)
+  const cashBalance = monthlyAvailable;
   
   const growthRate = monthlyAvailable > 0 ? (totalInvestedValue / monthlyAvailable / Math.max(gameState.currentMonth - 1, 1) * 100) : 0;
   const financialHealth = Math.min(Math.max((growthRate / 50 * 100), 0), 100);
@@ -186,7 +186,7 @@ export default function Dashboard({
             </div>
             {/* Timeframe Toggle */}
             <div className="flex gap-2">
-              {[3, 6, 12].map(months => (
+              {[3, 6, 12].map((months: number) => (
                 <Button
                   key={months}
                   size="sm"
@@ -202,7 +202,7 @@ export default function Dashboard({
           </div>
           
           <ResponsiveContainer width="100%" height={320}>
-            <AreaChart data={monthlyData} animationDuration={800}>
+            <AreaChart data={monthlyData}>
               <defs>
                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#66BB6A" stopOpacity={0.3} />
@@ -233,7 +233,7 @@ export default function Dashboard({
                 strokeWidth={2} 
                 fillOpacity={1} 
                 fill="url(#colorIncome)"
-                animationDuration={800}
+               
               />
               <Area 
                 type="monotoneX" 
@@ -242,7 +242,7 @@ export default function Dashboard({
                 strokeWidth={2} 
                 fillOpacity={1} 
                 fill="url(#colorExpenses)"
-                animationDuration={800}
+               
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -327,8 +327,8 @@ export default function Dashboard({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Portfolio Breakdown Donut Chart */}
         {(() => {
-          const totalValue = categoryData.reduce((sum, item) => sum + item.value, 0);
-          const donutData = categoryData.filter(item => item.value > 0).map(item => ({
+          const totalValue = categoryData.reduce((sum: number, item: any) => sum + item.value, 0);
+          const donutData = categoryData.filter((item: any) => item.value > 0).map((item: any) => ({
             ...item,
             percentage: totalValue > 0 ? ((item.value / totalValue) * 100).toFixed(1) : 0
           }));
@@ -359,7 +359,7 @@ export default function Dashboard({
                           onMouseLeave={() => setHoveredSlice(null)}
                           animationDuration={600}
                         >
-                          {donutData.map((entry, index) => (
+                          {donutData.map((entry: any, index: number) => (
                             <Cell 
                               key={`cell-${index}`} 
                               fill={entry.color}
