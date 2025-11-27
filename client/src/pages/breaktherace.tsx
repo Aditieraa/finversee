@@ -148,8 +148,6 @@ export default function BreakTheRace() {
   const [cardData, setCardData] = useState<any>(null);
   const [selectedAssetToSell, setSelectedAssetToSell] = useState<number | null>(null);
   const [animatingValue, setAnimatingValue] = useState<string | null>(null);
-  const [showDiceAnimation, setShowDiceAnimation] = useState(false);
-  const [diceResult, setDiceResult] = useState(0);
 
   const [gameState, setGameState] = useState<GameState>({
     career: null,
@@ -218,23 +216,21 @@ export default function BreakTheRace() {
 
   const rollDice = async () => {
     setDiceRolling(true);
-    setShowDiceAnimation(true);
     
-    // Play sound and show animation simultaneously (synced to 800ms total)
+    // Play sound
     playSound('dice');
     
     // Generate random result
     const roll = Math.floor(Math.random() * 6) + 1;
-    setDiceResult(roll);
-    
-    // Wait for animation + audio to complete (pop-in: 200ms + roll: 700ms + pop-out: 150ms = 1050ms, keeping at 800ms for tighter sync)
-    await new Promise(r => setTimeout(r, 1050));
-    
-    setShowDiceAnimation(false);
-    setDiceRolling(false);
-    
     const newPosition = (gameState.boardPosition + roll) % BOARD_SPACES.length;
-    setGameState(prev => ({ ...prev, boardPosition: newPosition, dice: roll }));
+    
+    const newGameState = { ...gameState, boardPosition: newPosition, dice: roll };
+    setGameState(newGameState);
+    
+    // Save the new state
+    await saveGameState(newGameState);
+    
+    setDiceRolling(false);
     
     handleBoardSpace(newPosition);
   };
@@ -249,13 +245,18 @@ export default function BreakTheRace() {
       const totalIncome = salary + gameState.passiveIncome - gameState.totalExpenses - tax;
       setAnimatingValue('cash');
       playSound('cash');
-      setGameState(prev => ({ ...prev, cash: prev.cash + totalIncome }));
+      const updatedPayday = { ...gameState, cash: gameState.cash + totalIncome };
+      setGameState(updatedPayday);
+      await saveGameState(updatedPayday);
       toast({ title: '💰 Payday!', description: `Salary: ₹${salary.toLocaleString('en-IN')} | Tax: -₹${tax.toLocaleString('en-IN')} | Net: +₹${totalIncome.toLocaleString('en-IN')}` });
+      await checkEscapeRatRace();
+      return;
     } else if (space === 'smalldeal') {
       const deal = SMALL_DEALS[Math.floor(Math.random() * SMALL_DEALS.length)];
       playSound('card');
       setCardData({ type: 'deal', ...deal });
       setShowCardModal(true);
+      return;
     } else if (space === 'bigdeal') {
       if (!gameState.onFastTrack) {
         toast({ title: '🚀 Big Deal Available', description: 'Escape the Rat Race to access Big Deals!', variant: 'destructive' });
@@ -265,6 +266,7 @@ export default function BreakTheRace() {
       playSound('card');
       setCardData({ type: 'bigdeal', ...deal });
       setShowCardModal(true);
+      return;
     } else if (space === 'doodad') {
       // Doodads are rare (30% chance) on Fast Track, always (100%) on Rat Race
       const shouldSkipDoodad = gameState.onFastTrack && Math.random() > 0.3;
@@ -273,28 +275,44 @@ export default function BreakTheRace() {
         return;
       }
       const doodad = DOODADS[Math.floor(Math.random() * DOODADS.length)];
-      setGameState(prev => ({ ...prev, cash: Math.max(0, prev.cash - doodad.cost) }));
+      const updatedDoodad = { ...gameState, cash: Math.max(0, gameState.cash - doodad.cost) };
+      setGameState(updatedDoodad);
+      await saveGameState(updatedDoodad);
       toast({ title: '⚠️ Oops!', description: `${doodad.name}: -₹${doodad.cost.toLocaleString('en-IN')}`, variant: 'destructive' });
+      await checkEscapeRatRace();
+      return;
     } else if (space === 'market') {
       // TEST: Market cards can modify assets
       const card = MARKET_CARDS[Math.floor(Math.random() * MARKET_CARDS.length)];
       playSound('card');
       setAnimatingValue('cash');
-      setGameState(prev => ({ ...prev, cash: prev.cash + card.effect }));
+      const updatedMarket = { ...gameState, cash: gameState.cash + card.effect };
+      setGameState(updatedMarket);
+      await saveGameState(updatedMarket);
       toast({ title: '📊 Market Event', description: `${card.name}: ${card.effect > 0 ? '+' : ''}₹${card.effect.toLocaleString('en-IN')}` });
+      await checkEscapeRatRace();
+      return;
     } else if (space === 'charity') {
       const reward = CHARITY_REWARDS[Math.floor(Math.random() * CHARITY_REWARDS.length)];
       const donation = Math.round(gameState.cash * 0.05);
-      setGameState(prev => ({ ...prev, cash: Math.max(0, prev.cash - donation) }));
+      const updatedCharity = { ...gameState, cash: Math.max(0, gameState.cash - donation) };
+      setGameState(updatedCharity);
+      await saveGameState(updatedCharity);
       toast({ title: '❤️ Charity', description: `Donated ₹${donation.toLocaleString('en-IN')} → ${reward.description}`, variant: 'default' });
+      await checkEscapeRatRace();
+      return;
     } else if (space === 'opportunity') {
       const opp = OPPORTUNITIES[Math.floor(Math.random() * OPPORTUNITIES.length)];
-      setGameState(prev => ({ ...prev, cash: prev.cash + opp.effect }));
+      const updatedOpp = { ...gameState, cash: gameState.cash + opp.effect };
+      setGameState(updatedOpp);
+      await saveGameState(updatedOpp);
       toast({ title: '⭐ Opportunity!', description: `${opp.description} +₹${opp.effect.toLocaleString('en-IN')}` });
+      await checkEscapeRatRace();
+      return;
     }
 
     await saveGameState(gameState);
-    checkEscapeRatRace();
+    await checkEscapeRatRace();
   };
 
   const buyAsset = async (name: string, cost: number, passiveIncome: number) => {
@@ -328,13 +346,15 @@ export default function BreakTheRace() {
 
     const updatedState = { ...gameState, cash: gameState.cash - adjustedCost, assets: [...gameState.assets, newAsset], passiveIncome: newPassiveIncome };
     await saveGameState(updatedState);
-    checkEscapeRatRace();
+    await checkEscapeRatRace();
   };
 
-  const checkEscapeRatRace = () => {
+  const checkEscapeRatRace = async () => {
     // TEST: Rat race → fast track switch
     if (gameState.passiveIncome >= gameState.totalExpenses && !gameState.onFastTrack) {
-      setGameState(prev => ({ ...prev, onFastTrack: true }));
+      const newState = { ...gameState, onFastTrack: true };
+      setGameState(newState);
+      await saveGameState(newState);
       playSound('deal');
       confetti();
       toast({ title: '🚀 You Escaped the Rat Race!', description: 'Welcome to the Fast Track! (10x multiplier on deals)' });
@@ -350,9 +370,10 @@ export default function BreakTheRace() {
 
   const buyYourDream = async () => {
     playSound('win');
-    setGameState(prev => ({ ...prev, hasWon: true }));
+    const winState = { ...gameState, hasWon: true };
+    setGameState(winState);
     confetti();
-    await saveGameState({ ...gameState, hasWon: true });
+    await saveGameState(winState);
   };
 
   const sellAsset = async (index: number) => {
@@ -376,7 +397,7 @@ export default function BreakTheRace() {
       passiveIncome: gameState.passiveIncome - asset.passiveIncome,
     };
     await saveGameState(updatedState);
-    checkEscapeRatRace();
+    await checkEscapeRatRace();
   };
 
   const saveGameState = async (state: GameState) => {
@@ -572,17 +593,6 @@ export default function BreakTheRace() {
               )}
             </div>
 
-            {/* Animated Dice Overlay */}
-            {showDiceAnimation && (
-              <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
-                <div className="animate-dice-roll">
-                  <div className="w-24 h-24 bg-gradient-to-br from-primary/80 to-primary/40 rounded-lg flex items-center justify-center border-2 border-primary/60 shadow-2xl"
-                       style={{ perspective: '1200px' }}>
-                    <span className="text-5xl font-bold text-white drop-shadow-lg">{diceResult}</span>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Current Space */}
             <div className="text-center p-4 bg-foreground/5 rounded-lg border border-primary/20">
