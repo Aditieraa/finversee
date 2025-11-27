@@ -8,6 +8,7 @@ import { TrendingUp, TrendingDown, Coins, Target, AlertCircle, CheckCircle, Cale
 import { NumberCounter } from '@/components/number-counter';
 import { NextStepWidget } from '@/components/next-step-widget';
 import { QuickActionsBar } from '@/components/quick-actions-bar';
+import { GrowthRateChart } from '@/components/growth-rate-chart';
 
 interface DashboardProps {
   gameState: any;
@@ -225,21 +226,8 @@ export default function Dashboard({
           </ResponsiveContainer>
         </Card>
 
-        {/* SECTION 3: Right-Hand Rail - Growth Rate Indicator */}
-        <Card className="border-green-400/30 bg-gradient-to-br from-green-900/40 to-green-950/30 backdrop-blur-sm p-6 shadow-card">
-          <div className="h-full flex flex-col justify-between">
-            <div>
-              <p className="text-xs text-green-200/70 mb-2 font-semibold">GROWTH RATE</p>
-              <p className="text-3xl font-bold text-green-50 animate-countUp">{growthRate.toFixed(1)}%</p>
-              <p className="text-xs text-green-200/50 mt-2">Monthly growth</p>
-            </div>
-            <div className="mt-4 pt-4 border-t border-green-400/20">
-              <Badge className="bg-green-500/20 text-green-300 border-green-500/40 text-xs">
-                {growthRate > 10 ? 'Excellent' : growthRate > 5 ? 'Good' : growthRate > 0 ? 'Fair' : 'Needs Work'}
-              </Badge>
-            </div>
-          </div>
-        </Card>
+        {/* SECTION 3: Right-Hand Rail - Growth Rate Chart */}
+        <GrowthRateChart currentGrowthRate={growthRate} />
       </div>
 
       {/* SECTION 4: Main Content + Right Sidebar */}

@@ -84,5 +84,45 @@ export async function registerRoutes(app: Express) {
     res.json({ message: "Cache clear endpoint (admin only)" });
   });
 
+  // ===== GAME STATE UPDATE ROUTES =====
+  app.post("/api/game/add-income", (req: Request, res: Response) => {
+    try {
+      const { amount } = req.body;
+      if (!amount || amount <= 0) {
+        res.status(400).json({ error: "Valid amount required" });
+        return;
+      }
+      res.json({ success: true, amount, message: `Added ₹${amount.toLocaleString('en-IN')} income` });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add income" });
+    }
+  });
+
+  app.post("/api/game/add-expense", (req: Request, res: Response) => {
+    try {
+      const { amount } = req.body;
+      if (!amount || amount <= 0) {
+        res.status(400).json({ error: "Valid amount required" });
+        return;
+      }
+      res.json({ success: true, amount, message: `Added ₹${amount.toLocaleString('en-IN')} expense` });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add expense" });
+    }
+  });
+
+  app.post("/api/game/invest", (req: Request, res: Response) => {
+    try {
+      const { type, amount } = req.body;
+      if (!type || !amount || amount <= 0) {
+        res.status(400).json({ error: "Valid type and amount required" });
+        return;
+      }
+      res.json({ success: true, type, amount, message: `Invested ₹${amount.toLocaleString('en-IN')} in ${type}` });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to invest" });
+    }
+  });
+
   return server;
 }

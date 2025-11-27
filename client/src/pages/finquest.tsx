@@ -1297,7 +1297,27 @@ export default function FinQuest() {
       <div className="container mx-auto px-4 py-6">
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
-          <Dashboard gameState={gameState} monthlyDecisions={monthlyDecisions} />
+          <Dashboard 
+            gameState={gameState} 
+            monthlyDecisions={monthlyDecisions}
+            onAddIncome={(amount) => {
+              setGameState(prev => ({
+                ...prev,
+                cashBalance: prev.cashBalance + amount,
+                netWorth: prev.netWorth + amount,
+              }));
+              toast({ title: 'Income Added', description: `₹${amount.toLocaleString('en-IN')} added to cash` });
+            }}
+            onAddExpense={(amount) => {
+              setGameState(prev => ({
+                ...prev,
+                cashBalance: Math.max(0, prev.cashBalance - amount),
+                netWorth: Math.max(0, prev.netWorth - amount),
+              }));
+              toast({ title: 'Expense Added', description: `₹${amount.toLocaleString('en-IN')} deducted from cash` });
+            }}
+            onInvest={() => setCurrentView('stocks')}
+          />
         )}
 
         {/* Game View */}

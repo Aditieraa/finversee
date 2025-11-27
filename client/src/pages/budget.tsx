@@ -13,6 +13,12 @@ interface BudgetProps {
   gameState: any;
 }
 
+interface CustomBudgetCategory {
+  id: string;
+  name: string;
+  monthlyBudget: number;
+}
+
 interface BudgetAlert {
   id: string;
   title: string;
@@ -42,10 +48,14 @@ interface BudgetCategory {
 
 export default function Budget({ gameState }: BudgetProps) {
   const [showAddGoal, setShowAddGoal] = useState(false);
+  const [showAddCategory, setShowAddCategory] = useState(false);
   const [goalName, setGoalName] = useState('');
   const [goalAmount, setGoalAmount] = useState('');
+  const [categoryName, setCategoryName] = useState('');
+  const [categoryBudget, setCategoryBudget] = useState('');
   const [goals, setGoals] = useState<Goal[]>([]);
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
+  const [customCategories, setCustomCategories] = useState<CustomBudgetCategory[]>([]);
 
   // Calculate budget categories based on user's actual expenses
   useEffect(() => {
@@ -199,6 +209,24 @@ export default function Budget({ gameState }: BudgetProps) {
     setGoals(goals.filter(g => g.id !== id));
   };
 
+  const handleAddCategory = () => {
+    if (categoryName && categoryBudget) {
+      const newCategory: CustomBudgetCategory = {
+        id: Date.now().toString(),
+        name: categoryName,
+        monthlyBudget: parseInt(categoryBudget),
+      };
+      setCustomCategories([...customCategories, newCategory]);
+      setCategoryName('');
+      setCategoryBudget('');
+      setShowAddCategory(false);
+    }
+  };
+
+  const removeCategory = (id: string) => {
+    setCustomCategories(customCategories.filter(c => c.id !== id));
+  };
+
   return (
     <div className="space-y-6 pb-6">
       {/* Budget Alerts */}
@@ -272,6 +300,51 @@ export default function Budget({ gameState }: BudgetProps) {
           <p className="text-xs text-green-200/40 mt-2">Of income saved</p>
         </Card>
       </div>
+
+      {/* Custom Budget Categories */}
+      {customCategories.length > 0 && (
+        <Card className="border-indigo-400/30 bg-indigo-950/40 backdrop-blur-sm p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-bold text-white">Custom Budget Categories</h3>
+            <Button
+              onClick={() => setShowAddCategory(true)}
+              size="sm"
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700"
+            >
+              <Plus className="h-4 w-4" />
+              Add Category
+            </Button>
+          </div>
+
+          <div className="space-y-3">
+            {customCategories.map((cat) => (
+              <div key={cat.id} className="flex items-center justify-between p-4 rounded-lg border border-indigo-400/20 bg-indigo-950/30 hover:border-indigo-400/40 transition-colors">
+                <div>
+                  <p className="text-white font-semibold text-sm">{cat.name}</p>
+                  <p className="text-indigo-200/60 text-xs">Monthly Budget: ₹{cat.monthlyBudget.toLocaleString('en-IN')}</p>
+                </div>
+                <button
+                  onClick={() => removeCategory(cat.id)}
+                  className="text-indigo-400 hover:text-indigo-300"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Button to Add Category if none exist */}
+      {customCategories.length === 0 && (
+        <Button
+          onClick={() => setShowAddCategory(true)}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Create Custom Budget Category
+        </Button>
+      )}
 
       {/* Budget Tracking */}
       <Card className="border-purple-400/30 bg-purple-950/40 backdrop-blur-sm p-6">
@@ -395,6 +468,51 @@ export default function Budget({ gameState }: BudgetProps) {
           })}
         </div>
       </Card>
+
+      {/* Add Custom Budget Category Dialog */}
+      <Dialog open={showAddCategory} onOpenChange={setShowAddCategory}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Custom Budget Category</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="category-name">Category Name</Label>
+              <Input
+                id="category-name"
+                placeholder="e.g., Subscriptions, Hobbies, etc."
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="category-budget">Monthly Budget (₹)</Label>
+              <Input
+                id="category-budget"
+                type="number"
+                placeholder="0"
+                value={categoryBudget}
+                onChange={(e) => setCategoryBudget(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2 pt-4">
+              <Button
+                onClick={handleAddCategory}
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+              >
+                Add Category
+              </Button>
+              <Button
+                onClick={() => setShowAddCategory(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Add Goal Dialog */}
       <Dialog open={showAddGoal} onOpenChange={setShowAddGoal}>
