@@ -546,13 +546,14 @@ export default function FinQuest() {
       currentMonth: 1,
       currentYear: 2025,
       cashBalance: initialCash,
+      goldCoins: 50000,
       netWorth: initialCash,
       userProfile: profile,
       portfolio: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
       chatHistory: [
         {
           role: 'ai' as const,
-          content: `Hello ${onboarding.name}! I'm Aura Twin, your financial advisor. I see you're a ${onboarding.career} with a monthly salary of ₹${salary.toLocaleString('en-IN')}. After accounting for ₹${expenses.toLocaleString('en-IN')} in monthly expenses, you have ₹${initialCash.toLocaleString('en-IN')} available for investment. I'm here to help you build a sustainable financial plan.`,
+          content: `🎮 Welcome to FinVerse, ${onboarding.name}! I'm Aura Twin, your AI financial mentor 🤖\n\nI see you're a ${onboarding.career} with a monthly salary of ₹${salary.toLocaleString('en-IN')}. After covering ₹${expenses.toLocaleString('en-IN')} in expenses, you have ₹${initialCash.toLocaleString('en-IN')} available to invest each month.\n\n✨ You start with 50,000 gold coins to use for special investments and bonuses! I'm here to guide you toward your financial freedom goal of ₹50,00,000.\n\nLet's build wealth together! What would you like to invest in this month? 💪`,
           timestamp: Date.now(),
         },
       ],
@@ -562,6 +563,7 @@ export default function FinQuest() {
       lastLoginDate: new Date().toISOString().split('T')[0],
       consecutiveLogins: 1,
       monthlyInvestments: { sip: 0, stocks: 0, gold: 0, realEstate: 0, savings: 0 },
+      financialGoal: 5000000,
     };
 
     setGameState(newGameState);
@@ -578,6 +580,7 @@ export default function FinQuest() {
             xp: newGameState.xp,
             current_month: newGameState.currentMonth,
             cash_balance: newGameState.cashBalance,
+            gold_coins: newGameState.goldCoins,
             portfolio: newGameState.portfolio,
             achievements: newGameState.achievements,
             financial_goal: 5000000,
@@ -721,7 +724,8 @@ export default function FinQuest() {
       };
     });
 
-    await sendAIMessage(`I invested ₹${totalInvestment.toLocaleString('en-IN')} this month: SIP ₹${monthlyDecisions.sip.toLocaleString('en-IN')}, Stocks ₹${monthlyDecisions.stocks.toLocaleString('en-IN')}, Gold ₹${monthlyDecisions.gold.toLocaleString('en-IN')}, Real Estate ₹${monthlyDecisions.realEstate.toLocaleString('en-IN')}, Savings ₹${monthlyDecisions.savings.toLocaleString('en-IN')}`);
+    const diversificationScore = Object.values(monthlyDecisions).filter(v => v > 0).length;
+    await sendAIMessage(`🎯 I invested ₹${totalInvestment.toLocaleString('en-IN')} this month:\n• SIP: ₹${monthlyDecisions.sip.toLocaleString('en-IN')}\n• Stocks: ₹${monthlyDecisions.stocks.toLocaleString('en-IN')}\n• Gold: ₹${monthlyDecisions.gold.toLocaleString('en-IN')}\n• Real Estate: ₹${monthlyDecisions.realEstate.toLocaleString('en-IN')}\n• Savings: ₹${monthlyDecisions.savings.toLocaleString('en-IN')}\n\n${diversificationScore === 5 ? '✨ Excellent diversification!' : diversificationScore >= 3 ? '👍 Good spread across assets!' : '💡 Consider diversifying more!'}`);
 
     setTimeout(() => {
       processMonthEnd();
@@ -779,6 +783,15 @@ export default function FinQuest() {
       }
 
       aiMessage += `\n💼 Net Worth: ₹${Math.round(newNetWorth).toLocaleString('en-IN')}`;
+      
+      const netWorthGrowth = newNetWorth - prev.netWorth;
+      if (netWorthGrowth > 500000) {
+        aiMessage += `\n\n🔥 WOW! You grew your wealth by ₹${Math.round(netWorthGrowth).toLocaleString('en-IN')} this month! That's amazing momentum!`;
+      } else if (netWorthGrowth < -100000) {
+        aiMessage += `\n\n⚠️ Tough month! But don't worry - market volatility is normal. Let's refocus and build back stronger next month!`;
+      } else if (newNetWorth >= 5000000) {
+        aiMessage += `\n\n🎉🎉🎉 CONGRATULATIONS! You've reached FINANCIAL FREEDOM! ₹50,00,000 net worth achieved!`;
+      }
 
       if (newNetWorth >= 1000000 && prev.netWorth < 1000000) {
         unlockAchievement('millionaire');
@@ -870,6 +883,10 @@ export default function FinQuest() {
         }
       }
 
+      const totalInvested = Object.values(gameState.portfolio).reduce((a, b) => a + b, 0);
+      const monthlyAvailable = (gameState.userProfile?.salary || 0) - (gameState.userProfile?.expenses || 0);
+      const projectedFinalNetWorth = gameState.netWorth + (monthlyAvailable * (12 - gameState.currentMonth));
+
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -880,6 +897,14 @@ export default function FinQuest() {
             portfolio: gameState.portfolio,
             level: gameState.level,
             career: gameState.userProfile?.career,
+            salary: gameState.userProfile?.salary,
+            expenses: gameState.userProfile?.expenses,
+            monthlyAvailable: monthlyAvailable,
+            totalInvested: totalInvested,
+            goldCoins: gameState.goldCoins,
+            currentMonth: gameState.currentMonth,
+            projectedFinalNetWorth: projectedFinalNetWorth,
+            achievements: gameState.achievements.filter(a => a.unlocked).map(a => a.title),
           },
         }),
       });
@@ -887,7 +912,11 @@ export default function FinQuest() {
       if (!response.ok) throw new Error('AI response failed');
 
       const data = await response.json();
-      const aiMessage = data.response;
+      let aiMessage = data.response;
+      
+      if (userMessage.toLowerCase().includes('gold') || userMessage.toLowerCase().includes('coin')) {
+        aiMessage += '\n\n💰 Pro tip: Gold coins can be converted to real investments! Ask me how to use them wisely.';
+      }
 
       setGameState(prev => ({
         ...prev,
@@ -919,10 +948,12 @@ export default function FinQuest() {
     } catch (error) {
       console.error('AI chat error:', error);
       
-      const fallbackMsg = `I'm having trouble connecting right now, but I'm here to support you! ${
+      const fallbackMsg = `I'm here to support you, even when I'm thinking! 🤔\n\n${
         userMessage.includes('invest') 
-          ? "Remember: Diversification is key to managing risk. Keep building your portfolio steadily!" 
-          : "Keep making smart financial decisions. Your future self will thank you!"
+          ? "📊 Remember: Diversification across SIPs, Stocks, Gold & Real Estate reduces risk and maximizes growth!" 
+          : userMessage.includes('goal') 
+          ? "🎯 You're doing great! Stay focused on reaching ₹50,00,000. Every month counts!" 
+          : "💪 Keep making smart financial decisions. Your future self will thank you!"
       }`;
       
       setGameState(prev => ({
