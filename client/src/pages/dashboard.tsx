@@ -9,6 +9,8 @@ import { NumberCounter } from '@/components/number-counter';
 import { NextStepWidget } from '@/components/next-step-widget';
 import { QuickActionsBar } from '@/components/quick-actions-bar';
 import { GrowthRateChart } from '@/components/growth-rate-chart';
+import { AIFinancialScore } from '@/components/ai-financial-score';
+import { SmartBudgetAnalyzer } from '@/components/smart-budget-analyzer';
 
 interface DashboardProps {
   gameState: any;
@@ -467,6 +469,12 @@ export default function Dashboard({
             </div>
           </div>
         </Card>
+      </div>
+
+      {/* AI-Powered Insights Section */}
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AIFinancialScore gameState={gameState} />
+        <SmartBudgetAnalyzer gameState={gameState} />
       </div>
     </div>
   );
