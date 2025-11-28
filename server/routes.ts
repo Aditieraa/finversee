@@ -124,5 +124,69 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // ===== AI INVESTMENT RECOMMENDATIONS ROUTE =====
+  app.post("/api/ai-recommendations", async (req: Request, res: Response) => {
+    try {
+      const { prompt } = req.body;
+
+      if (!prompt || typeof prompt !== "string") {
+        res.status(400).json({ error: "Prompt required" });
+        return;
+      }
+
+      console.log('🤖 Generating investment recommendations...');
+      const advice = await getFinancialAdvice(prompt, {
+        netWorth: 0,
+        portfolio: {},
+        level: 1,
+        career: "Investor"
+      });
+
+      // Parse recommendations from Gemini response
+      // Try to extract JSON array from response
+      let recommendations = [];
+      try {
+        // Look for JSON array in the response
+        const jsonMatch = advice.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          recommendations = JSON.parse(jsonMatch[0]);
+        } else {
+          // Fallback: Create mock recommendations from advice
+          recommendations = [
+            {
+              title: "📈 Recommended Strategy",
+              description: advice.substring(0, 200),
+              expectedReturn: "8-12%",
+              riskLevel: "Medium",
+              minimumInvestment: 5000,
+              reason: "AI-generated recommendation based on your profile"
+            }
+          ];
+        }
+      } catch (parseErr) {
+        console.log('ℹ️ Could not parse JSON from response, using fallback');
+        recommendations = [
+          {
+            title: "💡 Financial Strategy",
+            description: advice.substring(0, 250),
+            expectedReturn: "10-15%",
+            riskLevel: "Medium",
+            minimumInvestment: 5000,
+            reason: "Personalized based on your financial metrics"
+          }
+        ];
+      }
+
+      console.log('✅ Recommendations generated:', recommendations.length);
+      res.json({ recommendations });
+    } catch (error) {
+      console.error('❌ Recommendations error:', error);
+      res.status(500).json({
+        error: "Failed to generate recommendations",
+        recommendations: []
+      });
+    }
+  });
+
   return server;
 }

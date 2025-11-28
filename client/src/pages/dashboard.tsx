@@ -11,6 +11,7 @@ import { QuickActionsBar } from '@/components/quick-actions-bar';
 import { GrowthRateChart } from '@/components/growth-rate-chart';
 import { AIFinancialScore } from '@/components/ai-financial-score';
 import { SmartBudgetAnalyzer } from '@/components/smart-budget-analyzer';
+import { AIInvestmentRecommendations } from '@/components/ai-investment-recommendations';
 
 interface DashboardProps {
   gameState: any;
@@ -475,6 +476,11 @@ export default function Dashboard({
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AIFinancialScore gameState={gameState} />
         <SmartBudgetAnalyzer gameState={gameState} />
+      </div>
+
+      {/* AI Investment Recommendations Section */}
+      <div className="mt-8">
+        <AIInvestmentRecommendations gameState={gameState} />
       </div>
     </div>
   );
