@@ -34,84 +34,6 @@ export function AIInvestmentRecommendations({ gameState }: AIInvestmentRecommend
   const savingsRate = salary > 0 ? (monthlySavings / salary) * 100 : 0;
   const investmentCapacity = Math.floor(availableCash * 0.3); // Can invest 30% of cash
 
-  // Generate default recommendations (fallback if API call fails)
-  const getDefaultRecommendations = (): Recommendation[] => {
-    const defaults: Recommendation[] = [];
-
-    // 1. Emergency Fund Check
-    if (availableCash < monthlyExpenses * 3) {
-      defaults.push({
-        title: '🏦 Build Emergency Fund',
-        description: `Create a safety net of ₹${Math.round(monthlyExpenses * 3).toLocaleString('en-IN')}. Currently: ₹${Math.round(availableCash).toLocaleString('en-IN')}`,
-        expectedReturn: 'Safety (5-6% in savings account)',
-        riskLevel: 'Low',
-        minimumInvestment: monthlyExpenses * 3 - availableCash,
-        reason: 'Essential for financial stability',
-      });
-    }
-
-    // 2. Index Funds for Steady Growth
-    if (investmentCapacity > 50000) {
-      defaults.push({
-        title: '📈 Nifty 50 Index Funds',
-        description: 'Diversified equity investment tracking Indian market',
-        expectedReturn: '8-12% annually',
-        riskLevel: 'Medium',
-        minimumInvestment: 5000,
-        reason: `With ₹${monthlySavings.toLocaleString('en-IN')}/month savings, you can build long-term wealth`,
-      });
-    }
-
-    // 3. Debt Reduction Priority
-    if (expenses > salary * 0.6) {
-      defaults.push({
-        title: '🛡️ Reduce Expenses First',
-        description: 'Focus on reducing your expense-to-income ratio before aggressive investing',
-        expectedReturn: 'Guaranteed savings',
-        riskLevel: 'Low',
-        minimumInvestment: 0,
-        reason: `Your expense ratio is ${((expenses / salary) * 100).toFixed(0)}%. Ideal is <50%`,
-      });
-    }
-
-    // 4. SIPs (Systematic Investment Plan)
-    if (monthlySavings > 10000) {
-      defaults.push({
-        title: '💰 SIP in Mutual Funds',
-        description: `Invest ₹${Math.round(monthlySavings * 0.5).toLocaleString('en-IN')}/month through SIPs`,
-        expectedReturn: '10-15% annually',
-        riskLevel: 'Medium',
-        minimumInvestment: 5000,
-        reason: 'Disciplined investing with rupee-cost averaging',
-      });
-    }
-
-    // 5. High-Risk High-Reward (if good financial health)
-    if (availableCash > monthlyExpenses * 6 && savingsRate > 30) {
-      defaults.push({
-        title: '🚀 Growth Stocks Portfolio',
-        description: 'Allocate 10-15% to high-growth tech/pharma stocks',
-        expectedReturn: '15-25% annually',
-        riskLevel: 'High',
-        minimumInvestment: 50000,
-        reason: `Your strong savings rate (${savingsRate.toFixed(0)}%) supports higher risk`,
-      });
-    }
-
-    // 6. Passive Income Stream
-    if (passiveIncome < salary * 0.1) {
-      defaults.push({
-        title: '🎯 Build Passive Income',
-        description: `Current passive income: ₹${passiveIncome.toLocaleString('en-IN')}. Target: ₹${Math.round(salary * 0.1).toLocaleString('en-IN')}/month`,
-        expectedReturn: 'Recurring monthly income',
-        riskLevel: 'Medium',
-        minimumInvestment: 100000,
-        reason: 'Creates financial freedom and reduces job dependency',
-      });
-    }
-
-    return defaults.slice(0, 5); // Show top 5 recommendations
-  };
 
   // Fetch AI recommendations from Gemini
   const fetchAIRecommendations = async () => {
@@ -150,14 +72,15 @@ Provide exactly 5 recommendations. Return as JSON array.`;
       if (!response.ok) throw new Error('Failed to fetch recommendations');
       const data = await response.json();
       
-      if (data.recommendations && Array.isArray(data.recommendations)) {
+      if (data.recommendations && Array.isArray(data.recommendations) && data.recommendations.length > 0) {
         setRecommendations(data.recommendations);
       } else {
-        setRecommendations(getDefaultRecommendations());
+        throw new Error('No recommendations received from AI');
       }
     } catch (err) {
       console.error('AI recommendation error:', err);
-      setRecommendations(getDefaultRecommendations());
+      setError(err instanceof Error ? err.message : 'Failed to generate AI recommendations. Please try again.');
+      setRecommendations([]);
     } finally {
       setLoading(false);
     }
@@ -231,16 +154,35 @@ Provide exactly 5 recommendations. Return as JSON array.`;
       </div>
 
       {/* Recommendations List */}
-      {error && (
-        <div className="p-3 mb-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-2">
-          <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-red-300">{error}</p>
+      {loading && (
+        <div className="p-6 bg-indigo-900/20 rounded-lg border border-indigo-400/20 text-center">
+          <Loader2 className="h-5 w-5 text-indigo-400 animate-spin mx-auto mb-2" />
+          <p className="text-sm text-indigo-300">Analyzing your financial profile...</p>
         </div>
       )}
 
-      <div className="space-y-3">
-        {recommendations.length > 0 ? (
-          recommendations.map((rec, idx) => (
+      {error && !loading && (
+        <div className="p-4 mb-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-red-300 mb-1">AI Analysis Failed</p>
+            <p className="text-xs text-red-200/70">{error}</p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={fetchAIRecommendations}
+              className="mt-2 text-xs h-7"
+              data-testid="button-retry-recommendations"
+            >
+              Retry
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && recommendations.length > 0 && (
+        <div className="space-y-3">
+          {recommendations.map((rec, idx) => (
             <div
               key={idx}
               className="p-4 bg-indigo-900/20 rounded-lg border border-indigo-400/20 hover-elevate transition-all"
@@ -277,13 +219,9 @@ Provide exactly 5 recommendations. Return as JSON array.`;
                 💡 {rec.reason}
               </p>
             </div>
-          ))
-        ) : (
-          <div className="p-4 bg-indigo-900/20 rounded-lg border border-indigo-400/20 text-center">
-            <p className="text-xs text-indigo-300">Loading recommendations...</p>
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Action Footer */}
       <div className="mt-6 pt-6 border-t border-indigo-400/20">
